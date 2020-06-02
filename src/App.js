@@ -7,9 +7,11 @@ import numerales from "numeral/locales/es";
 
 import styles from "./styles.module.css";
 
-const lastUpdate = "2020-05-31 21:00:00";
-const lastCount = 105159;
-const prevCount = 90638;
+import {
+  lastUpdate,
+  lastCount,
+  prevCount,
+} from './data';
 
 const startTs = moment(lastUpdate)
   .add(4, "hours")
