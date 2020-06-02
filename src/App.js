@@ -5,6 +5,7 @@ import numeral from "numeral";
 // eslint-disable-next-line
 import numerales from "numeral/locales/es";
 
+import pjson from '../package.json';
 import styles from "./styles.module.css";
 
 import {
@@ -48,7 +49,11 @@ export default function App() {
           </div>
           <br/>
           <br/>
-          <div><small>Código: <a href="https://github.com/pviojo/covid-counter">https://github.com/pviojo/covid-counter</a></small></div>
+          <div>
+            <small>Código: <a href="https://github.com/pviojo/covid-counter">https://github.com/pviojo/covid-counter</a></small>
+            <br/>
+            <small><small>v: {pjson.version}</small></small>
+            </div>
         </div>
       </div>
     </div>
