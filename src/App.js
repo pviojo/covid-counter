@@ -2,6 +2,7 @@ import React from "react";
 import moment from "moment";
 import Counter from "./components/Counter";
 import numeral from "numeral";
+// eslint-disable-next-line
 import numerales from "numeral/locales/es";
 
 import styles from "./styles.module.css";
