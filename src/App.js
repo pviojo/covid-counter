@@ -44,6 +44,9 @@ export default function App() {
               </a>
             </small>
           </div>
+          <br/>
+          <br/>
+          <div><small>Código: <a href="https://github.com/pviojo/covid-counter">https://github.com/pviojo/covid-counter</a></small></div>
         </div>
       </div>
     </div>
