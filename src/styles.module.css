@@ -1,5 +1,5 @@
 body {
-  background: #150015;
+  background: #222;
   color: #fff;
   padding: 100px 50px;
   text-align: center;
@@ -10,13 +10,21 @@ body {
   text-align: center;
 }
 
+:local(.counters) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
 a {
   color: #999;
 }
-
+:local(.calculatedAt) {
+  font-size: 20px;
+  margin: 100px 0;
+  font-weight: 600;
+}
 :local(.currentData) {
-  margin-top: 100px;
-  font-size: 16px;
+  font-size: 12px;
   color: #777;
 }
 
@@ -26,9 +34,23 @@ a {
 
 @media(max-width:600px){
   body {
-    padding: 100px 50px;
+    padding: 10px 10px 0;
   }   
   :local(.currentData) {
     font-size: 12px;
   }
+  :local(.counters) {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 50px 0px;
+  }
+  :local(.calculatedAt) {
+    margin: 50px 0;
+  }
+
+  :local(.currentData) {
+    margin-top: 0px;
+  }
+   
+  
 }

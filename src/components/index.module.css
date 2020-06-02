@@ -8,7 +8,7 @@
 }
 
 :local(.subtitle) {
-  margin-top: 20px;
+  margin-top: 0px;
   font-size: 18px;
   font-weight: 100;
 }

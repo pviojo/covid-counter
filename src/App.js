@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import moment from "moment";
 import Counter from "./components/Counter";
 import numeral from "numeral";
@@ -12,50 +12,80 @@ import {
   lastUpdate,
   lastCount,
   prevCount,
+  lastDeath,
+  prevDeath,
 } from './data';
 
 const startTs = moment(lastUpdate)
   .add(4, "hours")
   .format("X");
 
+const nowTs = moment().format("X");
 const delta = (lastCount - prevCount) / (3 * 60 * 60 * 24);
 const start = Math.floor(
   lastCount + Math.floor(delta * (moment().format("X") - startTs))
 );
+const deltaDeath = (lastDeath - prevDeath) / (3 * 60 * 60 * 24);
+const startDeath = Math.floor(
+  lastDeath + Math.floor(deltaDeath * (moment().format("X") - startTs))
+);
 
-console.log("startTs", start, startTs);
 numeral.locale("es");
-export default function App() {
+
+const App = () => {
+  const [now, setNow] = useState(moment());
+
+  useEffect(() => {
+    window.setInterval(() => {
+      setNow(moment());
+    }, 100);
+  }, [])
+
+
   return (
     <div className="App">
-      <div className={styles.counter}>
-        <Counter
-          startTs={moment().format("X")}
-          start={start}
-          delta={delta}
-        />
-        <div className={styles.currentData}>
-          <div>Último cómputo oficial: {numeral(lastCount).format(0, 0)}</div>
-          <div>
-            Última actualización oficial: {moment(lastUpdate).format("DD/MM HH:mm")}
-          </div>
-          <div>
-            <small>
-              Fuente:{" "}
-              <a href="https://www.gob.cl/coronavirus/cifrasoficiales/">
-                Cifras Oficiales COVID-19, Gobierno de Chile
-              </a>
-            </small>
-          </div>
-          <br/>
-          <br/>
-          <div>
-            <small>Código: <a href="https://github.com/pviojo/covid-counter">https://github.com/pviojo/covid-counter</a></small>
-            <br/>
-            <small><small>v: {pjson.version}</small></small>
-            </div>
+      <div>
+        <div className={styles.counters}>
+          <Counter
+            startTs={nowTs}
+            start={start}
+            delta={delta}
+            subtitle="Casos totales estimados en Chile"
+          />
+          <Counter
+            startTs={nowTs}
+            start={startDeath}
+            delta={deltaDeath}
+            subtitle="Fallecidos estimados en Chile"
+          />
         </div>
+      </div>
+      <div className={styles.calculatedAt}>
+        Calculado: {now.format("DD/MM HH:mm:ss")}
+      </div>
+      <div className={styles.currentData}>
+        <div>* Estimaciones en base a datos de últ 3 días</div>
+        <div>Último cómputo oficial: {numeral(lastCount).format(0, 0)} ({numeral(lastDeath).format(0, 0)} fallecidos)</div>
+        <div>
+          Última actualización oficial: {moment(lastUpdate).format("DD/MM HH:mm")}
+        </div>
+        <div>
+          <small>
+            Fuente:{" "}
+            <a href="https://www.gob.cl/coronavirus/cifrasoficiales/">
+              Cifras Oficiales COVID-19, Gobierno de Chile
+            </a>
+          </small>
+        </div>
+        <br/>
+        <div>
+          <small>Código: <a href="https://github.com/pviojo/covid-counter">https://github.com/pviojo/covid-counter</a></small>
+          <br/>
+          <small><small>v: {pjson.version}</small></small>
+          </div>
       </div>
     </div>
   );
 }
+
+export default App;
