@@ -1,0 +1,9 @@
+:local(.counter) {
+  font-size: 96px;
+  font-weight: 400;
+}
+
+:local(.subtitle) {
+  font-size: 18px;
+  font-weight: 300;
+}
