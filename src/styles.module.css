@@ -1,7 +1,7 @@
 body {
-  background: #222;
+  background: #150015;
   color: #fff;
-  padding: 50px;
+  padding: 100px 50px;
   text-align: center;
   font-family: "Noto Sans Jp", "Helvetica", sans-serif;
 }
@@ -15,11 +15,20 @@ a {
 }
 
 :local(.currentData) {
-  margin: 100px;
+  margin-top: 100px;
   font-size: 16px;
   color: #777;
 }
 
 :local(.currentData div) {
   margin-bottom: 10px;
+}
+
+@media(max-width:600px){
+  body {
+    padding: 100px 50px;
+  }   
+  :local(.currentData) {
+    font-size: 12px;
+  }
 }

@@ -21,9 +21,13 @@ const Counter = ({ startTs, start, delta, onChange }) => {
   }, 100);
 
   return (
-    <div>
+    <div className={styles.cnt}>
       <div className={styles.counter}>{numeral(n).format("0,0")}</div>
-      <div className={styles.subtitle}>Casos totales estimados. {now}</div>
+      <div className={styles.subtitle}>
+        Casos totales estimados en Chile<br/>{now}
+        <br /><br />
+        <small>* Estimación basado en cantidad de casos últ 3 días</small>
+      </div>
     </div>
   );
 };

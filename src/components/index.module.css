@@ -1,9 +1,23 @@
+:local(.cnt) {
+  text-align: center;
+}
+
 :local(.counter) {
   font-size: 96px;
   font-weight: 400;
 }
 
 :local(.subtitle) {
+  margin-top: 20px;
   font-size: 18px;
-  font-weight: 300;
+  font-weight: 100;
+}
+
+@media(max-width:600px){
+  :local(.counter) {
+    font-size: 72px;
+  }
+  :local(.subtitle) {
+    font-size: 14px;
+  }
 }
