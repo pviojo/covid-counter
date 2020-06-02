@@ -26,7 +26,7 @@ const Counter = ({ startTs, start, delta, onChange }) => {
       <div className={styles.subtitle}>
         Casos totales estimados en Chile<br/>{now}
         <br /><br />
-        <small>* Estimación basado en cantidad de casos últ 3 días</small>
+        <small>* Estimación en base a cantidad de casos últ 3 días</small>
       </div>
     </div>
   );

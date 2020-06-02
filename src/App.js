@@ -29,7 +29,6 @@ export default function App() {
           startTs={moment().format("X")}
           start={start}
           delta={delta}
-          onChange={n => {}}
         />
         <div className={styles.currentData}>
           <div>Último cómputo real: {numeral(lastCount).format(0, 0)}</div>
