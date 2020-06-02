@@ -35,9 +35,9 @@ export default function App() {
           delta={delta}
         />
         <div className={styles.currentData}>
-          <div>Último cómputo real: {numeral(lastCount).format(0, 0)}</div>
+          <div>Último cómputo oficial: {numeral(lastCount).format(0, 0)}</div>
           <div>
-            Última actualización: {moment(lastUpdate).format("DD/MM HH:mm")}
+            Última actualización oficial: {moment(lastUpdate).format("DD/MM HH:mm")}
           </div>
           <div>
             <small>
