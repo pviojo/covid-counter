@@ -54,7 +54,7 @@ const App = () => {
 
       setNowTs(_nowTs);
       setLastUpdate(_lastUpdate);
-      setLastCount(_lastUpdate);
+      setLastCount(_lastCount);
       setLastDeath(_lastDeath);
       setStart(start);
       setStartDeath(startDeath);
