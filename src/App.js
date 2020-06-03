@@ -9,12 +9,14 @@ import pjson from '../package.json';
 import styles from "./styles.module.css";
 
 import {
-  lastUpdate,
-  lastCount,
-  prevCount,
-  lastDeath,
-  prevDeath,
+  data
 } from './data';
+
+const lastUpdate = data[0][0]
+const lastCount = data[0][1]
+const prevCount = data[3][1]
+const lastDeath = data[0][2]
+const prevDeath = data[3][2]
 
 const startTs = moment(lastUpdate)
   .add(4, "hours")
