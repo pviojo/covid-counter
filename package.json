@@ -8,6 +8,7 @@
   ],
   "main": "src/index.js",
   "dependencies": {
+    "axios": "^0.19.2",
     "moment": "2.26.0",
     "numeral": "2.0.6",
     "react": "16.12.0",

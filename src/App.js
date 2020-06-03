@@ -2,47 +2,72 @@ import React, { useState, useEffect } from "react";
 import moment from "moment";
 import Counter from "./components/Counter";
 import numeral from "numeral";
+import axios from 'axios';
 // eslint-disable-next-line
 import numerales from "numeral/locales/es";
 
 import pjson from '../package.json';
 import styles from "./styles.module.css";
 
-import {
-  data
-} from './data';
-
-const lastUpdate = data[0][0]
-const lastCount = data[0][1]
-const prevCount = data[3][1]
-const lastDeath = data[0][2]
-const prevDeath = data[3][2]
-
-const startTs = moment(lastUpdate)
-  .add(4, "hours")
-  .format("X");
-
-const nowTs = moment().format("X");
-const delta = (lastCount - prevCount) / (3 * 60 * 60 * 24);
-const start = Math.floor(
-  lastCount + Math.floor(delta * (moment().format("X") - startTs))
-);
-const deltaDeath = (lastDeath - prevDeath) / (3 * 60 * 60 * 24);
-const startDeath = Math.floor(
-  lastDeath + Math.floor(deltaDeath * (moment().format("X") - startTs))
-);
-
-numeral.locale("es");
-
 const App = () => {
+
+  numeral.locale("es");
+
   const [now, setNow] = useState(moment());
+  
+  const [nowTs, setNowTs] = useState(0);
+  const [lastUpdate, setLastUpdate] = useState(0);
+  const [lastCount, setLastCount] = useState(0);
+  const [lastDeath, setLastDeath] = useState(0);
+  const [start, setStart] = useState(0);
+  const [startDeath, setStartDeath] = useState(0);
+  const [deltaDeath, setDeltaDeath] = useState(0);
+  const [delta, setDelta] = useState(0);
+
 
   useEffect(() => {
     window.setInterval(() => {
       setNow(moment());
     }, 100);
-  }, [])
 
+    const initData = (data) => {
+
+      const _lastUpdate = data[0].updatedAt;
+      const _lastCount = data[0].totalCases;
+      const _prevCount = data[3].totalCases;
+      const _lastDeath = data[0].totalDeaths;
+      const _prevDeath = data[3].totalDeaths;
+      
+      const startTs = moment(_lastUpdate)
+        .add(4, "hours")
+        .format("X");
+      
+      const _nowTs = moment().format("X");
+      const _delta = (_lastCount - _prevCount) / (3 * 60 * 60 * 24);
+      const start = Math.floor(
+        _lastCount + Math.floor(_delta * (moment().format("X") - startTs))
+      );
+      const _deltaDeath = (_lastDeath - _prevDeath) / (3 * 60 * 60 * 24);
+      const startDeath = Math.floor(
+        _lastDeath + Math.floor(_deltaDeath * (moment().format("X") - startTs))
+      );
+
+      setNowTs(_nowTs);
+      setLastUpdate(_lastUpdate);
+      setLastCount(_lastUpdate);
+      setLastDeath(_lastDeath);
+      setStart(start);
+      setStartDeath(startDeath);
+      setDeltaDeath(_deltaDeath)
+      setDelta(_delta)
+    } 
+    const loadData = async () => {
+      const { data } = await axios.get('https://raw.githubusercontent.com/pviojo/covid-counter/master/data/resume_by_day.json')
+      initData(data)
+    }
+    
+    loadData()
+  }, [])
 
   return (
     <div className="App">

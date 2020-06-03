@@ -10,13 +10,16 @@ const Counter = ({ subtitle, startTs, start, delta, onChange }) => {
   }, [n, onChange]);
 
   useEffect(() => {
-    window.setInterval(() => {
+    const pid = window.setInterval(() => {
       const nowTs = Date.now() / 1000;
       const cases = Math.floor(start + delta * (nowTs - startTs));
       if (cases !== n && cases > n) {
         setN(cases);
       }
     }, 100)
+    return () => {
+      window.clearInterval(pid);
+    }
   },[start, delta, startTs, n]);
 
   return (
