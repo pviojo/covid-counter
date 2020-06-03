@@ -72,6 +72,11 @@ const App = () => {
   return (
     <div className="App">
       <div>
+        <div className={styles.calculatedAt}>
+          Situación en Chile. Estimada en tiempo real.
+          <br/>
+          <small>Actualizado: {now.format("DD/MM HH:mm:ss")}</small>
+        </div>
         <div className={styles.counters}>
           <Counter
             startTs={nowTs}
@@ -87,9 +92,7 @@ const App = () => {
           />
         </div>
       </div>
-      <div className={styles.calculatedAt}>
-        Calculado: {now.format("DD/MM HH:mm:ss")}
-      </div>
+      
       <div className={styles.currentData}>
         <div>* Estimaciones en base a datos de últ 3 días</div>
         <div>Último cómputo oficial: {numeral(lastCount).format(0, 0)} ({numeral(lastDeath).format(0, 0)} fallecidos)</div>
