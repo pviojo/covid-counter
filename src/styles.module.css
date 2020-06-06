@@ -1,6 +1,6 @@
 body {
   background: #222;
-  color: #999;
+  color: #69c;
   padding: 100px 50px;
   text-align: center;
   font-family: "Noto Sans Jp", "Helvetica", sans-serif;
@@ -10,13 +10,25 @@ body {
   text-align: center;
 }
 
+:local(.loading){
+  text-align: center;
+  margin:0px auto;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+}
 :local(.counters) {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
 
 a {
-  color: #999;
+  color: #666;
 }
 :local(.calculatedAt) {
   font-size: 20px;

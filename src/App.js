@@ -3,6 +3,8 @@ import moment from "moment";
 import Counter from "./components/Counter";
 import numeral from "numeral";
 import axios from 'axios';
+import ReactLoading from 'react-loading';
+
 // eslint-disable-next-line
 import numerales from "numeral/locales/es";
 
@@ -12,17 +14,14 @@ import styles from "./styles.module.css";
 const App = () => {
 
   numeral.locale("es");
-
+  const [loading, setLoading] = useState(true);
   const [now, setNow] = useState(moment());
-  
+  const [data, setData] = useState(null);
   const [nowTs, setNowTs] = useState(0);
-  const [lastUpdate, setLastUpdate] = useState(0);
-  const [lastCount, setLastCount] = useState(0);
-  const [lastDeath, setLastDeath] = useState(0);
-  const [start, setStart] = useState(0);
+  const [startCases, setStartCases] = useState(0);
   const [startDeath, setStartDeath] = useState(0);
   const [deltaDeath, setDeltaDeath] = useState(0);
-  const [delta, setDelta] = useState(0);
+  const [deltaCases, setDeltaCases] = useState(0);
 
 
   useEffect(() => {
@@ -33,8 +32,7 @@ const App = () => {
     const initData = (data) => {
 
       const _lastUpdate = data[0].updatedAt;
-      const _lastCount = data[0].totalCases;
-      const _prevCount = data[3].totalCases;
+      const _lastCases = data[0].totalCases;
       const _lastDeath = data[0].totalDeaths;
       const _prevDeath = data[3].totalDeaths;
       
@@ -43,32 +41,48 @@ const App = () => {
         .format("X");
       
       const _nowTs = moment().format("X");
-      const _delta = (_lastCount - _prevCount) / (3 * 60 * 60 * 24);
-      const start = Math.floor(
-        _lastCount + Math.floor(_delta * (moment().format("X") - startTs))
+      const _deltaCases = 
+        (
+          (data[0].totalCases - data[1].totalCases) * 0.5 +
+          (data[1].totalCases - data[2].totalCases) * 0.3 +
+          (data[2].totalCases - data[3].totalCases) * 0.2
+        ) / (60 * 60 * 24);
+      const _startCases = Math.floor(
+        _lastCases + Math.floor(_deltaCases * (moment().format("X") - startTs))
       );
       const _deltaDeath = (_lastDeath - _prevDeath) / (3 * 60 * 60 * 24);
-      const startDeath = Math.floor(
+      const _startDeath = Math.floor(
         _lastDeath + Math.floor(_deltaDeath * (moment().format("X") - startTs))
       );
 
       setNowTs(_nowTs);
-      setLastUpdate(_lastUpdate);
-      setLastCount(_lastCount);
-      setLastDeath(_lastDeath);
-      setStart(start);
-      setStartDeath(startDeath);
+      setStartCases(_startCases);
+      setStartDeath(_startDeath);
       setDeltaDeath(_deltaDeath)
-      setDelta(_delta)
+      setDeltaCases(_deltaCases)
     } 
     const loadData = async () => {
       const { data } = await axios.get('https://raw.githubusercontent.com/pviojo/covid-counter/master/data/resume_by_day.json')
-      initData(data)
+      setData(data);
+      initData(data);
+      setLoading(false)
     }
     
     loadData()
   }, [])
-
+  if (loading){
+    return (
+      <div className={styles.loading}>
+        <ReactLoading
+          type="spin"
+          color={'#69c'}
+        />
+      </div>
+    )
+  }
+  if (!data){
+    return null;
+  }
   return (
     <div className="App">
       <div>
@@ -80,8 +94,8 @@ const App = () => {
         <div className={styles.counters}>
           <Counter
             startTs={nowTs}
-            start={start}
-            delta={delta}
+            start={startCases}
+            delta={deltaCases}
             subtitle="Casos totales estimados en Chile"
           />
           <Counter
@@ -93,11 +107,12 @@ const App = () => {
         </div>
       </div>
       
+      
       <div className={styles.currentData}>
         <div>* Estimaciones en base a datos de últ 3 días</div>
-        <div>Último cómputo oficial: {numeral(lastCount).format(0, 0)} ({numeral(lastDeath).format(0, 0)} fallecidos)</div>
+        <div>Último cómputo oficial: {numeral(data[0].totalCases).format(0, 0)} ({numeral(data[0].totalDeaths).format(0, 0)} fallecidos)</div>
         <div>
-          Última actualización oficial: {moment(lastUpdate).format("DD/MM HH:mm")}
+          Última actualización oficial: {moment(data[0].lastUpdate).format("DD/MM HH:mm")}
         </div>
         <div>
           <small>
