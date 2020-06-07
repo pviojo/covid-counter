@@ -265,6 +265,14 @@ const App = () => {
             <a href="https://www.gob.cl/coronavirus/cifrasoficiales/">
               Cifras Oficiales COVID-19, Gobierno de Chile
             </a>
+            <br />
+            * Los datos de fallecidos se ajustaron en 553 de acuerdo al cambio de reporte del
+            {' '}
+            Minsal de 2020-06-07.
+            {' '}
+            Asimismo se aplicó el mismo ajuste 12 días hacia atras para
+            {' '}
+            mantener el model de estimación.
           </small>
         </div>
         <div>
