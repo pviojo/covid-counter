@@ -69,7 +69,6 @@ const App = () => {
     };
 
     const loadData = async () => {
-      // const { data: loadedData } = await axios.get('https://raw.githubusercontent.com/pviojo/covid-counter/master/data/resume_by_day.json');
       const { data: loadedData } = await axios.get('https://covid.tiopaul.io/data/resume_by_day.json');
       initData(loadedData);
       setLoading(false);
