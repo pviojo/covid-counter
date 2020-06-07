@@ -135,13 +135,14 @@ const App = () => {
             Casos:
             {' '}
             {numeral(data[0].totalCases).format(0, 0)}
-            , Fallecidos:
+            <br />
+            Fallecidos:
             {' '}
             {numeral(data[0].totalDeaths).format(0, 0)}
           </big>
         </div>
-        <div className={styles.officialInfo}>
-          Estimación de próxima actualización oficial (
+        <div className={`${styles.officialInfo} ${styles.estimation}`}>
+          Estimación próxima actualización oficial (
           {moment().startOf('day').subtract(3, 'hours').format('DD/MM HH:mm')}
           )
           <br />
@@ -152,7 +153,8 @@ const App = () => {
             {' (+'}
             {numeral(estimationLastOfficialInfoCases - data[0].totalCases).format(0, 0)}
             )
-            , Fallecidos:
+            <br />
+            Fallecidos:
             {' '}
             {numeral(estimationLastOfficialInfoDeaths).format(0, 0)}
             {' (+'}

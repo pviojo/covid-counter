@@ -58,6 +58,9 @@ a {
   margin:50px 0 50px 0;
   font-weight: bold;
 }
+:local(.currentData .estimation){
+  color:#997;
+}
 :local(.currentData .officialInfo big){
   font-size:18px;
   display: block;
