@@ -143,7 +143,7 @@ const App = () => {
         </div>
         <div className={`${styles.officialInfo} ${styles.estimation}`}>
           Estimación próxima actualización oficial (
-          {moment().startOf('day').subtract(3, 'hours').format('DD/MM HH:mm')}
+          {moment(data[0].updatedAt).add(1, 'day').format('DD/MM HH:mm')}
           )
           <br />
           <big>
