@@ -1,0 +1,26 @@
+:local(.cnt) {
+  :local(.title) {
+    font-size: 16px;
+  }
+  :local(.tools) {
+    padding:20px 0px;
+    text-align: center;
+    :local(.btn){
+      margin-right: 10px;
+    }  
+  }
+}
+
+:local(.btn){
+  cursor: pointer;
+  font-size: 11px;
+  background:#999;
+  border-radius: 50px;
+  padding:3px 10px;
+  color:#fff;
+  text-align: center;
+}
+
+:local(.btn.selected){
+  background:#387;
+}

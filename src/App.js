@@ -6,6 +6,7 @@ import moment from 'moment';
 import numeral from 'numeral';
 import axios from 'axios';
 import ReactLoading from 'react-loading';
+import isMobile from 'is-mobile';
 
 // eslint-disable-next-line
 import numerales from "numeral/locales/es";
@@ -13,8 +14,10 @@ import Counter from './components/Counter';
 
 import { generatePolynomialRegression } from './logic/parameters';
 
+import { RenderLineChart } from './components/Charts';
+
 import pjson from '../package.json';
-import styles from './styles.module.css';
+import styles from './index.module.scss';
 
 const App = () => {
   numeral.locale('es');
@@ -100,15 +103,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <div>
-        <div className={styles.calculatedAt}>
-          Situación en Chile. Estimada en tiempo real.
-          <br />
-          <small>
-            Actualizado:
-            {now.format('DD/MM HH:mm:ss')}
-          </small>
-        </div>
+      <div className={`${styles.topCounter} ${styles.estimation} ${styles.widget}`}>
         <div className={styles.counters}>
           <Counter
             model={modelCases}
@@ -121,27 +116,19 @@ const App = () => {
             subtitle="Fallecidos estimados en Chile"
           />
         </div>
+        <div className={styles.calculatedAt}>
+          Situación en Chile. Estimada en tiempo real.
+          {' '}
+          Actualizado:
+          {' '}
+          {now.format('DD/MM HH:mm:ss')}
+          <div><small>* Estimaciones en base a datos de últ 3 días</small></div>
+        </div>
       </div>
 
 
-      <div className={styles.currentData}>
-        <div>* Estimaciones en base a datos de últ 3 días</div>
-        <div className={styles.officialInfo}>
-          Última actualización oficial:
-          {' '}
-          {moment(data[0].updatedAt).format('DD/MM HH:mm')}
-          <br />
-          <big>
-            Casos:
-            {' '}
-            {numeral(data[0].totalCases).format(0, 0)}
-            <br />
-            Fallecidos:
-            {' '}
-            {numeral(data[0].totalDeaths).format(0, 0)}
-          </big>
-        </div>
-        <div className={`${styles.officialInfo} ${styles.estimation}`}>
+      <div className={styles.grid2Cols1Col}>
+        <div className={`${styles.officialInfo} ${styles.estimation} ${styles.widget}  ${styles.widgetSp}`}>
           Estimación próxima actualización oficial (
           {moment(data[0].updatedAt).add(1, 'day').format('DD/MM HH:mm')}
           )
@@ -162,6 +149,59 @@ const App = () => {
             )
           </big>
         </div>
+        <div className={`${styles.officialInfo} ${styles.widget}  ${styles.widgetSp}`}>
+          Última actualización oficial:
+          {' '}
+          {moment(data[0].updatedAt).format('DD/MM HH:mm')}
+          <br />
+          <big>
+            Casos:
+            {' '}
+            {numeral(data[0].totalCases).format(0, 0)}
+            <br />
+            Fallecidos:
+            {' '}
+            {numeral(data[0].totalDeaths).format(0, 0)}
+          </big>
+        </div>
+      </div>
+      <div className={`${styles.charts} ${styles.grid2Cols1Col}`}>
+        <div className={styles.widget}>
+          <RenderLineChart
+            data={data.slice(0, 100)}
+            colors={["#387"]}
+            yAxisScale="linear"
+            xAxisType="time"
+            title="Total de casos COVID-19 Chile"
+            width={100}
+            height={isMobile() ? 80 : 60}
+            yAxisMin={0}
+            xAxisStepSize={isMobile() ? 7 : 4}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Total Casos': 'totalCases',
+            }}
+          />
+        </div>
+        <div className={styles.widget}>
+          <RenderLineChart
+            data={data.slice(0, 100)}
+            colors={["#387"]}
+            yAxisScale="linear"
+            title="Total de fallecidos COVID-19 Chile"
+            xAxisType="time"
+            xAxisStepSize={isMobile() ? 7 : 4}
+            width={100}
+            height={isMobile() ? 80 : 60}
+            yAxisMin={0}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Total Fallecidos': 'totalDeaths',
+            }}
+          />
+        </div>
+      </div>
+      <div className={styles.sources}>
         <div>
           <small>
             Fuente:
@@ -171,18 +211,18 @@ const App = () => {
             </a>
           </small>
         </div>
-        <br />
         <div>
           <small>
             Código:
+            {' '}
             <a href="https://github.com/pviojo/covid-counter">https://github.com/pviojo/covid-counter</a>
           </small>
-          <br />
+        </div>
+        <div>
           <small>
-            <small>
-              v:
-              {pjson.version}
-            </small>
+            v:
+            {' '}
+            {pjson.version}
           </small>
         </div>
       </div>
