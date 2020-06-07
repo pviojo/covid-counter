@@ -13,7 +13,7 @@ const Counter = ({
     if (onChange) {
       onChange(n);
     }
-  }, [n, onChange]);
+  }, [n]);
 
   useEffect(() => {
     const calculate = () => {
@@ -24,11 +24,7 @@ const Counter = ({
       }
     };
     calculate();
-    const pid = window.setInterval(calculate, 100);
-    return () => {
-      window.clearInterval(pid);
-    };
-  }, [model, n]);
+  }, [model, now, n]);
 
   if (n === null) {
     return null;
