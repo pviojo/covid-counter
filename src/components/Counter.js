@@ -49,7 +49,7 @@ Counter.propTypes = {
   subtitle: PropTypes.string.isRequired,
   model: PropTypes.object.isRequired,
   onChange: PropTypes.func,
-  now: PropTypes.number,
+  now: PropTypes.object,
 };
 
 export default Counter;

@@ -194,16 +194,18 @@ RenderChart.defaultProps = {
   yAxisScale: 'linear',
   xAxisStepSize: 1,
   title: null,
+  labels: null,
+  datasets: null,
 };
 
 RenderChart.propTypes = {
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
   chartType: PropTypes.string,
-  xLabelsField: PropTypes.array.isRequired,
-  yDatasets: PropTypes.array.isRequired,
+  xLabelsField: PropTypes.string.isRequired,
+  yDatasets: PropTypes.object.isRequired,
   colors: PropTypes.array.isRequired,
-  labels: PropTypes.array.isRequired,
-  datasets: PropTypes.object.isRequired,
+  labels: PropTypes.array,
+  datasets: PropTypes.object,
   height: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   legend: PropTypes.string,
