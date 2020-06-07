@@ -47,14 +47,14 @@ const App = () => {
 
       setData(filteredCovidData);
 
-      const pointsTotalCases = filteredCovidData.slice(0, 3).map((item) => (
+      const pointsTotalCases = filteredCovidData.slice(0, 13).map((item) => (
         {
           x: moment(item.updatedAt).format('X'),
           y: item.totalCases,
         }
       ));
 
-      const pointsTotalDeaths = filteredCovidData.slice(0, 3).map((item) => (
+      const pointsTotalDeaths = filteredCovidData.slice(0, 6).map((item) => (
         {
           x: moment(item.updatedAt).format('X'),
           y: item.totalDeaths,
@@ -101,6 +101,18 @@ const App = () => {
     modelDeaths.predictY(modelDeaths.getTerms(), tsLastOfficialInfo),
   );
 
+  const simulatedTotalCases = data.slice(0, 12).map((x) => ({
+    updatedAt: x.updatedAt,
+    estimatedTotalCases: Math.floor(modelCases.predictY(modelCases.getTerms(), moment(x.updatedAt).format('X'))),
+    realTotalCases: Math.floor(x.totalCases),
+  }));
+
+  const simulatedTotalDeaths = data.slice(0, 12).map((x) => ({
+    updatedAt: x.updatedAt,
+    estimatedTotalDeaths: Math.floor(modelDeaths.predictY(modelDeaths.getTerms(), moment(x.updatedAt).format('X'))),
+    realTotalDeaths: Math.floor(x.totalDeaths),
+  }));
+
   return (
     <div className="App">
       <div className={`${styles.topCounter} ${styles.estimation} ${styles.widget}`}>
@@ -132,8 +144,6 @@ const App = () => {
           <div><small>* Estimaciones en base a datos de últ 3 días</small></div>
         </div>
       </div>
-
-
       <div className={styles.grid2Cols1Col}>
         <div className={`${styles.officialInfo} ${styles.estimation} ${styles.widget}  ${styles.widgetSp}`}>
           Estimación próxima actualización oficial (
@@ -179,7 +189,7 @@ const App = () => {
             colors={["#387"]}
             yAxisScale="linear"
             xAxisType="time"
-            title="Total de casos COVID-19 Chile"
+            title="Total de Casos COVID-19 Chile"
             width={100}
             height={isMobile() ? 80 : 60}
             yAxisMin={0}
@@ -195,7 +205,7 @@ const App = () => {
             data={data.slice(0, 100)}
             colors={["#387"]}
             yAxisScale="linear"
-            title="Total de fallecidos COVID-19 Chile"
+            title="Total de Fallecidos COVID-19 Chile"
             xAxisType="time"
             xAxisStepSize={isMobile() ? 7 : 4}
             width={100}
@@ -208,6 +218,45 @@ const App = () => {
           />
         </div>
       </div>
+
+      <div className={`${styles.charts} ${styles.grid2Cols1Col}`}>
+        <div className={styles.widget}>
+          <RenderLineChart
+            data={simulatedTotalCases}
+            colors={["#09c", "#387"]}
+            yAxisScale="linear"
+            xAxisType="time"
+            title="Comparación modelo estimación - reales. Casos"
+            width={100}
+            height={isMobile() ? 60 : 60}
+            xAxisStepSize={isMobile() ? 7 : 1}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Total Casos Estimados': 'estimatedTotalCases',
+              'Total Casos Reales': 'realTotalCases',
+            }}
+          />
+        </div>
+        <div className={styles.widget}>
+          <RenderLineChart
+            data={simulatedTotalDeaths}
+            colors={["#09c", "#387"]}
+            yAxisScale="linear"
+            xAxisType="time"
+            title="Comparación modelo estimación - reales. Fallecidos"
+            width={100}
+            height={isMobile() ? 60 : 60}
+            xAxisStepSize={isMobile() ? 7 : 1}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Total Fallecidos Estimados': 'estimatedTotalDeaths',
+              'Total Fallecidos Reales': 'realTotalDeaths',
+            }}
+          />
+        </div>
+      </div>
+
+
       <div className={styles.sources}>
         <div>
           <small>
@@ -216,6 +265,13 @@ const App = () => {
             <a href="https://www.gob.cl/coronavirus/cifrasoficiales/">
               Cifras Oficiales COVID-19, Gobierno de Chile
             </a>
+          </small>
+        </div>
+        <div>
+          <small>
+            Data:
+            {' '}
+            <a href="https://covid.tiopaul.io/data/resume_by_day.json">https://covid.tiopaul.io/data/resume_by_day.json</a>
           </small>
         </div>
         <div>
