@@ -11,6 +11,8 @@ import ReactLoading from 'react-loading';
 import numerales from "numeral/locales/es";
 import Counter from './components/Counter';
 
+import { generatePolynomialRegression } from './logic/parameters';
+
 import pjson from '../package.json';
 import styles from './styles.module.css';
 
@@ -19,64 +21,55 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [now, setNow] = useState(moment());
   const [data, setData] = useState(null);
-  const [nowTs, setNowTs] = useState(0);
-  const [startCases, setStartCases] = useState(0);
-  const [startDeath, setStartDeath] = useState(0);
-  const [deltaDeath, setDeltaDeath] = useState(0);
-  const [deltaCases, setDeltaCases] = useState(0);
-  const [simulateTs, setSimultaeTs] = useState(null);
-
+  const [modelCases, setModelCases] = useState(null);
+  const [modelDeaths, setModelDeaths] = useState(null);
 
   useEffect(() => {
-    window.setInterval(() => {
-      setNow(moment());
-    }, 100);
+    const tsParam = (new URLSearchParams(window.location.search.slice(1))).get('ts');
+    if (tsParam) {
+      setNow(moment(tsParam));
+    } else {
+      window.setInterval(() => {
+        setNow(moment());
+      }, 100);
+    }
 
     const initData = (covidData) => {
-      const localLastUpdate = covidData[0].updatedAt;
-      const localLastCases = covidData[0].totalCases;
-      const localLastDeath = covidData[0].totalDeaths;
+      const filteredCovidData = !tsParam
+        ? covidData
+        : covidData.filter((x) => {
+          const tsFormated = moment(tsParam).format('YYYY-MM-DD H:mm:ss');
+          return x.updatedAt < tsFormated;
+        });
 
-      const startTs = moment(localLastUpdate)
-        .add(4, 'hours')
-        .format('X');
+      setData(filteredCovidData);
 
+      const pointsTotalCases = filteredCovidData.slice(0, 3).map((item) => (
+        {
+          x: moment(item.updatedAt).format('X'),
+          y: item.totalCases,
+        }
+      ));
 
-      const localNowTs = moment().add(4, 'hours').format('X');
-      setSimultaeTs(localNowTs);
+      const pointsTotalDeaths = filteredCovidData.slice(0, 3).map((item) => (
+        {
+          x: moment(item.updatedAt).format('X'),
+          y: item.totalDeaths,
+        }
+      ));
 
-      const localDeltaCases = (
-        (covidData[0].totalCases - covidData[1].totalCases) * 0.4
-        + (covidData[1].totalCases - covidData[2].totalCases) * 0.2
-        + (covidData[2].totalCases - covidData[3].totalCases) * 0.2
-        + (covidData[3].totalCases - covidData[4].totalCases) * 0.1
-        + (covidData[4].totalCases - covidData[5].totalCases) * 0.1
-      ) / (60 * 60 * 24);
-
-      const localDeltaDeaths = (
-        (covidData[0].totalDeaths - covidData[1].totalDeaths) * 0.4
-        + (covidData[1].totalDeaths - covidData[2].totalDeaths) * 0.2
-        + (covidData[2].totalDeaths - covidData[3].totalDeaths) * 0.2
-        + (covidData[3].totalDeaths - covidData[4].totalDeaths) * 0.1
-        + (covidData[4].totalDeaths - covidData[5].totalDeaths) * 0.1
-      ) / (60 * 60 * 24);
-
-      const localStartCases = Math.floor(
-        localLastCases + Math.floor(localDeltaCases * (localNowTs - startTs)),
+      const localModelCases = generatePolynomialRegression(
+        pointsTotalCases, pointsTotalCases.length,
       );
-      const localStartDeath = Math.floor(
-        localLastDeath + Math.floor(localDeltaDeaths * (localNowTs - startTs)),
+      const localModelDeaths = generatePolynomialRegression(
+        pointsTotalDeaths, pointsTotalDeaths.length,
       );
-
-      setNowTs(localNowTs);
-      setStartCases(localStartCases);
-      setStartDeath(localStartDeath);
-      setDeltaDeath(localDeltaDeaths);
-      setDeltaCases(localDeltaCases);
+      setModelCases(localModelCases);
+      setModelDeaths(localModelDeaths);
     };
+
     const loadData = async () => {
       const { data: loadedData } = await axios.get('https://raw.githubusercontent.com/pviojo/covid-counter/master/data/resume_by_day.json');
-      setData(loadedData);
       initData(loadedData);
       setLoading(false);
     };
@@ -109,17 +102,13 @@ const App = () => {
         </div>
         <div className={styles.counters}>
           <Counter
-            startTs={nowTs}
-            simulateTs={simulateTs}
-            start={startCases}
-            delta={deltaCases}
+            model={modelCases}
+            now={now}
             subtitle="Casos totales estimados en Chile"
           />
           <Counter
-            startTs={nowTs}
-            simulateTs={simulateTs}
-            start={startDeath}
-            delta={deltaDeath}
+            model={modelDeaths}
+            now={now}
             subtitle="Fallecidos estimados en Chile"
           />
         </div>

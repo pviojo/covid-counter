@@ -6,9 +6,9 @@ import moment from 'moment';
 import styles from './index.module.css';
 
 const Counter = ({
-  subtitle, startTs, start, delta, onChange, simulateTs,
+  subtitle, model, onChange, now,
 }) => {
-  const [n, setN] = useState(start);
+  const [n, setN] = useState(null);
   useEffect(() => {
     if (onChange) {
       onChange(n);
@@ -16,17 +16,23 @@ const Counter = ({
   }, [n, onChange]);
 
   useEffect(() => {
-    const pid = window.setInterval(() => {
-      const nowTs = moment(simulateTs).format('X');
-      const cases = Math.floor(start + delta * (nowTs - startTs));
-      if (cases !== n && cases > n) {
-        setN(cases);
+    const calculate = () => {
+      const nowTs = moment(now).format('X');
+      const value = Math.floor(model.predictY(model.getTerms(), nowTs));
+      if (value !== n && (n === null || value > n)) {
+        setN(value);
       }
-    }, 100);
+    };
+    calculate();
+    const pid = window.setInterval(calculate, 100);
     return () => {
       window.clearInterval(pid);
     };
-  }, [start, delta, startTs, n, simulateTs]);
+  }, [model, n]);
+
+  if (n === null) {
+    return null;
+  }
 
   return (
     <div className={styles.cnt}>
@@ -40,16 +46,14 @@ const Counter = ({
 
 Counter.defaultProps = {
   onChange: () => {},
-  simulateTs: null,
+  now: null,
 };
 
 Counter.propTypes = {
   subtitle: PropTypes.string.isRequired,
-  startTs: PropTypes.number.isRequired,
-  start: PropTypes.number.isRequired,
-  delta: PropTypes.number.isRequired,
-  simulateTs: PropTypes.number,
+  model: PropTypes.object.isRequired,
   onChange: PropTypes.func,
+  now: PropTypes.number,
 };
 
 export default Counter;
