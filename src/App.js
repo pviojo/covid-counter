@@ -47,7 +47,7 @@ const App = () => {
 
       setData(filteredCovidData);
 
-      const pointsTotalCases = filteredCovidData.slice(0, 13).map((item) => (
+      const pointsTotalCases = filteredCovidData.slice(0, 4).map((item) => (
         {
           x: moment(item.updatedAt).format('X'),
           y: item.totalCases,
@@ -101,13 +101,13 @@ const App = () => {
     modelDeaths.predictY(modelDeaths.getTerms(), tsLastOfficialInfo),
   );
 
-  const simulatedTotalCases = data.slice(0, 12).map((x) => ({
+  const simulatedTotalCases = data.slice(0, 6).map((x) => ({
     updatedAt: x.updatedAt,
     estimatedTotalCases: Math.floor(modelCases.predictY(modelCases.getTerms(), moment(x.updatedAt).format('X'))),
     realTotalCases: Math.floor(x.totalCases),
   }));
 
-  const simulatedTotalDeaths = data.slice(0, 12).map((x) => ({
+  const simulatedTotalDeaths = data.slice(0, 6).map((x) => ({
     updatedAt: x.updatedAt,
     estimatedTotalDeaths: Math.floor(modelDeaths.predictY(modelDeaths.getTerms(), moment(x.updatedAt).format('X'))),
     realTotalDeaths: Math.floor(x.totalDeaths),
