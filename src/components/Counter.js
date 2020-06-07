@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import numeral from 'numeral';
+import moment from 'moment';
 
 import styles from './index.module.css';
 
 const Counter = ({
-  subtitle, startTs, start, delta, onChange,
+  subtitle, startTs, start, delta, onChange, simulateTs,
 }) => {
   const [n, setN] = useState(start);
   useEffect(() => {
@@ -16,7 +17,7 @@ const Counter = ({
 
   useEffect(() => {
     const pid = window.setInterval(() => {
-      const nowTs = Date.now() / 1000;
+      const nowTs = moment(simulateTs).format('X');
       const cases = Math.floor(start + delta * (nowTs - startTs));
       if (cases !== n && cases > n) {
         setN(cases);
@@ -25,7 +26,7 @@ const Counter = ({
     return () => {
       window.clearInterval(pid);
     };
-  }, [start, delta, startTs, n]);
+  }, [start, delta, startTs, n, simulateTs]);
 
   return (
     <div className={styles.cnt}>
@@ -39,6 +40,7 @@ const Counter = ({
 
 Counter.defaultProps = {
   onChange: () => {},
+  simulateTs: null,
 };
 
 Counter.propTypes = {
@@ -46,6 +48,7 @@ Counter.propTypes = {
   startTs: PropTypes.number.isRequired,
   start: PropTypes.number.isRequired,
   delta: PropTypes.number.isRequired,
+  simulateTs: PropTypes.number,
   onChange: PropTypes.func,
 };
 
