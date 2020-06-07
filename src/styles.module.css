@@ -54,6 +54,16 @@ a {
   margin-bottom: 10px;
 }
 
+:local(.currentData .officialInfo){
+  margin:50px 0 50px 0;
+  font-weight: bold;
+}
+:local(.currentData .officialInfo big){
+  font-size:18px;
+  display: block;
+  margin-top:10px;
+}
+
 @media(max-width:600px){
   body {
     padding: 10px 10px 0;

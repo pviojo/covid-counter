@@ -89,6 +89,15 @@ const App = () => {
   if (!data) {
     return null;
   }
+
+  const tsLastOfficialInfo = moment(data[0].updatedAt).add(1, 'day').format('X');
+  const estimationLastOfficialInfoCases = Math.floor(
+    modelCases.predictY(modelCases.getTerms(), tsLastOfficialInfo),
+  );
+  const estimationLastOfficialInfoDeaths = Math.floor(
+    modelDeaths.predictY(modelDeaths.getTerms(), tsLastOfficialInfo),
+  );
+
   return (
     <div className="App">
       <div>
@@ -117,18 +126,39 @@ const App = () => {
 
       <div className={styles.currentData}>
         <div>* Estimaciones en base a datos de últ 3 días</div>
-        <div>
-          Último cómputo oficial:
-          {numeral(data[0].totalCases).format(0, 0)}
-          {' '}
-          {numeral(data[0].totalDeaths).format(0, 0)}
-          {' '}
-          fallecidos
-        </div>
-        <div>
+        <div className={styles.officialInfo}>
           Última actualización oficial:
           {' '}
           {moment(data[0].updatedAt).format('DD/MM HH:mm')}
+          <br />
+          <big>
+            Casos:
+            {' '}
+            {numeral(data[0].totalCases).format(0, 0)}
+            , Fallecidos:
+            {' '}
+            {numeral(data[0].totalDeaths).format(0, 0)}
+          </big>
+        </div>
+        <div className={styles.officialInfo}>
+          Estimación de próxima actualización oficial (
+          {moment().startOf('day').subtract(3, 'hours').format('DD/MM HH:mm')}
+          )
+          <br />
+          <big>
+            Casos:
+            {' '}
+            {numeral(estimationLastOfficialInfoCases).format(0, 0)}
+            {' (+'}
+            {numeral(estimationLastOfficialInfoCases - data[0].totalCases).format(0, 0)}
+            )
+            , Fallecidos:
+            {' '}
+            {numeral(estimationLastOfficialInfoDeaths).format(0, 0)}
+            {' (+'}
+            {numeral(estimationLastOfficialInfoDeaths - data[0].totalDeaths).format(0, 0)}
+            )
+          </big>
         </div>
         <div>
           <small>
