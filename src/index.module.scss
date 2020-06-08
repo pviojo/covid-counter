@@ -60,6 +60,10 @@ body {
       font-size: 10px;
     }
   }
+  :local(.sound){
+    float: right;
+    margin-right: 10px;
+  }
 }
 
 a {

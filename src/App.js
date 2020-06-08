@@ -7,6 +7,8 @@ import numeral from 'numeral';
 import axios from 'axios';
 import ReactLoading from 'react-loading';
 import isMobile from 'is-mobile';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons';
 
 import { Share } from 'react-twitter-widgets';
 
@@ -28,7 +30,7 @@ const App = () => {
   const [data, setData] = useState(null);
   const [modelCases, setModelCases] = useState(null);
   const [modelDeaths, setModelDeaths] = useState(null);
-  const [sound] = useState(new URLSearchParams(window.location.search.slice(1)).get('sound'));
+  const [sound, setSound] = useState(new URLSearchParams(window.location.search.slice(1)).get('sound'));
   useEffect(() => {
     const tsParam = (new URLSearchParams(window.location.search.slice(1))).get('ts');
     if (tsParam) {
@@ -151,6 +153,11 @@ const App = () => {
           />
         </div>
         <div className={styles.calculatedAt}>
+          <div className={styles.sound}>
+            { sound
+              ? <FontAwesomeIcon icon={faVolumeUp} size="3x" onClick={() => setSound(false)} />
+              : <FontAwesomeIcon icon={faVolumeMute} size="3x" onClick={() => setSound(true)} />}
+          </div>
           Situación en Chile. Estimada en tiempo real.
           {' '}
           Actualizado:
