@@ -125,8 +125,8 @@ const App = () => {
     - modelDeaths.predictY(modelDeaths.getTerms(), moment().subtract(1, 'day').format('X'))
   ));
 
-  const message = `🔴 ¡AHORA! En #Chile cada ${secondsBetweenCases} segundos una persona se contagia y cada ${minutesBetweenDeaths} minutos una persona muere por #Covid. 🦠 `;
-  const hashTags = 'QuedateEnCasa';
+  const message = `🔴 ¡AHORA! En #Chile cada ${secondsBetweenCases} segundos una persona se contagia y cada ${minutesBetweenDeaths} minutos una persona muere por #COVID 🦠 #QuedateEnCasa`;
+  const url = 'https://covid.tiopaul.io';
 
   return (
     <div className="App">
@@ -161,14 +161,12 @@ const App = () => {
       </div>
       <div className={`${styles.widget}`}>
         {message}
-        {hashTags.split(',').map((x) => `#${x}`).join(' ')}
         <div className={styles.tweet}>
           <Share
             options={{
-              hashtags: hashTags,
-              text: message,
+              text: `${message} -> `,
             }}
-            url="https://covid.tiopaul.io"
+            url={url}
           />
         </div>
       </div>
