@@ -317,6 +317,13 @@ const App = () => {
         </div>
         <div>
           <small>
+            Imagen:
+            {' '}
+            <a href="https://www.flickr.com/photos/davidstanleytravel/7185456324">David Stanley (CC BY 2.0)</a>
+          </small>
+        </div>
+        <div>
+          <small>
             v:
             {' '}
             {pjson.version}
