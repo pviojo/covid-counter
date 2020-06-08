@@ -125,7 +125,7 @@ const App = () => {
     - modelDeaths.predictY(modelDeaths.getTerms(), moment().subtract(1, 'day').format('X'))
   ));
 
-  const message = `🔴 ¡AHORA! En #Chile cada ${secondsBetweenCases} segundos una persona se contagia y cada ${minutesBetweenDeaths} minutos una persona muere por #COVID 🦠 #QuedateEnCasa`;
+  const message = `🔴 ¡AHORA! 🦠 Cada ${secondsBetweenCases} segundos una persona se contagia y cada ${minutesBetweenDeaths} minutos una persona muere por #COVID en #Chile. #QuedateEnCasa`;
   const url = 'https://covid.tiopaul.io';
 
   return (
