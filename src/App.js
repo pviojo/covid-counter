@@ -228,7 +228,14 @@ const App = () => {
         </div>
         <div className={styles.widget}>
           <RenderLineChart
-            data={data.slice(0, 100)}
+            data={data.slice(0, 100).map((x) => (
+              x.updatedAt > '2020-06-06'
+                ? x
+                : {
+                  ...x,
+                  totalDeaths: x.totalOriginalDeaths || x.totalDeaths,
+                }
+            ))}
             colors={["#387"]}
             yAxisScale="linear"
             title="Total de Fallecidos COVID-19 Chile"
@@ -242,6 +249,9 @@ const App = () => {
               'Total Fallecidos': 'totalDeaths',
             }}
           />
+          * El Minsal cambió su reporte de fallecidos el 2020-06-07
+          {' '}
+          lo que originó un ajuste en el dato de ese día.
         </div>
       </div>
 
