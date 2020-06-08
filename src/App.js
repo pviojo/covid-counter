@@ -8,6 +8,8 @@ import axios from 'axios';
 import ReactLoading from 'react-loading';
 import isMobile from 'is-mobile';
 
+import { Share } from 'react-twitter-widgets';
+
 // eslint-disable-next-line
 import numerales from "numeral/locales/es";
 import Counter from './components/Counter';
@@ -113,6 +115,19 @@ const App = () => {
     realTotalDeaths: Math.floor(x.totalDeaths),
   }));
 
+  const secondsBetweenCases = Math.round((60 * 60) / (
+    modelDeaths.predictY(modelCases.getTerms(), moment().format('X'))
+    - modelDeaths.predictY(modelCases.getTerms(), moment().subtract(1, 'hour').format('X'))
+  ));
+
+  const minutesBetweenDeaths = Math.round((24 * 60) / (
+    modelDeaths.predictY(modelDeaths.getTerms(), moment().format('X'))
+    - modelDeaths.predictY(modelDeaths.getTerms(), moment().subtract(1, 'day').format('X'))
+  ));
+
+  const message = `🔴 ¡AHORA! En #Chile cada ${secondsBetweenCases} segundos una persona se contagia y cada ${minutesBetweenDeaths} minutos una persona muere por #Covid. 🦠 `;
+  const hashTags = 'QuedateEnCasa';
+
   return (
     <div className="App">
       <div className={`${styles.topCounter} ${styles.estimation} ${styles.widget}`}>
@@ -142,6 +157,19 @@ const App = () => {
           {' '}
           {now.format('DD/MM HH:mm:ss')}
           <div><small>* Estimaciones en base a datos de últ 3 días</small></div>
+        </div>
+      </div>
+      <div className={`${styles.widget}`}>
+        {message}
+        {hashTags.split(',').map((x) => `#${x}`).join(' ')}
+        <div className={styles.tweet}>
+          <Share
+            options={{
+              hashtags: hashTags,
+              text: message,
+            }}
+            url="https://covid.tiopaul.io"
+          />
         </div>
       </div>
       <div className={styles.grid2Cols1Col}>

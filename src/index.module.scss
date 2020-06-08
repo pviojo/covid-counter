@@ -46,7 +46,11 @@ body {
 }
 :local(.widgetSp){
 }
-
+:local(.tweet){
+  margin-left:10px;
+  display: inline-block;
+  vertical-align: middle;
+}
 :local(.topCounter){
   :local(.counters) {
     display: grid;
@@ -98,6 +102,10 @@ a {
 @media(max-width:600px){
   body{
     margin:0px 0px;
+  }
+  :local(.tweet){
+    display: block;
+    margin-top: 20px;
   }
   :local(.topCounter){
     :local(.counters) {
