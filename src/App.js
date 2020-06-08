@@ -145,6 +145,21 @@ const App = () => {
         </div>
       </div>
       <div className={styles.grid2Cols1Col}>
+        <div className={`${styles.officialInfo} ${styles.widget}  ${styles.widgetSp}`}>
+          Última actualización oficial:
+          {' '}
+          {moment(data[0].updatedAt).format('DD/MM HH:mm')}
+          <br />
+          <big>
+            Casos:
+            {' '}
+            {numeral(data[0].totalCases).format(0, 0)}
+            <br />
+            Fallecidos:
+            {' '}
+            {numeral(data[0].totalDeaths).format(0, 0)}
+          </big>
+        </div>
         <div className={`${styles.officialInfo} ${styles.estimation} ${styles.widget}  ${styles.widgetSp}`}>
           Estimación próxima actualización oficial (
           {moment(data[0].updatedAt).add(1, 'day').format('DD/MM HH:mm')}
@@ -164,21 +179,6 @@ const App = () => {
             {' (+'}
             {numeral(estimationLastOfficialInfoDeaths - data[0].totalDeaths).format(0, 0)}
             )
-          </big>
-        </div>
-        <div className={`${styles.officialInfo} ${styles.widget}  ${styles.widgetSp}`}>
-          Última actualización oficial:
-          {' '}
-          {moment(data[0].updatedAt).format('DD/MM HH:mm')}
-          <br />
-          <big>
-            Casos:
-            {' '}
-            {numeral(data[0].totalCases).format(0, 0)}
-            <br />
-            Fallecidos:
-            {' '}
-            {numeral(data[0].totalDeaths).format(0, 0)}
           </big>
         </div>
       </div>
