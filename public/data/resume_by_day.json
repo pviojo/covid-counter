@@ -1,4 +1,5 @@
 [
+  {"updatedAt": "2020-06-09T21:00:00-04:00", "totalCases": 148496, "totalDeaths": 2475},
   {"updatedAt": "2020-06-08T21:00:00-04:00", "totalCases": 142759, "totalDeaths": 2283},
   {"updatedAt": "2020-06-07T21:00:00-04:00", "totalCases": 138846, "totalDeaths": 2264},
   {"updatedAt": "2020-06-06T21:00:00-04:00", "totalCases": 134150, "totalDeaths": 2190, "totalOriginalDeaths":1637},
