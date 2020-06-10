@@ -33,7 +33,6 @@ export const getData = async () => {
       totalCases: row.totalCases,
     };
   });
-  console.log('data', data);
   return data;
 };
 

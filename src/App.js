@@ -58,7 +58,7 @@ const App = () => {
         }
       ));
 
-      const pointsTotalDeaths = filteredCovidData.slice(0, 6).map((item) => (
+      const pointsTotalDeaths = filteredCovidData.slice(6, 18).map((item) => (
         {
           x: moment(item.updatedAt).format('X'),
           y: item.totalDeathsRC,
@@ -111,7 +111,7 @@ const App = () => {
     realTotalCases: Math.floor(x.totalCases),
   }));
 
-  const simulatedTotalDeaths = data.slice(0, 6).map((x) => ({
+  const simulatedTotalDeaths = data.slice(0, 18).map((x) => ({
     updatedAt: x.updatedAt,
     estimatedTotalDeaths: Math.floor(modelDeaths.predictY(modelDeaths.getTerms(), moment(x.updatedAt).format('X'))),
     realTotalDeaths: Math.floor(x.totalDeathsRC),
@@ -212,6 +212,13 @@ const App = () => {
             {' (+'}
             {numeral(estimationLastOfficialInfoDeaths - data[0].totalDeathsRC).format(0, 0)}
             )
+            <div>
+              <small style={{fontSize: 10}}>
+                * El número de fallecidos se está reportando con varios días de retraso.
+                {' '}
+                <strong>Estimado 5 días</strong>
+              </small>
+            </div>
           </big>
         </div>
       </div>
@@ -254,7 +261,9 @@ const App = () => {
               'Total Fallecidos': 'totalDeaths',
             }}
           />
-          * Fallecidos usa info del Registro Civil
+          * Fallecidos usa info del Registro Civil disponible en
+          {' '}
+          <a target="_blank" rel="noreferrer" href="https://github.com/MinCiencia/Datos-COVID19/blob/master/output/producto37/Defunciones.csv">Min Ciencias</a>
         </div>
       </div>
 
