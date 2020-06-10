@@ -4,23 +4,23 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import numeral from 'numeral';
+// eslint-disable-next-line
+import numerales from "numeral/locales/es";
 import ReactLoading from 'react-loading';
 import isMobile from 'is-mobile';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons';
-
 import { Share } from 'react-twitter-widgets';
 
-// eslint-disable-next-line
-import numerales from "numeral/locales/es";
+import pjson from '../package.json';
+
 import Counter from './components/Counter';
+import { RenderLineChart } from './components/Charts';
 
 import { generatePolynomialRegression } from './logic/parameters';
 import { getData } from './logic/data';
 
-import { RenderLineChart } from './components/Charts';
-
-import pjson from '../package.json';
+import './global.scss';
 import styles from './index.module.scss';
 
 const App = () => {
@@ -304,6 +304,43 @@ const App = () => {
         </div>
       </div>
 
+      <div className={styles.widget}>
+        <div className={styles.title}>
+          Datos
+        </div>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>
+                Fecha del reporte (cierre 21H día anterior)
+              </th>
+              <th>
+                Nuevos Casos
+              </th>
+              <th>
+                Total de Casos
+              </th>
+              <th>
+                Total de Fallecidos nuevos
+              </th>
+              <th>
+                Total de Fallecidos acumulados
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((row) => (
+              <tr key={row.updatedAt}>
+                <td>{moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD')}</td>
+                <td>{row.newCases}</td>
+                <td>{row.totalCases}</td>
+                <td>{row.newDeathsRC}</td>
+                <td>{row.totalDeathsRC}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <div className={styles.sources}>
         <div>

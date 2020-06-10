@@ -9,6 +9,12 @@ export const getData = async () => {
   const dates = (rows[0]).slice(1);
   const deaths = {};
   let acc = 0;
+  data = data.map((row, index) => ({
+    ...row,
+    ...{
+      newCases: row.totalCases - (data[index + 1] ? data[index + 1].totalCases : 0),
+    },
+  }));
   deathsByDay.map((value, index) => {
     acc += parseInt(value || 0, 10);
     deaths[moment(dates[index]).add(21, 'hours').format()] = {
@@ -24,6 +30,7 @@ export const getData = async () => {
         ...{
           updatedAt: row.updatedAt,
           totalCases: row.totalCases,
+          newCases: row.newCases,
         },
         ...deaths[row.updatedAt],
       };
@@ -31,6 +38,7 @@ export const getData = async () => {
     return {
       updatedAt: row.updatedAt,
       totalCases: row.totalCases,
+      newCases: row.newCases,
     };
   });
   return data;
