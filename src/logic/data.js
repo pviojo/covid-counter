@@ -43,8 +43,9 @@ export const getData = async () => {
   });
   data = data.map((row) => ({
     ...row,
-    totalDeaths: row.totalDeathsRC,
-    lethality: row.totalDeathsRC / row.totalCases,
+    newDeaths: row.newDeathsRC || 0,
+    totalDeaths: row.totalDeathsRC || 0,
+    lethality: row.totalDeathsRC ? row.totalDeathsRC / row.totalCases : 0,
   }));
   return data;
 };

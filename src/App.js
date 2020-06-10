@@ -62,7 +62,7 @@ const App = () => {
       const pointsTotalDeaths = filteredCovidData.slice(6, 12).map((item) => (
         {
           x: moment(item.updatedAt).format('X'),
-          y: item.totalDeathsRC,
+          y: item.totalDeaths,
         }
       ));
 
@@ -127,7 +127,7 @@ const App = () => {
   const simulatedTotalDeaths = data.slice(0, 24).map((x) => ({
     updatedAt: x.updatedAt,
     estimatedTotalDeaths: Math.floor(modelDeaths.predictY(modelDeaths.getTerms(), moment(x.updatedAt).format('X'))),
-    realTotalDeaths: Math.floor(x.totalDeathsRC),
+    realTotalDeaths: Math.floor(x.totalDeaths),
   }));
 
   const simulatedLethality = data.slice(0, 24).map((x) => ({
@@ -209,7 +209,7 @@ const App = () => {
             <br />
             Fallecidos:
             {' '}
-            {numeral(data[0].totalDeathsRC).format(0, 0)}
+            {numeral(data[0].totalDeaths).format(0, 0)}
           </big>
         </div>
         <div className={`${styles.officialInfo} ${styles.estimation} ${styles.widget}  ${styles.widgetSp}`}>
@@ -229,7 +229,7 @@ const App = () => {
             {' '}
             {numeral(estimationLastOfficialInfoDeaths).format(0, 0)}
             {' (+'}
-            {numeral(estimationLastOfficialInfoDeaths - data[0].totalDeathsRC).format(0, 0)}
+            {numeral(estimationLastOfficialInfoDeaths - data[0].totalDeaths).format(0, 0)}
             )
             <div>
               <small style={{fontSize: 10}}>
@@ -264,7 +264,7 @@ const App = () => {
             data={data.slice(0, 100).map((x) => (
               {
                 ...x,
-                totalDeaths: x.totalDeathsRC,
+                totalDeaths: x.totalDeaths,
               }
             ))}
             colors={["#387"]}
@@ -289,7 +289,7 @@ const App = () => {
             data={data.slice(0, 100).map((x) => (
               {
                 ...x,
-                totalDeaths: x.totalDeathsRC,
+                totalDeaths: x.totalDeaths,
               }
             ))}
             colors={["#387"]}
@@ -390,6 +390,9 @@ const App = () => {
               <th>
                 Total de Fallecidos acumulados
               </th>
+              <th>
+                Letalidad (%)
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -398,8 +401,9 @@ const App = () => {
                 <td>{moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD')}</td>
                 <td>{row.newCases}</td>
                 <td>{row.totalCases}</td>
-                <td>{row.newDeathsRC}</td>
-                <td>{row.totalDeathsRC}</td>
+                <td>{row.newDeaths}</td>
+                <td>{row.totalDeaths}</td>
+                <td>{row.lethality && Math.round(row.lethality * 100 * 100, 2) / 100}</td>
               </tr>
             ))}
           </tbody>
