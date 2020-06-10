@@ -30,6 +30,7 @@ const App = () => {
   const [data, setData] = useState(null);
   const [modelCases, setModelCases] = useState(null);
   const [modelDeaths, setModelDeaths] = useState(null);
+  const [modelLethality, setModelLethality] = useState(null);
   const [sound, setSound] = useState(new URLSearchParams(window.location.search.slice(1)).get('sound'));
   useEffect(() => {
     const tsParam = (new URLSearchParams(window.location.search.slice(1))).get('ts');
@@ -65,14 +66,26 @@ const App = () => {
         }
       ));
 
+      const pointsLethality = filteredCovidData.slice(6, 21).map((item) => (
+        {
+          x: moment(item.updatedAt).format('X'),
+          y: item.lethality,
+        }
+      ));
+
       const localModelCases = generatePolynomialRegression(
         pointsTotalCases, pointsTotalCases.length,
       );
       const localModelDeaths = generatePolynomialRegression(
         pointsTotalDeaths, pointsTotalDeaths.length,
       );
+      const localModelLethality = generatePolynomialRegression(
+        pointsLethality, pointsLethality.length,
+      );
+
       setModelCases(localModelCases);
       setModelDeaths(localModelDeaths);
+      setModelLethality(localModelLethality);
     };
 
     const loadData = async () => {
@@ -115,6 +128,12 @@ const App = () => {
     updatedAt: x.updatedAt,
     estimatedTotalDeaths: Math.floor(modelDeaths.predictY(modelDeaths.getTerms(), moment(x.updatedAt).format('X'))),
     realTotalDeaths: Math.floor(x.totalDeathsRC),
+  }));
+
+  const simulatedLethality = data.slice(0, 24).map((x) => ({
+    updatedAt: x.updatedAt,
+    estimatedLethality: modelLethality.predictY(modelLethality.getTerms(), moment(x.updatedAt).format('X')),
+    realLethality: x.lethality,
   }));
 
   const secondsBetweenCases = Math.round((60 * 60) / (
@@ -222,7 +241,7 @@ const App = () => {
           </big>
         </div>
       </div>
-      <div className={`${styles.charts} ${styles.grid2Cols1Col}`}>
+      <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
         <div className={styles.widget}>
           <RenderLineChart
             data={data.slice(0, 100)}
@@ -265,9 +284,35 @@ const App = () => {
           {' '}
           <a target="_blank" rel="noreferrer" href="https://github.com/MinCiencia/Datos-COVID19/blob/master/output/producto37/Defunciones.csv">Min Ciencias</a>
         </div>
+        <div className={styles.widget}>
+          <RenderLineChart
+            data={data.slice(0, 100).map((x) => (
+              {
+                ...x,
+                totalDeaths: x.totalDeathsRC,
+              }
+            ))}
+            colors={["#387"]}
+            yAxisScale="linear"
+            title="Letalidad COVID-19 Chile (%)"
+            xAxisType="time"
+            yAxisType="percentage"
+            xAxisStepSize={isMobile() ? 7 : 4}
+            width={100}
+            height={isMobile() ? 80 : 60}
+            yAxisMin={0}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Letalidad': 'lethality',
+            }}
+          />
+          * Fallecidos usa info del Registro Civil disponible en
+          {' '}
+          <a target="_blank" rel="noreferrer" href="https://github.com/MinCiencia/Datos-COVID19/blob/master/output/producto37/Defunciones.csv">Min Ciencias</a>
+        </div>
       </div>
 
-      <div className={`${styles.charts} ${styles.grid2Cols1Col}`}>
+      <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
         <div className={styles.widget}>
           <RenderLineChart
             data={simulatedTotalCases}
@@ -299,6 +344,25 @@ const App = () => {
             yDatasets={{
               'Total Fallecidos Estimados': 'estimatedTotalDeaths',
               'Total Fallecidos Reales': 'realTotalDeaths',
+            }}
+          />
+        </div>
+        <div className={styles.widget}>
+          <RenderLineChart
+            data={simulatedLethality}
+            colors={["#09c", "#387"]}
+            yAxisScale="linear"
+            xAxisType="time"
+            yAxisMin={0}
+            title="Comparación modelo estimación - reales. Letalidad"
+            yAxisType="percentage"
+            width={100}
+            height={isMobile() ? 60 : 60}
+            xAxisStepSize={isMobile() ? 7 : 1}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Letalidad Estimada': 'estimatedLethality',
+              'Letalidad Real': 'realLethality',
             }}
           />
         </div>

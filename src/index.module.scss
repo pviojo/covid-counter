@@ -120,11 +120,24 @@ body {
 
 :local(.grid2Cols1Col){
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+:local(.grid3Cols1Col){
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+:local(.grid4Cols1Col){
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 @media(max-width:600px){
-  :local(.grid2Cols1Col){
+  :local(.grid2Cols1Col),
+  :local(.grid3Cols1Col),
+  :local(.grid4Cols1Col)
+  {
     display: grid;
     grid-template-columns: 1fr;
   }

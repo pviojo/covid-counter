@@ -41,6 +41,11 @@ export const getData = async () => {
       newCases: row.newCases,
     };
   });
+  data = data.map((row) => ({
+    ...row,
+    totalDeaths: row.totalDeathsRC,
+    lethality: row.totalDeathsRC / row.totalCases,
+  }));
   return data;
 };
 
