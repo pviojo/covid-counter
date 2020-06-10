@@ -4,7 +4,6 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import numeral from 'numeral';
-import axios from 'axios';
 import ReactLoading from 'react-loading';
 import isMobile from 'is-mobile';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,6 +16,7 @@ import numerales from "numeral/locales/es";
 import Counter from './components/Counter';
 
 import { generatePolynomialRegression } from './logic/parameters';
+import { getData } from './logic/data';
 
 import { RenderLineChart } from './components/Charts';
 
@@ -61,7 +61,7 @@ const App = () => {
       const pointsTotalDeaths = filteredCovidData.slice(0, 6).map((item) => (
         {
           x: moment(item.updatedAt).format('X'),
-          y: item.totalDeaths,
+          y: item.totalDeathsRC,
         }
       ));
 
@@ -76,7 +76,7 @@ const App = () => {
     };
 
     const loadData = async () => {
-      const { data: loadedData } = await axios.get('https://covid.tiopaul.io/data/resume_by_day.json');
+      const loadedData = await getData();
       initData(loadedData);
       setLoading(false);
     };
@@ -114,7 +114,7 @@ const App = () => {
   const simulatedTotalDeaths = data.slice(0, 6).map((x) => ({
     updatedAt: x.updatedAt,
     estimatedTotalDeaths: Math.floor(modelDeaths.predictY(modelDeaths.getTerms(), moment(x.updatedAt).format('X'))),
-    realTotalDeaths: Math.floor(x.totalDeaths),
+    realTotalDeaths: Math.floor(x.totalDeathsRC),
   }));
 
   const secondsBetweenCases = Math.round((60 * 60) / (
@@ -190,7 +190,7 @@ const App = () => {
             <br />
             Fallecidos:
             {' '}
-            {numeral(data[0].totalDeaths).format(0, 0)}
+            {numeral(data[0].totalDeathsRC).format(0, 0)}
           </big>
         </div>
         <div className={`${styles.officialInfo} ${styles.estimation} ${styles.widget}  ${styles.widgetSp}`}>
@@ -210,7 +210,7 @@ const App = () => {
             {' '}
             {numeral(estimationLastOfficialInfoDeaths).format(0, 0)}
             {' (+'}
-            {numeral(estimationLastOfficialInfoDeaths - data[0].totalDeaths).format(0, 0)}
+            {numeral(estimationLastOfficialInfoDeaths - data[0].totalDeathsRC).format(0, 0)}
             )
           </big>
         </div>
@@ -236,12 +236,10 @@ const App = () => {
         <div className={styles.widget}>
           <RenderLineChart
             data={data.slice(0, 100).map((x) => (
-              x.updatedAt > '2020-06-06'
-                ? x
-                : {
-                  ...x,
-                  totalDeaths: x.totalOriginalDeaths || x.totalDeaths,
-                }
+              {
+                ...x,
+                totalDeaths: x.totalDeathsRC,
+              }
             ))}
             colors={["#387"]}
             yAxisScale="linear"
@@ -256,9 +254,7 @@ const App = () => {
               'Total Fallecidos': 'totalDeaths',
             }}
           />
-          * El Minsal cambió su reporte de fallecidos el 2020-06-07
-          {' '}
-          lo que originó un ajuste en el dato de ese día.
+          * Fallecidos usa info del Registro Civil
         </div>
       </div>
 
@@ -308,21 +304,8 @@ const App = () => {
             <a href="https://www.gob.cl/coronavirus/cifrasoficiales/">
               Cifras Oficiales COVID-19, Gobierno de Chile
             </a>
-            <br />
-            * Los datos de fallecidos se ajustaron en 553 de acuerdo al cambio de reporte del
-            {' '}
-            Minsal de 2020-06-07.
-            {' '}
-            Asimismo se aplicó el mismo ajuste 12 días hacia atras para
-            {' '}
-            mantener el model de estimación.
-          </small>
-        </div>
-        <div>
-          <small>
-            Data:
-            {' '}
-            <a href="https://covid.tiopaul.io/data/resume_by_day.json">https://covid.tiopaul.io/data/resume_by_day.json</a>
+            {', '}
+            <a href="https://github.com/MinCiencia/Datos-COVID19">Min Ciencias</a>
           </small>
         </div>
         <div>
