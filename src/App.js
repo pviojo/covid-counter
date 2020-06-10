@@ -58,7 +58,7 @@ const App = () => {
         }
       ));
 
-      const pointsTotalDeaths = filteredCovidData.slice(6, 18).map((item) => (
+      const pointsTotalDeaths = filteredCovidData.slice(6, 12).map((item) => (
         {
           x: moment(item.updatedAt).format('X'),
           y: item.totalDeathsRC,
@@ -111,7 +111,7 @@ const App = () => {
     realTotalCases: Math.floor(x.totalCases),
   }));
 
-  const simulatedTotalDeaths = data.slice(0, 18).map((x) => ({
+  const simulatedTotalDeaths = data.slice(0, 24).map((x) => ({
     updatedAt: x.updatedAt,
     estimatedTotalDeaths: Math.floor(modelDeaths.predictY(modelDeaths.getTerms(), moment(x.updatedAt).format('X'))),
     realTotalDeaths: Math.floor(x.totalDeathsRC),
