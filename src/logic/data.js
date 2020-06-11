@@ -45,7 +45,9 @@ export const getData = async () => {
     ...row,
     newDeaths: row.newDeathsRC || 0,
     totalDeaths: row.totalDeathsRC || 0,
-    lethality: row.totalDeathsRC ? row.totalDeathsRC / row.totalCases : 0,
+    lethality: Math.round(
+      (row.totalDeathsRC ? row.totalDeathsRC / row.totalCases : 0) * 100 * 100,
+    ) / 100 / 100,
   }));
   return data;
 };

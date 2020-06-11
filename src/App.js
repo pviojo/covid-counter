@@ -355,7 +355,6 @@ const App = () => {
             xAxisType="time"
             yAxisMin={0}
             title="Comparación modelo estimación - reales. Letalidad"
-            yAxisType="percentage"
             width={100}
             height={isMobile() ? 60 : 60}
             xAxisStepSize={isMobile() ? 7 : 1}
