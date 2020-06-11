@@ -45,8 +45,12 @@ body {
 }
 :local(.widgetSp){
 }
-:local(.tweet){
-  margin-left:10px;
+:local(.share){
+  display: inline-block;
+}
+:local(.tweet), :local(.fb){
+  margin:0px 10px;
+  border-radius: 5px;
   display: inline-block;
   vertical-align: middle;
 }
@@ -102,7 +106,7 @@ body {
   body{
     margin:0px 0px;
   }
-  :local(.tweet){
+  :local(.share){
     display: block;
     margin-top: 20px;
   }

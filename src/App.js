@@ -11,7 +11,12 @@ import isMobile from 'is-mobile';
 import { CSVLink } from 'react-csv';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVolumeMute, faVolumeUp, faDownload } from '@fortawesome/free-solid-svg-icons';
-import { Share } from 'react-twitter-widgets';
+import {
+  FacebookShareButton,
+  FacebookIcon,
+  TwitterShareButton,
+  TwitterIcon,
+} from 'react-share';
 
 import pjson from '../package.json';
 
@@ -148,6 +153,7 @@ const App = () => {
   ));
 
   const message = `🔴 ¡AHORA! 🦠 Cada ${secondsBetweenCases} segundos una persona se contagia y cada ${minutesBetweenDeaths} minutos una persona muere por #COVID en #Chile. #QuedateEnCasa`;
+  const fbMessage = `¡AHORA! Cada ${secondsBetweenCases} segundos una persona se contagia y cada ${minutesBetweenDeaths} minutos una persona muere por #COVID en #Chile. #QuedateEnCasa`;
   const url = 'https://covid.tiopaul.io';
 
   const csvData = data.map((row) => ([
@@ -205,13 +211,17 @@ const App = () => {
       </div>
       <div className={`${styles.widget}`}>
         {message}
-        <div className={styles.tweet}>
-          <Share
-            options={{
-              text: `${message} -> `,
-            }}
-            url={url}
-          />
+        <div className={styles.share}>
+          <div className={styles.tweet}>
+            <TwitterShareButton url={url} title={message}>
+              <div style={{width: 30}}><TwitterIcon width={30} round /></div>
+            </TwitterShareButton>
+          </div>
+          <div className={styles.fb}>
+            <FacebookShareButton url={url} quote={fbMessage}>
+              <div style={{width: 30}}><FacebookIcon width={30} round /></div>
+            </FacebookShareButton>
+          </div>
         </div>
       </div>
       <div className={styles.grid2Cols1Col}>
@@ -458,7 +468,7 @@ const App = () => {
           <small>
             Imagen:
             {' '}
-            <a href="https://www.flickr.com/photos/davidstanleytravel/7185456324">David Stanley (CC BY 2.0)</a>
+            <a href="https://pixabay.com/es/illustrations/covid-corona-coronavirus-virus-4948866/">Miroslava Chrienova (Pixabay License)</a>
           </small>
         </div>
         <div>
