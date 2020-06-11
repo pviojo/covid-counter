@@ -47,6 +47,7 @@ body {
 }
 :local(.share){
   display: inline-block;
+  margin-left:20px;
 }
 :local(.tweet), :local(.fb){
   margin:0px 10px;
@@ -109,6 +110,7 @@ body {
   :local(.share){
     display: block;
     margin-top: 20px;
+    margin-left: 0px;
   }
   :local(.topCounter){
     :local(.counters) {
