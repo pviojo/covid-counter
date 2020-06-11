@@ -117,7 +117,9 @@ body {
     margin: 10px 0;
   }  
 }
-
+;:local(.tools){
+  float:right;
+}
 :local(.grid2Cols1Col){
   display: grid;
   grid-template-columns: repeat(2, 1fr);

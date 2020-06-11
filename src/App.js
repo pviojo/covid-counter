@@ -8,8 +8,9 @@ import numeral from 'numeral';
 import numerales from "numeral/locales/es";
 import ReactLoading from 'react-loading';
 import isMobile from 'is-mobile';
+import { CSVLink } from 'react-csv';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons';
+import { faVolumeMute, faVolumeUp, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { Share } from 'react-twitter-widgets';
 
 import pjson from '../package.json';
@@ -148,6 +149,23 @@ const App = () => {
 
   const message = `🔴 ¡AHORA! 🦠 Cada ${secondsBetweenCases} segundos una persona se contagia y cada ${minutesBetweenDeaths} minutos una persona muere por #COVID en #Chile. #QuedateEnCasa`;
   const url = 'https://covid.tiopaul.io';
+
+  const csvData = data.map((row) => ([
+    moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD'),
+    parseInt(row.newCases, 10),
+    parseInt(row.totalCases, 10),
+    parseInt(row.newDeaths, 10),
+    parseInt(row.totalDeaths, 10),
+    parseFloat(row.lethality),
+  ])).reverse();
+  csvData.unshift([
+    'fecha',
+    'nuevos_casos',
+    'total_casos',
+    'nuevos_fallecidos',
+    'total_fallecidos',
+    'letalidad',
+  ]);
 
   return (
     <div className="App">
@@ -368,6 +386,14 @@ const App = () => {
       </div>
 
       <div className={styles.widget}>
+        <div className={styles.tools}>
+          <div className="btn">
+            <CSVLink data={csvData} filename={`${moment().utc().format()}-covid-data-chile.csv`}>
+              <FontAwesomeIcon icon={faDownload} />
+              Descargar
+            </CSVLink>
+          </div>
+        </div>
         <div className={styles.title}>
           Datos
         </div>
@@ -377,19 +403,19 @@ const App = () => {
               <th>
                 Fecha del reporte (cierre 21H día anterior)
               </th>
-              <th>
+              <th className="right">
                 Nuevos Casos
               </th>
-              <th>
+              <th className="right">
                 Total de Casos
               </th>
-              <th>
+              <th className="right">
                 Total de Fallecidos nuevos
               </th>
-              <th>
+              <th className="right">
                 Total de Fallecidos acumulados
               </th>
-              <th>
+              <th className="center">
                 Letalidad (%)
               </th>
             </tr>
@@ -398,11 +424,11 @@ const App = () => {
             {data.map((row) => (
               <tr key={row.updatedAt}>
                 <td>{moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD')}</td>
-                <td>{row.newCases}</td>
-                <td>{row.totalCases}</td>
-                <td>{row.newDeaths}</td>
-                <td>{row.totalDeaths}</td>
-                <td>{row.lethality && Math.round(row.lethality * 100 * 100, 2) / 100}</td>
+                <td className="right">{row.newCases}</td>
+                <td className="right">{row.totalCases}</td>
+                <td className="right">{row.newDeaths}</td>
+                <td className="right">{row.totalDeaths}</td>
+                <td className="center">{row.lethality && Math.round(row.lethality * 100 * 100, 2) / 100}</td>
               </tr>
             ))}
           </tbody>

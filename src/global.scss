@@ -5,10 +5,58 @@ a {
 .table{
  width: 100%;
  border-collapse: collapse;
+ text-align: left;
+}
+.table tr:nth-child(2n) td{
+  background:#1a1a1a;
 }
 
+.table tr:hover td{
+  background:#222222;
+}
 .table td,
 .table th
 {
-  padding:10px;
+  padding:5px;
+  color:#666;
+}
+.table td{
+  border-bottom:1px solid #222;
+}
+.table th{
+  border-bottom:2px solid #444;
+}
+
+
+.table td.right,
+.table th.right
+{
+  text-align: right;
+}
+
+.table td.center,
+.table th.center
+{
+  text-align: center;
+}
+
+.btn {
+  cursor: pointer;
+  font-size: 11px;
+  background:#444;
+  border-radius: 50px;
+  padding:5px 12px;
+  color:#fff;
+  text-align: center;
+  a{
+    color:inherit;
+    text-decoration: none;
+  }
+  svg{
+    margin-right: 8px;
+  }
+}
+
+.btn.selected {
+  background:#387;
 }

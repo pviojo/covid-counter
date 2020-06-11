@@ -148,13 +148,13 @@ export const RenderChart = ({
       <div className={styles.title}>{title}</div>
       <div className={styles.tools}>
         <span
-          className={`${styles.btn} ${selectedYAxisScale === 'linear' ? styles.selected : ''}`}
+          className={`btn ${selectedYAxisScale === 'linear' ? styles.selected : ''}`}
           onClick={() => setSelectedYAxisScale('linear')}
         >
           Lineal
         </span>
         <span
-          className={`${styles.btn} ${selectedYAxisScale === 'log' ? styles.selected : ''}`}
+          className={`btn ${selectedYAxisScale === 'log' ? styles.selected : ''}`}
           onClick={() => setSelectedYAxisScale('log')}
         >
           Logarítmico
