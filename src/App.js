@@ -69,14 +69,14 @@ const App = () => {
         }
       ));
 
-      const pointsTotalDeaths = filteredCovidData.slice(6, 12).map((item) => (
+      const pointsTotalDeaths = filteredCovidData.slice(7, 12).map((item) => (
         {
           x: moment(item.updatedAt).format('X'),
           y: item.totalDeaths,
         }
       ));
 
-      const pointsLethality = filteredCovidData.slice(6, 21).map((item) => (
+      const pointsLethality = filteredCovidData.slice(7, 12).map((item) => (
         {
           x: moment(item.updatedAt).format('X'),
           y: item.lethality,
