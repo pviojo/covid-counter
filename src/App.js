@@ -16,6 +16,10 @@ import {
   FacebookIcon,
   TwitterShareButton,
   TwitterIcon,
+  WhatsappShareButton,
+  WhatsappIcon,
+  TelegramShareButton,
+  TelegramIcon,
 } from 'react-share';
 
 import pjson from '../package.json';
@@ -212,15 +216,27 @@ const App = () => {
       <div className={`${styles.widget}`}>
         {message}
         <div className={styles.share}>
-          <div className={styles.tweet}>
+          <div className={styles.btn}>
             <TwitterShareButton url={url} title={message}>
-              <div style={{width: 30}}><TwitterIcon width={30} round /></div>
+              <div style={{width: 30}}><TwitterIcon width={30} height={30} round /></div>
             </TwitterShareButton>
           </div>
-          <div className={styles.fb}>
+          <div className={styles.btn}>
             <FacebookShareButton url={url} quote={fbMessage}>
-              <div style={{width: 30}}><FacebookIcon width={30} round /></div>
+              <div style={{width: 30}}><FacebookIcon width={30} height={30} round /></div>
             </FacebookShareButton>
+          </div>
+
+          <div className={styles.btn}>
+            <WhatsappShareButton url={url} title={fbMessage} separator=":: ">
+              <div style={{width: 30}}><WhatsappIcon width={30} height={30} round /></div>
+            </WhatsappShareButton>
+          </div>
+
+          <div className={styles.btn}>
+            <TelegramShareButton url={url} title={fbMessage}>
+              <div style={{width: 30}}><TelegramIcon width={30} height={30} round /></div>
+            </TelegramShareButton>
           </div>
         </div>
       </div>

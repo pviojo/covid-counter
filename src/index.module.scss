@@ -43,17 +43,15 @@ body {
     margin-bottom: 20px;
   }
 }
-:local(.widgetSp){
-}
 :local(.share){
   display: inline-block;
   margin-left:20px;
-}
-:local(.tweet), :local(.fb){
-  margin:0px 10px;
-  border-radius: 5px;
-  display: inline-block;
-  vertical-align: middle;
+  :local(.btn) {
+    margin:0px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    vertical-align: middle;
+  }
 }
 :local(.topCounter){
   :local(.counters) {
