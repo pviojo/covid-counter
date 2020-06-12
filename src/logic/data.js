@@ -19,8 +19,8 @@ const getDataCases = async () => {
   const rsp = dates.map((date, index) => {
     totalCases += parseInt(newCases[index] || 0, 10);
     return {
-      updatedAt: moment(dates[index]).add(21, 'hours').format(),
-      newCases: newCases[index],
+      updatedAt: moment(dates[index]).subtract(3, 'hours').format(),
+      newCases: parseInt(newCases[index] || 0, 10),
       totalCases,
     };
   }).reverse();
@@ -35,8 +35,8 @@ const getDataDeaths = async () => {
   const rsp = dates.map((date, index) => {
     totalDeaths += newDeaths[index] ? parseInt(newDeaths[index], 10) : 0;
     return {
-      updatedAt: moment(dates[index]).add(21, 'hours').format(),
-      newDeaths: newDeaths[index] || 0,
+      updatedAt: moment(dates[index]).subtract(3, 'hours').format(),
+      newDeaths: parseInt(newDeaths[index] || 0, 10),
       totalDeaths,
     };
   }).reverse();
