@@ -15,15 +15,10 @@ const getDataCases = async () => {
   const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto5/TotalesNacionales.csv');
   const dates = (rows[0]).slice(1);
   const newCases = (rows[7]).slice(1);
-  let totalCases = 0;
-  const rsp = dates.map((date, index) => {
-    totalCases += parseInt(newCases[index] || 0, 10);
-    return {
-      updatedAt: moment(dates[index]).subtract(3, 'hours').format(),
-      newCases: parseInt(newCases[index] || 0, 10),
-      totalCases,
-    };
-  }).reverse();
+  const rsp = dates.map((date, index) => ({
+    updatedAt: moment(date).subtract(3, 'hours').format(),
+    newCases: parseInt(newCases[index] || 0, 10),
+  }));
   return rsp;
 };
 
@@ -31,15 +26,10 @@ const getDataDeaths = async () => {
   const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto37/Defunciones.csv');
   const dates = (rows[0]).slice(1);
   const newDeaths = (rows[rows.length - 1]).slice(1);
-  let totalDeaths = 0;
-  const rsp = dates.map((date, index) => {
-    totalDeaths += newDeaths[index] ? parseInt(newDeaths[index], 10) : 0;
-    return {
-      updatedAt: moment(dates[index]).subtract(3, 'hours').format(),
-      newDeaths: parseInt(newDeaths[index] || 0, 10),
-      totalDeaths,
-    };
-  }).reverse();
+  const rsp = dates.map((date, index) => ({
+    updatedAt: moment(date).subtract(3, 'hours').format(),
+    newDeaths: parseInt(newDeaths[index] || 0, 10),
+  }));
   return rsp;
 };
 
@@ -51,10 +41,25 @@ const merge = (array1, array2, key) => {
   return rsp;
 };
 
+const accumulate = (array, key, accKey) => {
+  let acc = 0;
+  const rsp = array.map((item) => {
+    acc += (item[key] || 0);
+    return {
+      ...item,
+      [accKey]: acc,
+    };
+  });
+  return rsp;
+};
+
 export const getData = async () => {
   const dataCases = await getDataCases();
   const dataDeaths = await getDataDeaths();
   let data = merge(dataCases, dataDeaths, 'updatedAt');
+  data = accumulate(data, 'newCases', 'totalCases');
+  data = accumulate(data, 'newDeaths', 'totalDeaths');
+  data = data.reverse();
   data = data.map((row) => ({
     ...row,
     lethality: Math.round(
