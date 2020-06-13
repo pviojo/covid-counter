@@ -72,7 +72,7 @@ const App = () => {
       const pointsTotalDeaths = filteredCovidData.slice(7, 23).map((item) => (
         {
           x: moment(item.updatedAt).format('X'),
-          y: item.totalDeaths,
+          y: item.totalDeathsCovid,
         }
       ));
 
@@ -137,7 +137,7 @@ const App = () => {
   const simulatedTotalDeaths = data.slice(0, 24).map((x) => ({
     updatedAt: x.updatedAt,
     estimatedTotalDeaths: Math.floor(modelDeaths.predictY(modelDeaths.getTerms(), moment(x.updatedAt).format('X'))),
-    realTotalDeaths: Math.floor(x.totalDeaths),
+    realTotalDeaths: Math.floor(x.totalDeathsCovid),
   }));
 
   const simulatedLethality = data.slice(0, 24).map((x) => ({
@@ -164,8 +164,8 @@ const App = () => {
     moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD'),
     parseInt(row.newCases, 10),
     parseInt(row.totalCases, 10),
-    parseInt(row.newDeaths, 10),
-    parseInt(row.totalDeaths, 10),
+    parseInt(row.newDeathsCovid || 0, 10),
+    parseInt(row.totalDeathsCovid, 10),
     parseFloat(row.lethality),
   ])).reverse();
   csvData.unshift([
@@ -253,7 +253,7 @@ const App = () => {
             <br />
             Fallecidos:
             {' '}
-            {numeral(data[0].totalDeaths).format(0, 0)}
+            {numeral(data[0].totalDeathsCovid).format(0, 0)}
           </big>
         </div>
         <div className={`${styles.officialInfo} ${styles.estimation} ${styles.widget}  ${styles.widgetSp}`}>
@@ -273,7 +273,7 @@ const App = () => {
             {' '}
             {numeral(estimationLastOfficialInfoDeaths).format(0, 0)}
             {' (+'}
-            {numeral(estimationLastOfficialInfoDeaths - data[0].totalDeaths).format(0, 0)}
+            {numeral(estimationLastOfficialInfoDeaths - data[0].totalDeathsCovid).format(0, 0)}
             )
             <div>
               <small style={{fontSize: 10}}>
@@ -283,6 +283,53 @@ const App = () => {
               </small>
             </div>
           </big>
+        </div>
+      </div>
+
+      <div className={`${styles.charts} ${styles.grid2Cols1Col}`}>
+        <div className={styles.widget}>
+          <RenderLineChart
+            data={data}
+            colors={["#387", "#f60"]}
+            yAxisScale="linear"
+            title="Fallecidos Totales y COVID-19 Chile"
+            xAxisType="time"
+            xAxisStepSize={isMobile() ? 7 : 4}
+            width={100}
+            height={isMobile() ? 80 : 40}
+            yAxisMin={0}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'COVID': 'avg7DayDeathsCovid',
+              'Total': 'avg7DayAllDeaths',
+            }}
+          />
+          * Media movil 7 días (últ 14 días datos provisorios)
+        </div>
+        <div className={styles.widget}>
+          <RenderLineChart
+            data={data.map((x) => (
+              {
+                ...x,
+                pctDeathsCovid: x.avg7DayAllDeaths
+                  ? ((x.avg7DayDeathsCovid || 0) / x.avg7DayAllDeaths) * 100
+                  : 0,
+              }
+            ))}
+            colors={["#387", "#f60"]}
+            yAxisScale="linear"
+            title="% Fallecidos COVID sobre Total de Fallecidos Chile"
+            xAxisType="time"
+            xAxisStepSize={isMobile() ? 7 : 4}
+            width={100}
+            height={isMobile() ? 80 : 40}
+            yAxisMin={0}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              '% Fallecidos COVID': 'pctDeathsCovid',
+            }}
+          />
+          * Media movil 7 días (últ 14 días datos provisorios)
         </div>
       </div>
       <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
@@ -308,7 +355,7 @@ const App = () => {
             data={data.slice(0, 100).map((x) => (
               {
                 ...x,
-                totalDeaths: x.totalDeaths,
+                totalDeaths: x.totalDeathsCovid,
               }
             ))}
             colors={["#387"]}
@@ -321,7 +368,7 @@ const App = () => {
             yAxisMin={0}
             xLabelsField="updatedAt"
             yDatasets={{
-              'Total Fallecidos': 'totalDeaths',
+              'Total Fallecidos': 'totalDeathsCovid',
             }}
           />
           * Fallecidos usa info del Registro Civil disponible en
@@ -333,7 +380,7 @@ const App = () => {
             data={data.slice(0, 100).map((x) => (
               {
                 ...x,
-                totalDeaths: x.totalDeaths,
+                totalDeaths: x.totalDeathsCovid,
               }
             ))}
             colors={["#387"]}
@@ -452,8 +499,8 @@ const App = () => {
                 <td>{moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD')}</td>
                 <td className="right">{row.newCases}</td>
                 <td className="right">{row.totalCases}</td>
-                <td className="right">{row.newDeaths}</td>
-                <td className="right">{row.totalDeaths}</td>
+                <td className="right">{row.newDeathsCovid || 0}</td>
+                <td className="right">{row.totalDeathsCovid}</td>
                 <td className="center">{row.lethality && Math.round(row.lethality * 100 * 100, 2) / 100}</td>
               </tr>
             ))}

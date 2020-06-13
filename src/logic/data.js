@@ -11,28 +11,6 @@ const readCsv = async (url) => {
   return rows;
 };
 
-const getDataCases = async () => {
-  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto5/TotalesNacionales.csv');
-  const dates = (rows[0]).slice(1);
-  const newCases = (rows[7]).slice(1);
-  const rsp = dates.map((date, index) => ({
-    updatedAt: moment(date).subtract(3, 'hours').format(),
-    newCases: parseInt(newCases[index] || 0, 10),
-  }));
-  return rsp;
-};
-
-const getDataDeaths = async () => {
-  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto37/Defunciones.csv');
-  const dates = (rows[0]).slice(1);
-  const newDeaths = (rows[rows.length - 1]).slice(1);
-  const rsp = dates.map((date, index) => ({
-    updatedAt: moment(date).subtract(3, 'hours').format(),
-    newDeaths: parseInt(newDeaths[index] || 0, 10),
-  }));
-  return rsp;
-};
-
 const merge = (array1, array2, key) => {
   const rsp = array1.map((row) => ({
     ...row,
@@ -53,19 +31,76 @@ const accumulate = (array, key, accKey) => {
   return rsp;
 };
 
+const avgLast = (array, n, key, averagedKey) => {
+  const prev = [];
+  let avg = 0;
+  const rsp = array.map((item, index) => {
+    prev.push(item[key]);
+    if (index >= (n - 1)) {
+      avg = Math.round((prev.reduce((a, b) => a + parseInt(b, 10), 0)) / n);
+      prev.shift();
+    }
+    return {
+      ...item,
+      [averagedKey]: avg,
+    };
+  });
+  return rsp;
+};
+
+const getDataCasesCovid = async () => {
+  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto5/TotalesNacionales.csv');
+  const dates = (rows[0]).slice(1);
+  const newCases = (rows[7]).slice(1);
+  const rsp = dates.map((date, index) => ({
+    updatedAt: moment(date).subtract(3, 'hours').format(),
+    newCases: parseInt(newCases[index] || 0, 10),
+  }));
+  return rsp;
+};
+
+const getDataDeaths2020 = async () => {
+  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto32/2020-Defunciones_T.csv');
+  const dates = rows.slice(4);
+  let rsp = dates.map((row) => ({
+    updatedAt: moment(row[0]).add(21, 'hours').format(),
+    allDeaths: row.slice(1).reduce((a, b) => a + parseInt(b, 10), 0),
+  }));
+  rsp = avgLast(rsp, 7, 'allDeaths', 'avg7DayAllDeaths');
+  return rsp;
+};
+
+const getDataDeathsCovid = async () => {
+  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto37/Defunciones.csv');
+  const dates = (rows[0]).slice(1);
+  const newDeathsCovid = (rows[rows.length - 1]).slice(1);
+  const rsp = dates.map((date, index) => ({
+    updatedAt: moment(date).subtract(3, 'hours').format(),
+    newDeathsCovid: parseInt(newDeathsCovid[index] || 0, 10),
+  }));
+  return rsp;
+};
+
 export const getData = async () => {
-  const dataCases = await getDataCases();
-  const dataDeaths = await getDataDeaths();
-  let data = merge(dataCases, dataDeaths, 'updatedAt');
+  const dataCases = await getDataCasesCovid();
+  const dataDeaths = await getDataDeathsCovid();
+  const dataDeaths2020 = await getDataDeaths2020();
+
+  let data = dataCases;
+  data = merge(dataCases, dataDeaths, 'updatedAt');
+  data = merge(data, dataDeaths2020, 'updatedAt');
   data = accumulate(data, 'newCases', 'totalCases');
-  data = accumulate(data, 'newDeaths', 'totalDeaths');
+  data = accumulate(data, 'newDeathsCovid', 'totalDeathsCovid');
+  data = avgLast(data, 7, 'newDeathsCovid', 'avg7DayDeathsCovid');
+
   data = data.reverse();
   data = data.map((row) => ({
     ...row,
     lethality: Math.round(
-      (row.totalDeaths ? row.totalDeaths / row.totalCases : 0) * 100 * 100,
+      (row.totalDeathsCovid ? row.totalDeathsCovid / row.totalCases : 0) * 100 * 100,
     ) / 100 / 100,
   }));
+  console.log('data', data);
   return data;
 };
 
