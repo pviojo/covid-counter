@@ -62,7 +62,7 @@ const App = () => {
 
       setData(filteredCovidData);
 
-      const pointsTotalCases = filteredCovidData.slice(2, 12).map((item) => (
+      const pointsTotalCases = filteredCovidData.slice(0, 12).map((item) => (
         {
           x: moment(item.updatedAt).format('X'),
           y: item.totalCases,
@@ -355,6 +355,7 @@ const App = () => {
             data={data.slice(0, 100).map((x) => (
               {
                 ...x,
+                updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
                 totalDeaths: x.totalDeathsCovid,
               }
             ))}
@@ -380,7 +381,7 @@ const App = () => {
             data={data.slice(0, 100).map((x) => (
               {
                 ...x,
-                totalDeaths: x.totalDeathsCovid,
+                updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
               }
             ))}
             colors={["#387"]}
@@ -406,7 +407,12 @@ const App = () => {
       <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
         <div className={styles.widget}>
           <RenderLineChart
-            data={simulatedTotalCases}
+            data={simulatedTotalCases.map((x) => (
+              {
+                ...x,
+                updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
+              }
+            ))}
             colors={["#09c", "#387"]}
             yAxisScale="linear"
             xAxisType="time"
@@ -423,7 +429,12 @@ const App = () => {
         </div>
         <div className={styles.widget}>
           <RenderLineChart
-            data={simulatedTotalDeaths}
+            data={simulatedTotalDeaths.map((x) => (
+              {
+                ...x,
+                updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
+              }
+            ))}
             colors={["#09c", "#387"]}
             yAxisScale="linear"
             xAxisType="time"

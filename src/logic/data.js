@@ -100,7 +100,6 @@ export const getData = async () => {
       (row.totalDeathsCovid ? row.totalDeathsCovid / row.totalCases : 0) * 100 * 100,
     ) / 100 / 100,
   }));
-  console.log('data', data);
   return data;
 };
 
