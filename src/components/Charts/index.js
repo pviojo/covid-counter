@@ -44,6 +44,7 @@ export const chartColors = [
 export const RenderChart = ({
   data,
   chartType,
+  stack,
   xLabelsField,
   yDatasets,
   colors,
@@ -73,10 +74,14 @@ export const RenderChart = ({
       if (yAxisType === 'percentage') {
         datasetData = datasetData.map((v) => v * 100);
       }
-      return dataset({
+      const ds = dataset({
         label,
         data: datasetData,
       });
+      if (stack) {
+        ds.stack = 'stackKey';
+      }
+      return ds;
     });
   }
   const chartOptions = {};
@@ -196,6 +201,7 @@ RenderChart.defaultProps = {
   title: null,
   labels: null,
   datasets: null,
+  stack: false,
 };
 
 RenderChart.propTypes = {
@@ -216,6 +222,7 @@ RenderChart.propTypes = {
   xAxisStepSize: PropTypes.number,
   yAxisType: PropTypes.string,
   yAxisScale: PropTypes.string,
+  stack: PropTypes.bool,
 };
 
 export const RenderLineChart = (props) => <RenderChart {...props} chartType="line" />;

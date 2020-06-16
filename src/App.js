@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable object-curly-spacing */
 /* eslint-disable quote-props */
 /* eslint-disable quotes */
@@ -25,7 +26,7 @@ import {
 import pjson from '../package.json';
 
 import Counter from './components/Counter';
-import { RenderLineChart } from './components/Charts';
+import { RenderLineChart, RenderBarChart } from './components/Charts';
 
 import { generatePolynomialRegression } from './logic/parameters';
 import { getData } from './logic/data';
@@ -38,6 +39,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [now, setNow] = useState(moment());
   const [data, setData] = useState(null);
+  const [dataDeathsCovidByReportDay, setDataDeathsCovidByReportDay] = useState(null);
   const [modelCases, setModelCases] = useState(null);
   const [modelDeaths, setModelDeaths] = useState(null);
   const [modelLethality, setModelLethality] = useState(null);
@@ -99,8 +101,12 @@ const App = () => {
     };
 
     const loadData = async () => {
-      const loadedData = await getData();
+      const {
+        dailyData: loadedData,
+        dataDeathsCovidByReportDay,
+      } = await getData();
       initData(loadedData);
+      setDataDeathsCovidByReportDay(dataDeathsCovidByReportDay);
       setLoading(false);
     };
 
@@ -176,6 +182,14 @@ const App = () => {
     'total_fallecidos',
     'letalidad',
   ]);
+
+  const dataDeathsCovidByReportDayKeys = {};
+  Object.keys(dataDeathsCovidByReportDay[0]).map((k) => {
+    if (k.startsWith('new_reported_')) {
+      dataDeathsCovidByReportDayKeys[k.replace('new_reported_', '')] = k;
+    }
+    return null;
+  });
 
   return (
     <div className="App">
@@ -286,7 +300,7 @@ const App = () => {
         </div>
       </div>
 
-      <div className={`${styles.charts} ${styles.grid2Cols1Col}`}>
+      <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
         <div className={styles.widget}>
           <RenderLineChart
             data={data}
@@ -296,7 +310,7 @@ const App = () => {
             xAxisType="time"
             xAxisStepSize={isMobile() ? 7 : 4}
             width={100}
-            height={isMobile() ? 80 : 40}
+            height={isMobile() ? 80 : 60}
             yAxisMin={0}
             xLabelsField="updatedAt"
             yDatasets={{
@@ -322,7 +336,7 @@ const App = () => {
             xAxisType="time"
             xAxisStepSize={isMobile() ? 7 : 4}
             width={100}
-            height={isMobile() ? 80 : 40}
+            height={isMobile() ? 80 : 60}
             yAxisMin={0}
             xLabelsField="updatedAt"
             yDatasets={{
@@ -330,6 +344,23 @@ const App = () => {
             }}
           />
           * Media movil 7 días (últ 14 días datos provisorios)
+        </div>
+        <div className={styles.widget}>
+          <RenderBarChart
+            data={dataDeathsCovidByReportDay.slice(-14)}
+            colors={["#c30", "#f60", "#fc0", "#093", "#06c", "#a3c"]}
+            yAxisScale="linear"
+            title="Fallecidos Últimos días por día de reporte"
+            xAxisType="time"
+            xAxisStepSize={isMobile() ? 7 : 4}
+            width={100}
+            stack
+            height={isMobile() ? 80 : 60}
+            yAxisMin={0}
+            xLabelsField="updatedAt"
+            yDatasets={dataDeathsCovidByReportDayKeys}
+          />
+          * Haz click sobre cada fecha de reporte para agregarla o quitarla del gráfico.
         </div>
       </div>
       <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>

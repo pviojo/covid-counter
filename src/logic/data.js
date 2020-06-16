@@ -73,17 +73,38 @@ const getDataDeaths2020 = async () => {
 const getDataDeathsCovid = async () => {
   const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto37/Defunciones.csv');
   const dates = (rows[0]).slice(1);
+  const allRows = rows.slice(1);
   const newDeathsCovid = (rows[rows.length - 1]).slice(1);
-  const rsp = dates.map((date, index) => ({
+  const deathsCovid = dates.map((date, index) => ({
     updatedAt: moment(date).subtract(3, 'hours').format(),
     newDeathsCovid: parseInt(newDeathsCovid[index] || 0, 10),
   }));
-  return rsp;
+  const deathsCovidByReportDay = dates.map((date, index) => {
+    const data = {
+      updatedAt: moment(date).format(),
+    };
+    let prevAccReported = 0;
+    allRows.slice(-6).map((r) => {
+      const accReported = parseInt(r[index + 1] || 0, 10) + 0;
+      data[`reported_${r[0].replace('Defunciones_', '').replace(/-/gi, '')}`] = accReported;
+      data[`new_reported_${r[0].replace('Defunciones_', '').replace(/-/gi, '')}`] = accReported - prevAccReported;
+      prevAccReported = accReported;
+      return null;
+    });
+    return data;
+  });
+  return {
+    deathsCovid,
+    deathsCovidByReportDay,
+  };
 };
 
 export const getData = async () => {
   const dataCases = await getDataCasesCovid();
-  const dataDeaths = await getDataDeathsCovid();
+  const {
+    deathsCovid: dataDeaths,
+    deathsCovidByReportDay: dataDeathsCovidByReportDay,
+  } = await getDataDeathsCovid();
   const dataDeaths2020 = await getDataDeaths2020();
 
   let data = dataCases;
@@ -100,7 +121,10 @@ export const getData = async () => {
       (row.totalDeathsCovid ? row.totalDeathsCovid / row.totalCases : 0) * 100 * 100,
     ) / 100 / 100,
   }));
-  return data;
+  return {
+    dailyData: data,
+    dataDeathsCovidByReportDay,
+  };
 };
 
 export default {
