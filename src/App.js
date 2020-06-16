@@ -26,6 +26,7 @@ import {
 import pjson from '../package.json';
 
 import Counter from './components/Counter';
+import Metric from './components/Metric';
 import { RenderLineChart, RenderBarChart } from './components/Charts';
 
 import { generatePolynomialRegression } from './logic/parameters';
@@ -212,6 +213,11 @@ const App = () => {
             now={now}
             subtitle="Fallecidos estimados en Chile"
           />
+          <Metric
+            n={`1 de ${Math.round(1 / ((data[7].avg7DayDeathsCovid || 0) / data[7].avg7DayAllDeaths))}`}
+            subtitle="Fallecidos es a causa de COVID (últ 14 días)"
+            color="#c33"
+          />
         </div>
         <div className={styles.calculatedAt}>
           <div className={styles.sound}>
@@ -303,7 +309,7 @@ const App = () => {
       <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
         <div className={styles.widget}>
           <RenderLineChart
-            data={data}
+            data={data.slice(7)}
             colors={["#387", "#f60"]}
             yAxisScale="linear"
             title="Fallecidos Totales y COVID-19 Chile"
@@ -318,11 +324,13 @@ const App = () => {
               'Total': 'avg7DayAllDeaths',
             }}
           />
-          * Media movil 7 días (últ 14 días datos provisorios)
+          * Media movil 7 días
+          <br />
+          (últ 14 días datos provisorios, no se muestran últ 7 días por datos incompletos)
         </div>
         <div className={styles.widget}>
           <RenderLineChart
-            data={data.map((x) => (
+            data={data.slice(7).map((x) => (
               {
                 ...x,
                 pctDeathsCovid: x.avg7DayAllDeaths
@@ -343,14 +351,16 @@ const App = () => {
               '% Fallecidos COVID': 'pctDeathsCovid',
             }}
           />
-          * Media movil 7 días (últ 14 días datos provisorios)
+          * Media movil 7 días
+          <br />
+          (últ 14 días datos provisorios, no se muestran últ 7 días por datos incompletos)
         </div>
         <div className={styles.widget}>
           <RenderBarChart
             data={dataDeathsCovidByReportDay.slice(-14)}
             colors={["#c30", "#f60", "#fc0", "#093", "#06c", "#a3c"]}
             yAxisScale="linear"
-            title="Fallecidos Últimos días por día de reporte"
+            title="Fallecidos Últimos 14 días por día de reporte"
             xAxisType="time"
             xAxisStepSize={isMobile() ? 7 : 4}
             width={100}

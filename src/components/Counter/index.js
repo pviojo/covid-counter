@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import numeral from 'numeral';
 import moment from 'moment';
 
-import styles from './index.module.css';
+import Metric from '../Metric';
 
 const Counter = ({
   subtitle, model, onChange, now,
@@ -31,12 +30,10 @@ const Counter = ({
   }
 
   return (
-    <div className={styles.cnt}>
-      <div className={styles.counter}>{numeral(n).format('0,0')}</div>
-      <div className={styles.subtitle}>
-        {subtitle}
-      </div>
-    </div>
+    <Metric
+      subtitle={subtitle}
+      n={n}
+    />
   );
 };
 
