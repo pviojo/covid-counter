@@ -5,7 +5,7 @@ import moment from 'moment';
 import Metric from '../Metric';
 
 const Counter = ({
-  subtitle, model, onChange, now,
+  subtitle, model, onChange, now, add,
 }) => {
   const [n, setN] = useState(null);
   useEffect(() => {
@@ -32,7 +32,7 @@ const Counter = ({
   return (
     <Metric
       subtitle={subtitle}
-      n={n}
+      n={n + add}
     />
   );
 };
@@ -40,6 +40,7 @@ const Counter = ({
 Counter.defaultProps = {
   onChange: () => {},
   now: null,
+  add: 0,
 };
 
 Counter.propTypes = {
@@ -47,6 +48,7 @@ Counter.propTypes = {
   model: PropTypes.object.isRequired,
   onChange: PropTypes.func,
   now: PropTypes.object,
+  add: PropTypes.number,
 };
 
 export default Counter;
