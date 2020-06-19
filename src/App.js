@@ -38,7 +38,7 @@ import styles from './index.module.scss';
 const App = () => {
   numeral.locale('es');
 
-  const addCases = 32564;
+  const addCases = 31422;
 
   const [loading, setLoading] = useState(true);
   const [now, setNow] = useState(moment());
