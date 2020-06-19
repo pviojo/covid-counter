@@ -2,9 +2,15 @@
   text-align: center;
 }
 
-:local(.counter) {
-  font-size: 96px;
+:local(.n) {
+  font-size: 72px;
   font-weight: 400;
+}
+:local(.subn) {
+  font-size: 20px;
+  margin-top: -10px;
+  font-weight: 400;
+  margin-bottom: 10px;
 }
 
 :local(.subtitle) {
@@ -14,8 +20,23 @@
 }
 
 @media(max-width:600px){
-  :local(.counter) {
+  :local(.n) {
     font-size: 72px;
+  }
+  :local(.subn) {
+    font-size: 18px;
+  }
+  :local(.subtitle) {
+    font-size: 14px;
+  }
+}
+
+@media(max-width:1025px){
+  :local(.n) {
+    font-size: 48px;
+  }
+  :local(.subn) {
+    font-size: 18px;
   }
   :local(.subtitle) {
     font-size: 14px;

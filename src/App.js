@@ -121,7 +121,7 @@ const App = () => {
       <div className={styles.loading}>
         <ReactLoading
           type="spin"
-          color="#69c"
+          color="#96c"
         />
       </div>
     );
@@ -214,6 +214,7 @@ const App = () => {
           />
           <Counter
             model={modelDeaths}
+            showLast24H
             now={now}
             subtitle="Fallecidos estimados en Chile"
           />
