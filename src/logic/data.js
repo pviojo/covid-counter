@@ -37,7 +37,7 @@ const avgLast = (array, n, key, averagedKey) => {
   const rsp = array.map((item, index) => {
     prev.push(item[key]);
     if (index >= (n - 1)) {
-      avg = Math.round((prev.reduce((a, b) => a + parseInt(b, 10), 0)) / n);
+      avg = (prev.reduce((a, b) => a + parseFloat(b, 10), 0)) / n;
       prev.shift();
     }
     return {
@@ -48,14 +48,30 @@ const avgLast = (array, n, key, averagedKey) => {
   return rsp;
 };
 
-const getDataCasesCovid = async () => {
+const getDataCovid = async () => {
   const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto5/TotalesNacionales.csv');
-  const dates = (rows[0]).slice(1);
-  const newCases = (rows[7]).slice(1);
-  const rsp = dates.map((date, index) => ({
-    updatedAt: moment(date).subtract(3, 'hours').format(),
-    newCases: parseInt(newCases[index] || 0, 10),
+  const pcrRows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto7/PCR_T.csv');
+  const casesPcr = pcrRows.slice(3).map((row) => ({
+    updatedAt: moment(row[0]).subtract(3, 'hours').format(),
+    testsPCR: row.slice(1).reduce((a, i) => a + (parseInt(i, 10) || 0), 0),
   }));
+  const dates = (rows[0]).slice(1);
+  const dataNewCases = (rows[7]).slice(1);
+  const rsp = dates.map((date, index) => {
+    const d = moment(date).subtract(3, 'hours').format();
+    const newCases = parseInt(dataNewCases[index] || 0, 10);
+    const testsPCR = parseInt(
+      (casesPcr.find((x) => x.updatedAt === d) || { testsPCR: 0 }).testsPCR,
+      10,
+    );
+    const positivity = testsPCR > 0 ? newCases / testsPCR : null;
+    return {
+      updatedAt: d,
+      newCases,
+      testsPCR,
+      positivity,
+    };
+  });
   return rsp;
 };
 
@@ -100,23 +116,42 @@ const getDataDeathsCovid = async () => {
 };
 
 export const getData = async () => {
-  const dataCases = await getDataCasesCovid();
+  let data = await getDataCovid();
   const {
     deathsCovid: dataDeaths,
     deathsCovidByReportDay: dataDeathsCovidByReportDay,
   } = await getDataDeathsCovid();
   const dataDeaths2020 = await getDataDeaths2020();
 
-  let data = dataCases;
-  data = merge(dataCases, dataDeaths, 'updatedAt');
+  data = merge(data, dataDeaths, 'updatedAt');
   data = merge(data, dataDeaths2020, 'updatedAt');
   data = accumulate(data, 'newCases', 'totalCases');
   data = accumulate(data, 'newDeathsCovid', 'totalDeathsCovid');
+  data = accumulate(data, 'testsPCR', 'totalTestsPCR');
   data = avgLast(data, 7, 'newDeathsCovid', 'avg7DayDeathsCovid');
+  data = avgLast(data, 7, 'positivity', 'avg7DPositivity');
+
+  let totalCasesSinceApr9 = 0;
+  data = data.map((row) => {
+    if (row.updatedAt <= '2020-04-09') {
+      return {
+        ...row,
+        totalCasesSinceApr9: 0,
+      };
+    }
+
+    totalCasesSinceApr9 += parseInt(row.newCases, 10);
+
+    return {
+      ...row,
+      totalCasesSinceApr9,
+    };
+  });
 
   data = data.reverse();
   data = data.map((row) => ({
     ...row,
+    accumulatedPositivity: row.updatedAt > '2020-04-09' ? row.totalCasesSinceApr9 / row.totalTestsPCR : null,
     lethality: Math.round(
       (row.totalDeathsCovid ? row.totalDeathsCovid / row.totalCases : 0) * 100 * 100,
     ) / 100 / 100,

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 /* eslint-disable no-restricted-globals */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -15,9 +16,7 @@ const Metric = ({
           <small>{!isNaN(subn) ? numeral(subn).format('0,0') : subn}</small>
         </div>
       )}
-    <div className={styles.subtitle}>
-      {subtitle}
-    </div>
+    <div className={styles.subtitle} dangerouslySetInnerHTML={{ __html: subtitle }} />
   </div>
 );
 Metric.defaultProps = {

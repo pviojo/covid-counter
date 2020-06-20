@@ -138,13 +138,13 @@ const App = () => {
     modelDeaths.predictY(modelDeaths.getTerms(), tsLastOfficialInfo),
   );
 
-  const simulatedTotalCases = data.slice(0, 6).map((x) => ({
+  const simulatedTotalCases = data.slice(0, 15).map((x) => ({
     updatedAt: x.updatedAt,
     estimatedTotalCases: Math.floor(modelCases.predictY(modelCases.getTerms(), moment(x.updatedAt).format('X'))),
     realTotalCases: Math.floor(x.totalCases),
   }));
 
-  const simulatedTotalDeaths = data.slice(0, 24).map((x) => ({
+  const simulatedTotalDeaths = data.slice(0, 15).map((x) => ({
     updatedAt: x.updatedAt,
     estimatedTotalDeaths: Math.floor(modelDeaths.predictY(modelDeaths.getTerms(), moment(x.updatedAt).format('X'))),
     realTotalDeaths: Math.floor(x.totalDeathsCovid),
@@ -219,8 +219,13 @@ const App = () => {
             subtitle="Fallecidos estimados en Chile"
           />
           <Metric
+            n={`${Math.round(data[0].avg7DPositivity * 100)}%`}
+            subtitle="Positividad actual<br/><small>(Promedio últ 7 días)</small>"
+            color={data[0].avg7DPositivity > 0.1 ? '#c33' : '#f60'}
+          />
+          <Metric
             n={`1 de ${Math.round(1 / ((data[7].avg7DayDeathsCovid || 0) / data[7].avg7DayAllDeaths))}`}
-            subtitle="Fallecidos es a causa de COVID (últ 14 días)"
+            subtitle="Fallecidos es a causa de COVID<br/><small>(últ 14 días)</small>"
             color="#c33"
           />
         </div>
@@ -309,6 +314,36 @@ const App = () => {
             </div>
           </big>
         </div>
+      </div>
+
+      <div className={styles.widget}>
+        <RenderLineChart
+          data={data.map((x) => (
+            {
+              ...x,
+              positivity: x.positivity ? x.positivity * 100 : null,
+              avg7DPositivity: x.positivity ? x.avg7DPositivity * 100 : null,
+              accumulatedPositivity: x.accumulatedPositivity ? x.accumulatedPositivity * 100 : null,
+              recommended: 10,
+            }
+          ))}
+          colors={["#387", "#f60", "#39f", "#c03"]}
+          yAxisScale="linear"
+          title="% Positividad PCR (Nuevos casos / Test reportados)"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          height={isMobile() ? 80 : 30}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            '% Test PCR Positivos': 'positivity',
+            '% Test PCR Positivos (Media Móvil 7D)': 'avg7DPositivity',
+            '% Test PCR Positivos Acumulado': 'accumulatedPositivity',
+            'Recomendado (10%)': 'recommended',
+          }}
+        />
+        <br />
       </div>
 
       <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
