@@ -585,6 +585,9 @@ const App = () => {
               <th className="right">
                 Total de Fallecidos acumulados
               </th>
+              <th className="right">
+                Prom fallecidos diarios por millón (ult 7 d)
+              </th>
               <th className="center">
                 Letalidad (%)
               </th>
@@ -598,6 +601,7 @@ const App = () => {
                 <td className="right">{row.totalCases}</td>
                 <td className="right">{row.newDeathsCovid || 0}</td>
                 <td className="right">{row.totalDeathsCovid}</td>
+                <td className="right">{numeral(row.avg7DayDeathsCovid ? row.avg7DayDeathsCovid / 18 : null).format('0,0.00')}</td>
                 <td className="center">{row.lethality && Math.round(row.lethality * 100 * 100, 2) / 100}</td>
               </tr>
             ))}
