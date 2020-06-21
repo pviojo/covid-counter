@@ -159,6 +159,10 @@ export const getData = async () => {
   return {
     dailyData: data,
     dataDeathsCovidByReportDay,
+    probableDeaths: {
+      n: 3069,
+      updatedAt: '2020-06-19',
+    },
   };
 };
 

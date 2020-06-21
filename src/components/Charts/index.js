@@ -52,6 +52,7 @@ export const RenderChart = ({
   datasets,
   height,
   width,
+  showYAxisSelector,
   legend,
   yAxisMin,
   title,
@@ -151,20 +152,23 @@ export const RenderChart = ({
   return (
     <div className={styles.cnt}>
       <div className={styles.title}>{title}</div>
-      <div className={styles.tools}>
-        <span
-          className={`btn ${selectedYAxisScale === 'linear' ? styles.selected : ''}`}
-          onClick={() => setSelectedYAxisScale('linear')}
-        >
-          Lineal
-        </span>
-        <span
-          className={`btn ${selectedYAxisScale === 'log' ? styles.selected : ''}`}
-          onClick={() => setSelectedYAxisScale('log')}
-        >
-          Logarítmico
-        </span>
-      </div>
+      {showYAxisSelector
+        && (
+          <div className={styles.tools}>
+            <span
+              className={`btn ${selectedYAxisScale === 'linear' ? styles.selected : ''}`}
+              onClick={() => setSelectedYAxisScale('linear')}
+            >
+              Lineal
+            </span>
+            <span
+              className={`btn ${selectedYAxisScale === 'log' ? styles.selected : ''}`}
+              onClick={() => setSelectedYAxisScale('log')}
+            >
+              Logarítmico
+            </span>
+          </div>
+        )}
       <div style={{ width: '100%' }}>
         { chartType === 'line'
           && (
@@ -202,6 +206,7 @@ RenderChart.defaultProps = {
   labels: null,
   datasets: null,
   stack: false,
+  showYAxisSelector: false,
 };
 
 RenderChart.propTypes = {
@@ -223,6 +228,7 @@ RenderChart.propTypes = {
   yAxisType: PropTypes.string,
   yAxisScale: PropTypes.string,
   stack: PropTypes.bool,
+  showYAxisSelector: PropTypes.bool,
 };
 
 export const RenderLineChart = (props) => <RenderChart {...props} chartType="line" />;

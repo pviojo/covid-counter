@@ -43,6 +43,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [now, setNow] = useState(moment());
   const [data, setData] = useState(null);
+  const [probableDeaths, setProbableDeaths] = useState(moment());
   const [dataDeathsCovidByReportDay, setDataDeathsCovidByReportDay] = useState(null);
   const [modelCases, setModelCases] = useState(null);
   const [modelDeaths, setModelDeaths] = useState(null);
@@ -108,8 +109,10 @@ const App = () => {
       const {
         dailyData: loadedData,
         dataDeathsCovidByReportDay,
+        probableDeaths,
       } = await getData();
       initData(loadedData);
+      setProbableDeaths(probableDeaths);
       setDataDeathsCovidByReportDay(dataDeathsCovidByReportDay);
       setLoading(false);
     };
@@ -271,7 +274,7 @@ const App = () => {
         </div>
       </div>
       <div className={styles.grid2Cols1Col}>
-        <div className={`${styles.officialInfo} ${styles.widget}  ${styles.widgetSp}`}>
+        <div className={`${styles.officialInfo} ${styles.lastUpdate} ${styles.widget}  ${styles.widgetSp}`}>
           Última actualización oficial:
           {' '}
           {moment(data[0].updatedAt).format('DD/MM HH:mm')}
@@ -284,6 +287,22 @@ const App = () => {
             Fallecidos:
             {' '}
             {numeral(data[0].totalDeathsCovid).format(0, 0)}
+            <br />
+            <small>
+              Fallecidos Probables (sin Test PCR +):
+              {' '}
+              {numeral(probableDeaths.n).format(0, 0)}
+              <br />
+              Fallecidos + Fallecidos Probables (sin Test PCR +):
+              {' '}
+              {numeral(data[0].totalDeathsCovid + probableDeaths.n).format(0, 0)}
+              <br />
+              <small>
+                * Fallecidos probables actualizado:
+                {' '}
+                {moment(probableDeaths.updatedAt).format('DD/MM')}
+              </small>
+            </small>
           </big>
         </div>
         <div className={`${styles.officialInfo} ${styles.estimation} ${styles.widget}  ${styles.widgetSp}`}>
@@ -333,7 +352,7 @@ const App = () => {
           xAxisType="time"
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
-          height={isMobile() ? 80 : 30}
+          height={isMobile() ? 80 : 25}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -420,6 +439,7 @@ const App = () => {
             colors={["#387"]}
             yAxisScale="linear"
             xAxisType="time"
+            showYAxisSelector
             title="Total de Casos COVID-19 Chile"
             width={100}
             height={isMobile() ? 80 : 60}
@@ -449,6 +469,7 @@ const App = () => {
             yAxisScale="linear"
             title="Total de Fallecidos COVID-19 Chile"
             xAxisType="time"
+            showYAxisSelector
             xAxisStepSize={isMobile() ? 7 : 4}
             width={100}
             height={isMobile() ? 80 : 60}
@@ -474,6 +495,7 @@ const App = () => {
             yAxisScale="linear"
             title="Letalidad COVID-19 Chile (%)"
             xAxisType="time"
+            showYAxisSelector
             yAxisType="percentage"
             xAxisStepSize={isMobile() ? 7 : 4}
             width={100}
@@ -502,6 +524,7 @@ const App = () => {
             colors={["#09c", "#387"]}
             yAxisScale="linear"
             xAxisType="time"
+            showYAxisSelector
             title="Comparación modelo estimación - reales. Casos"
             width={100}
             height={isMobile() ? 60 : 60}
@@ -524,6 +547,7 @@ const App = () => {
             colors={["#09c", "#387"]}
             yAxisScale="linear"
             xAxisType="time"
+            showYAxisSelector
             title="Comparación modelo estimación - reales. Fallecidos"
             width={100}
             height={isMobile() ? 60 : 60}
@@ -541,6 +565,7 @@ const App = () => {
             colors={["#09c", "#387"]}
             yAxisScale="linear"
             xAxisType="time"
+            showYAxisSelector
             yAxisMin={0}
             title="Comparación modelo estimación - reales. Letalidad"
             width={100}

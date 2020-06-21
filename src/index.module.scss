@@ -74,7 +74,14 @@ body {
   }
   margin-bottom: 20px;
 }
-
+:local(.lastUpdate small) {
+  font-size:12px;
+  font-weight: 400;
+}
+:local(.lastUpdate small small){
+  font-size:10px;
+  font-weight: 400;
+}
 :local(.calculatedAt small) {
   display: block;
   font-size: 18px;
