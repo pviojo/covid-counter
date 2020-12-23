@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import axios from 'axios';
 import moment from 'moment';
 
@@ -86,16 +87,86 @@ const getDataDeaths2020 = async () => {
   return rsp;
 };
 
+const getComunasData = async () => {
+  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto19/CasosActivosPorComuna.csv');
+  const dates = rows[0].slice(5);
+  const rsp = {};
+  rows.slice(1).map((row) => {
+    if (!row[3]) {
+      return null;
+    }
+    const r = {};
+    r.label = `${row[0]} - ${row[2]}`;
+    r.region = row[0];
+    r.regionCode = row[1];
+    r.comuna = row[2];
+    r.comunaCode = row[3];
+    r.population = parseInt(row[4], 10);
+    r.data = [];
+    // let prevCases = 0;
+    dates.map((d, i) => {
+      // const t = parseInt(row[i + 5], 10);
+      r.data.push({
+        updatedAt: d,
+        // totalCases: t,
+        // newCases: t - prevCases,
+        activeCases: parseInt(row[i + 5], 10),
+      });
+      // prevCases = t;
+      return null;
+    });
+    rsp[r.comunaCode] = r;
+    return null;
+  });
+  return rsp;
+};
+
+const getRegionesData = (comunasData) => {
+  const rsp = {};
+  Object.values(comunasData).map((comuna) => {
+    const { regionCode } = comuna;
+    if (!rsp[regionCode]) {
+      rsp[regionCode] = {
+        regionCode,
+        region: comuna.region,
+        data: {},
+      };
+    }
+    comuna.data.map((r) => {
+      const d = r.updatedAt;
+      if (!rsp[regionCode].data[d]) {
+        rsp[regionCode].data[d] = {
+          updatedAt: d,
+          activeCases: 0,
+        };
+      }
+      rsp[regionCode].data[d].activeCases += r.activeCases;
+      return null;
+    });
+    return null;
+  });
+  Object.keys(rsp).map((k) => {
+    rsp[k].data = Object.values(rsp[k].data);
+    return null;
+  });
+  return rsp;
+};
+
 const getDataDeathsCovid = async () => {
-  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto37/Defunciones.csv');
-  const dates = (rows[0]).slice(1);
-  const allRows = rows.slice(1);
-  const newDeathsCovid = (rows[rows.length - 1]).slice(1);
-  const deathsCovid = dates.map((date, index) => ({
-    updatedAt: moment(date).subtract(3, 'hours').format(),
-    newDeathsCovid: parseInt(newDeathsCovid[index] || 0, 10),
+  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto37/Defunciones_deis.csv');
+  const confirmedRows = rows.filter((r) => r[0] === 'confirmados');
+  // const dates = confirmedRows.map((x) => x[1]);
+  const deathsCovid = confirmedRows.map((row) => ({
+    updatedAt: moment(row[1]).subtract(3, 'hours').format(),
+    newDeathsCovid: parseInt(row.slice(3).reduce((acc, current) => acc + current, 0) || 0, 10),
   }));
-  const deathsCovidByReportDay = dates.map((date, index) => {
+  const deathsCovidByReportDay = [];
+  return {
+    deathsCovid,
+    deathsCovidByReportDay,
+  };
+  /*
+  deathsCovidByReportDay = dates.map((date, index) => {
     const data = {
       updatedAt: moment(date).format(),
     };
@@ -103,7 +174,8 @@ const getDataDeathsCovid = async () => {
     allRows.slice(-6).map((r) => {
       const accReported = parseInt(r[index + 1] || 0, 10) + 0;
       data[`reported_${r[0].replace('Defunciones_', '').replace(/-/gi, '')}`] = accReported;
-      data[`new_reported_${r[0].replace('Defunciones_', '').replace(/-/gi, '')}`] = accReported - prevAccReported;
+      data[`new_reported_${r[0].replace('Defunciones_', '').replace(/-/gi, '')}`] =
+        accReported - prevAccReported;
       prevAccReported = accReported;
       return null;
     });
@@ -112,7 +184,7 @@ const getDataDeathsCovid = async () => {
   return {
     deathsCovid,
     deathsCovidByReportDay,
-  };
+  }; */
 };
 
 export const getData = async () => {
@@ -126,6 +198,12 @@ export const getData = async () => {
   data = merge(data, dataDeaths, 'updatedAt');
   data = merge(data, dataDeaths2020, 'updatedAt');
   data = accumulate(data, 'newCases', 'totalCases');
+  data = data.map((x) => (
+    {
+      ...x,
+      totalCases: x.totalCases + 31784,
+    }
+  ));
   data = accumulate(data, 'newDeathsCovid', 'totalDeathsCovid');
   data = accumulate(data, 'testsPCR', 'totalTestsPCR');
   data = avgLast(data, 7, 'newDeathsCovid', 'avg7DayDeathsCovid');
@@ -156,8 +234,13 @@ export const getData = async () => {
       (row.totalDeathsCovid ? row.totalDeathsCovid / row.totalCases : 0) * 100 * 100,
     ) / 100 / 100,
   }));
+
+  const comunasData = await getComunasData();
+
   return {
     dailyData: data,
+    comunasData,
+    regionesData: getRegionesData(comunasData),
     dataDeathsCovidByReportDay,
     probableDeaths: {
       n: 3069,

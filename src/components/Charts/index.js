@@ -40,7 +40,6 @@ export const chartColors = [
   '#53a318',
 ];
 
-
 export const RenderChart = ({
   data,
   chartType,
@@ -103,7 +102,6 @@ export const RenderChart = ({
       zeroLineColor: '#333',
     },
   }];
-
 
   if (selectedYAxisScale === 'log') {
     chartOptions.scales.yAxes[0].type = 'logarithmic';

@@ -11,22 +11,10 @@ import ReactLoading from 'react-loading';
 import isMobile from 'is-mobile';
 import { CSVLink } from 'react-csv';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVolumeMute, faVolumeUp, faDownload } from '@fortawesome/free-solid-svg-icons';
-import {
-  FacebookShareButton,
-  FacebookIcon,
-  TwitterShareButton,
-  TwitterIcon,
-  WhatsappShareButton,
-  WhatsappIcon,
-  TelegramShareButton,
-  TelegramIcon,
-} from 'react-share';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import pjson from '../package.json';
 
-import Counter from './components/Counter';
-import Metric from './components/Metric';
 import { RenderLineChart, RenderBarChart } from './components/Charts';
 
 import { generatePolynomialRegression } from './logic/parameters';
@@ -38,17 +26,18 @@ import styles from './index.module.scss';
 const App = () => {
   numeral.locale('es');
 
-  const addCases = 31422;
+  const addCases = 0;
 
   const [loading, setLoading] = useState(true);
-  const [now, setNow] = useState(moment());
+  const [, setNow] = useState(moment());
   const [data, setData] = useState(null);
-  const [probableDeaths, setProbableDeaths] = useState(moment());
+  const [, setProbableDeaths] = useState(null);
+  const [comunasData, setComunasData] = useState(null);
+  const [regionesData, setRegionesData] = useState(null);
   const [dataDeathsCovidByReportDay, setDataDeathsCovidByReportDay] = useState(null);
   const [modelCases, setModelCases] = useState(null);
   const [modelDeaths, setModelDeaths] = useState(null);
   const [modelLethality, setModelLethality] = useState(null);
-  const [sound, setSound] = useState(new URLSearchParams(window.location.search.slice(1)).get('sound'));
   useEffect(() => {
     const tsParam = (new URLSearchParams(window.location.search.slice(1))).get('ts');
     if (tsParam) {
@@ -56,7 +45,7 @@ const App = () => {
     } else {
       window.setInterval(() => {
         setNow(moment());
-      }, 100);
+      }, 1000);
     }
 
     const initData = (covidData) => {
@@ -108,11 +97,15 @@ const App = () => {
     const loadData = async () => {
       const {
         dailyData: loadedData,
+        comunasData,
+        regionesData,
         dataDeathsCovidByReportDay,
         probableDeaths,
       } = await getData();
       initData(loadedData);
       setProbableDeaths(probableDeaths);
+      setComunasData(comunasData);
+      setRegionesData(regionesData);
       setDataDeathsCovidByReportDay(dataDeathsCovidByReportDay);
       setLoading(false);
     };
@@ -133,14 +126,6 @@ const App = () => {
     return null;
   }
 
-  const tsLastOfficialInfo = moment(data[0].updatedAt).add(1, 'day').format('X');
-  const estimationLastOfficialInfoCases = Math.floor(
-    modelCases.predictY(modelCases.getTerms(), tsLastOfficialInfo),
-  );
-  const estimationLastOfficialInfoDeaths = Math.floor(
-    modelDeaths.predictY(modelDeaths.getTerms(), tsLastOfficialInfo),
-  );
-
   const simulatedTotalCases = data.slice(0, 15).map((x) => ({
     updatedAt: x.updatedAt,
     estimatedTotalCases: Math.floor(modelCases.predictY(modelCases.getTerms(), moment(x.updatedAt).format('X'))),
@@ -159,20 +144,6 @@ const App = () => {
     realLethality: x.lethality,
   }));
 
-  const secondsBetweenCases = Math.round((60 * 60) / (
-    modelDeaths.predictY(modelCases.getTerms(), moment().format('X'))
-    - modelDeaths.predictY(modelCases.getTerms(), moment().subtract(1, 'hour').format('X'))
-  ));
-
-  const minutesBetweenDeaths = Math.round((24 * 60) / (
-    modelDeaths.predictY(modelDeaths.getTerms(), moment().format('X'))
-    - modelDeaths.predictY(modelDeaths.getTerms(), moment().subtract(1, 'day').format('X'))
-  ));
-
-  const message = `🔴 ¡AHORA! 🦠 Cada ${secondsBetweenCases} segundos una persona se contagia y cada ${minutesBetweenDeaths} minutos una persona muere por #COVID en #Chile. #QuedateEnCasa`;
-  const fbMessage = `¡AHORA! Cada ${secondsBetweenCases} segundos una persona se contagia y cada ${minutesBetweenDeaths} minutos una persona muere por #COVID en #Chile. #QuedateEnCasa`;
-  const url = 'https://covid.tiopaul.io';
-
   const csvData = data.map((row) => ([
     moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD'),
     parseInt(row.newCases, 10),
@@ -190,150 +161,18 @@ const App = () => {
     'letalidad',
   ]);
 
-  const dataDeathsCovidByReportDayKeys = {};
-  Object.keys(dataDeathsCovidByReportDay[0]).map((k) => {
-    if (k.startsWith('new_reported_')) {
-      dataDeathsCovidByReportDayKeys[k.replace('new_reported_', '')] = k;
-    }
-    return null;
-  });
+  const dataDeathsCovidByReportDayKeys = [];
+  if (dataDeathsCovidByReportDay && dataDeathsCovidByReportDay[0]) {
+    Object.keys(dataDeathsCovidByReportDay[0]).map((k) => {
+      if (k.startsWith('new_reported_')) {
+        dataDeathsCovidByReportDayKeys[k.replace('new_reported_', '')] = k;
+      }
+      return null;
+    });
+  }
 
   return (
     <div className="App">
-      <div className={`${styles.topCounter} ${styles.estimation} ${styles.widget}`}>
-        <div className={styles.counters}>
-          <Counter
-            model={modelCases}
-            now={now}
-            add={addCases}
-            onChange={(n) => {
-              if (sound && n) {
-                const snd = new Audio("data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
-                snd.volume = 0.1;
-                snd.play();
-              }
-            }}
-            subtitle="Casos totales estimados en Chile"
-          />
-          <Counter
-            model={modelDeaths}
-            showLast24H
-            now={now}
-            subtitle="Fallecidos estimados en Chile"
-          />
-          <Metric
-            n={`${Math.round(data[0].avg7DPositivity * 100)}%`}
-            subtitle="Positividad actual<br/><small>(Promedio últ 7 días)</small>"
-            color={data[0].avg7DPositivity > 0.1 ? '#c33' : '#f60'}
-          />
-          <Metric
-            n={`1 de ${Math.round(1 / ((data[7].avg7DayDeathsCovid || 0) / data[7].avg7DayAllDeaths))}`}
-            subtitle="Fallecidos es a causa de COVID<br/><small>(últ 14 días)</small>"
-            color="#c33"
-          />
-        </div>
-        <div className={styles.calculatedAt}>
-          <div className={styles.sound}>
-            { sound
-              ? <FontAwesomeIcon icon={faVolumeUp} size="3x" onClick={() => setSound(false)} />
-              : <FontAwesomeIcon icon={faVolumeMute} size="3x" onClick={() => setSound(true)} />}
-          </div>
-          Situación en Chile. Estimada en tiempo real.
-          {' '}
-          Actualizado:
-          {' '}
-          {now.format('DD/MM HH:mm:ss')}
-          <div><small>* Estimaciones en base a datos de últ 3 días</small></div>
-        </div>
-      </div>
-      <div className={`${styles.widget}`}>
-        {message}
-        <div className={styles.share}>
-          <div className={styles.btn}>
-            <TwitterShareButton url={url} title={message}>
-              <div style={{width: 30}}><TwitterIcon width={30} height={30} round /></div>
-            </TwitterShareButton>
-          </div>
-          <div className={styles.btn}>
-            <FacebookShareButton url={url} quote={fbMessage}>
-              <div style={{width: 30}}><FacebookIcon width={30} height={30} round /></div>
-            </FacebookShareButton>
-          </div>
-
-          <div className={styles.btn}>
-            <WhatsappShareButton url={url} title={fbMessage} separator=":: ">
-              <div style={{width: 30}}><WhatsappIcon width={30} height={30} round /></div>
-            </WhatsappShareButton>
-          </div>
-
-          <div className={styles.btn}>
-            <TelegramShareButton url={url} title={fbMessage}>
-              <div style={{width: 30}}><TelegramIcon width={30} height={30} round /></div>
-            </TelegramShareButton>
-          </div>
-        </div>
-      </div>
-      <div className={styles.grid2Cols1Col}>
-        <div className={`${styles.officialInfo} ${styles.lastUpdate} ${styles.widget}  ${styles.widgetSp}`}>
-          Última actualización oficial:
-          {' '}
-          {moment(data[0].updatedAt).format('DD/MM HH:mm')}
-          <br />
-          <big>
-            Casos:
-            {' '}
-            {numeral(data[0].totalCases + addCases).format(0, 0)}
-            <br />
-            Fallecidos:
-            {' '}
-            {numeral(data[0].totalDeathsCovid).format(0, 0)}
-            <br />
-            <small>
-              Fallecidos Probables (sin Test PCR +):
-              {' '}
-              {numeral(probableDeaths.n).format(0, 0)}
-              <br />
-              Fallecidos + Fallecidos Probables (sin Test PCR +):
-              {' '}
-              {numeral(data[0].totalDeathsCovid + probableDeaths.n).format(0, 0)}
-              <br />
-              <small>
-                * Fallecidos probables actualizado:
-                {' '}
-                {moment(probableDeaths.updatedAt).format('DD/MM')}
-              </small>
-            </small>
-          </big>
-        </div>
-        <div className={`${styles.officialInfo} ${styles.estimation} ${styles.widget}  ${styles.widgetSp}`}>
-          Estimación próxima actualización oficial (
-          {moment(data[0].updatedAt).add(1, 'day').format('DD/MM HH:mm')}
-          )
-          <br />
-          <big>
-            Casos:
-            {' '}
-            {numeral(estimationLastOfficialInfoCases + addCases).format(0, 0)}
-            {' (+'}
-            {numeral(estimationLastOfficialInfoCases - data[0].totalCases).format(0, 0)}
-            )
-            <br />
-            Fallecidos:
-            {' '}
-            {numeral(estimationLastOfficialInfoDeaths).format(0, 0)}
-            {' (+'}
-            {numeral(estimationLastOfficialInfoDeaths - data[0].totalDeathsCovid).format(0, 0)}
-            )
-            <div>
-              <small style={{fontSize: 10}}>
-                * El número de fallecidos se está reportando con varios días de retraso.
-                {' '}
-                <strong>Estimado 5 días</strong>
-              </small>
-            </div>
-          </big>
-        </div>
-      </div>
 
       <div className={styles.widget}>
         <RenderLineChart
@@ -364,220 +203,271 @@ const App = () => {
         />
         <br />
       </div>
+      {false
+        && (
+          <>
+            <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
+              <div className={styles.widget}>
+                <RenderLineChart
+                  data={data.slice(7)}
+                  colors={["#387", "#f60"]}
+                  yAxisScale="linear"
+                  title="Fallecidos Totales y COVID-19 Chile"
+                  xAxisType="time"
+                  xAxisStepSize={isMobile() ? 7 : 4}
+                  width={100}
+                  height={isMobile() ? 80 : 60}
+                  yAxisMin={0}
+                  xLabelsField="updatedAt"
+                  yDatasets={{
+                    'COVID': 'avg7DayDeathsCovid',
+                    'Total': 'avg7DayAllDeaths',
+                  }}
+                />
+                * Media movil 7 días
+                <br />
+                (últ 14 días datos provisorios, no se muestran últ 7 días por datos incompletos)
+              </div>
+              <div className={styles.widget}>
+                <RenderLineChart
+                  data={data.slice(7).map((x) => (
+                    {
+                      ...x,
+                      pctDeathsCovid: x.avg7DayAllDeaths
+                        ? ((x.avg7DayDeathsCovid || 0) / x.avg7DayAllDeaths) * 100
+                        : 0,
+                    }
+                  ))}
+                  colors={["#387", "#f60"]}
+                  yAxisScale="linear"
+                  title="% Fallecidos COVID sobre Total de Fallecidos Chile"
+                  xAxisType="time"
+                  xAxisStepSize={isMobile() ? 7 : 4}
+                  width={100}
+                  height={isMobile() ? 80 : 60}
+                  yAxisMin={0}
+                  xLabelsField="updatedAt"
+                  yDatasets={{
+                    '% Fallecidos COVID': 'pctDeathsCovid',
+                  }}
+                />
+                * Media movil 7 días
+                <br />
+                (últ 14 días datos provisorios, no se muestran últ 7 días por datos incompletos)
+              </div>
+              <div className={styles.widget}>
+                <RenderBarChart
+                  data={dataDeathsCovidByReportDay.slice(-14)}
+                  colors={["#c30", "#f60", "#fc0", "#093", "#06c", "#a3c"]}
+                  yAxisScale="linear"
+                  title="Fallecidos Últimos 14 días por día de reporte"
+                  xAxisType="time"
+                  xAxisStepSize={isMobile() ? 7 : 4}
+                  width={100}
+                  stack
+                  height={isMobile() ? 80 : 60}
+                  yAxisMin={0}
+                  xLabelsField="updatedAt"
+                  yDatasets={dataDeathsCovidByReportDayKeys}
+                />
+                * Haz click sobre cada fecha de reporte para agregarla o quitarla del gráfico.
+              </div>
+            </div>
+            <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
+              <div className={styles.widget}>
+                <RenderLineChart
+                  data={data.slice(0, 100)}
+                  colors={["#387"]}
+                  yAxisScale="linear"
+                  xAxisType="time"
+                  showYAxisSelector
+                  title="Total de Casos COVID-19 Chile"
+                  width={100}
+                  height={isMobile() ? 80 : 60}
+                  yAxisMin={0}
+                  xAxisStepSize={isMobile() ? 7 : 4}
+                  xLabelsField="updatedAt"
+                  yDatasets={{
+                    'Total Casos': 'totalCases',
+                  }}
+                />
+                *
+                {' '}
+                {addCases}
+                {' '}
+                casos fueron agregados el 15 de junio. No se muestran en gráfico
+                {' ' }
+                para evitar distorsión.
+              </div>
+              <div className={styles.widget}>
+                <RenderLineChart
+                  data={data.slice(0, 100).map((x) => (
+                    {
+                      ...x,
+                      updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
+                      totalDeaths: x.totalDeathsCovid,
+                    }
+                  ))}
+                  colors={["#387"]}
+                  yAxisScale="linear"
+                  title="Total de Fallecidos COVID-19 Chile"
+                  xAxisType="time"
+                  showYAxisSelector
+                  xAxisStepSize={isMobile() ? 7 : 4}
+                  width={100}
+                  height={isMobile() ? 80 : 60}
+                  yAxisMin={0}
+                  xLabelsField="updatedAt"
+                  yDatasets={{
+                    'Total Fallecidos': 'totalDeathsCovid',
+                  }}
+                />
+                * Fallecidos usa info del Registro Civil disponible en
+                {' '}
+                <a target="_blank" rel="noreferrer" href="https://github.com/MinCiencia/Datos-COVID19/blob/master/output/producto37/Defunciones.csv">Min Ciencias</a>
+              </div>
+              <div className={styles.widget}>
+                <RenderLineChart
+                  data={data.slice(0, 100).map((x) => (
+                    {
+                      ...x,
+                      updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
+                    }
+                  ))}
+                  colors={["#387"]}
+                  yAxisScale="linear"
+                  title="Letalidad COVID-19 Chile (%)"
+                  xAxisType="time"
+                  showYAxisSelector
+                  yAxisType="percentage"
+                  xAxisStepSize={isMobile() ? 7 : 4}
+                  width={100}
+                  height={isMobile() ? 80 : 60}
+                  yAxisMin={0}
+                  xLabelsField="updatedAt"
+                  yDatasets={{
+                    'Letalidad': 'lethality',
+                  }}
+                />
+                * Fallecidos usa info del Registro Civil disponible en
+                {' '}
+                <a target="_blank" rel="noreferrer" href="https://github.com/MinCiencia/Datos-COVID19/blob/master/output/producto37/Defunciones.csv">Min Ciencias</a>
+              </div>
+            </div>
 
-      <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
-        <div className={styles.widget}>
-          <RenderLineChart
-            data={data.slice(7)}
-            colors={["#387", "#f60"]}
-            yAxisScale="linear"
-            title="Fallecidos Totales y COVID-19 Chile"
-            xAxisType="time"
-            xAxisStepSize={isMobile() ? 7 : 4}
-            width={100}
-            height={isMobile() ? 80 : 60}
-            yAxisMin={0}
-            xLabelsField="updatedAt"
-            yDatasets={{
-              'COVID': 'avg7DayDeathsCovid',
-              'Total': 'avg7DayAllDeaths',
-            }}
-          />
-          * Media movil 7 días
-          <br />
-          (últ 14 días datos provisorios, no se muestran últ 7 días por datos incompletos)
-        </div>
-        <div className={styles.widget}>
-          <RenderLineChart
-            data={data.slice(7).map((x) => (
-              {
-                ...x,
-                pctDeathsCovid: x.avg7DayAllDeaths
-                  ? ((x.avg7DayDeathsCovid || 0) / x.avg7DayAllDeaths) * 100
-                  : 0,
-              }
-            ))}
-            colors={["#387", "#f60"]}
-            yAxisScale="linear"
-            title="% Fallecidos COVID sobre Total de Fallecidos Chile"
-            xAxisType="time"
-            xAxisStepSize={isMobile() ? 7 : 4}
-            width={100}
-            height={isMobile() ? 80 : 60}
-            yAxisMin={0}
-            xLabelsField="updatedAt"
-            yDatasets={{
-              '% Fallecidos COVID': 'pctDeathsCovid',
-            }}
-          />
-          * Media movil 7 días
-          <br />
-          (últ 14 días datos provisorios, no se muestran últ 7 días por datos incompletos)
-        </div>
-        <div className={styles.widget}>
-          <RenderBarChart
-            data={dataDeathsCovidByReportDay.slice(-14)}
-            colors={["#c30", "#f60", "#fc0", "#093", "#06c", "#a3c"]}
-            yAxisScale="linear"
-            title="Fallecidos Últimos 14 días por día de reporte"
-            xAxisType="time"
-            xAxisStepSize={isMobile() ? 7 : 4}
-            width={100}
-            stack
-            height={isMobile() ? 80 : 60}
-            yAxisMin={0}
-            xLabelsField="updatedAt"
-            yDatasets={dataDeathsCovidByReportDayKeys}
-          />
-          * Haz click sobre cada fecha de reporte para agregarla o quitarla del gráfico.
-        </div>
-      </div>
-      <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
-        <div className={styles.widget}>
-          <RenderLineChart
-            data={data.slice(0, 100)}
-            colors={["#387"]}
-            yAxisScale="linear"
-            xAxisType="time"
-            showYAxisSelector
-            title="Total de Casos COVID-19 Chile"
-            width={100}
-            height={isMobile() ? 80 : 60}
-            yAxisMin={0}
-            xAxisStepSize={isMobile() ? 7 : 4}
-            xLabelsField="updatedAt"
-            yDatasets={{
-              'Total Casos': 'totalCases',
-            }}
-          />
-          *
-          {' '}
-          {addCases}
-          {' '}
-          casos fueron agregados el 15 de junio. No se muestran en gráfico para evitar distorsión.
-        </div>
-        <div className={styles.widget}>
-          <RenderLineChart
-            data={data.slice(0, 100).map((x) => (
-              {
-                ...x,
-                updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
-                totalDeaths: x.totalDeathsCovid,
-              }
-            ))}
-            colors={["#387"]}
-            yAxisScale="linear"
-            title="Total de Fallecidos COVID-19 Chile"
-            xAxisType="time"
-            showYAxisSelector
-            xAxisStepSize={isMobile() ? 7 : 4}
-            width={100}
-            height={isMobile() ? 80 : 60}
-            yAxisMin={0}
-            xLabelsField="updatedAt"
-            yDatasets={{
-              'Total Fallecidos': 'totalDeathsCovid',
-            }}
-          />
-          * Fallecidos usa info del Registro Civil disponible en
-          {' '}
-          <a target="_blank" rel="noreferrer" href="https://github.com/MinCiencia/Datos-COVID19/blob/master/output/producto37/Defunciones.csv">Min Ciencias</a>
-        </div>
-        <div className={styles.widget}>
-          <RenderLineChart
-            data={data.slice(0, 100).map((x) => (
-              {
-                ...x,
-                updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
-              }
-            ))}
-            colors={["#387"]}
-            yAxisScale="linear"
-            title="Letalidad COVID-19 Chile (%)"
-            xAxisType="time"
-            showYAxisSelector
-            yAxisType="percentage"
-            xAxisStepSize={isMobile() ? 7 : 4}
-            width={100}
-            height={isMobile() ? 80 : 60}
-            yAxisMin={0}
-            xLabelsField="updatedAt"
-            yDatasets={{
-              'Letalidad': 'lethality',
-            }}
-          />
-          * Fallecidos usa info del Registro Civil disponible en
-          {' '}
-          <a target="_blank" rel="noreferrer" href="https://github.com/MinCiencia/Datos-COVID19/blob/master/output/producto37/Defunciones.csv">Min Ciencias</a>
-        </div>
-      </div>
+            <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
+              <div className={styles.widget}>
+                <RenderLineChart
+                  data={simulatedTotalCases.map((x) => (
+                    {
+                      ...x,
+                      updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
+                    }
+                  ))}
+                  colors={["#09c", "#387"]}
+                  yAxisScale="linear"
+                  xAxisType="time"
+                  showYAxisSelector
+                  title="Comparación modelo estimación - reales. Casos"
+                  width={100}
+                  height={isMobile() ? 60 : 60}
+                  xAxisStepSize={isMobile() ? 7 : 1}
+                  xLabelsField="updatedAt"
+                  yDatasets={{
+                    'Total Casos Estimados': 'estimatedTotalCases',
+                    'Total Casos Reales': 'realTotalCases',
+                  }}
+                />
+              </div>
+              <div className={styles.widget}>
+                <RenderLineChart
+                  data={simulatedTotalDeaths.map((x) => (
+                    {
+                      ...x,
+                      updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
+                    }
+                  ))}
+                  colors={["#09c", "#387"]}
+                  yAxisScale="linear"
+                  xAxisType="time"
+                  showYAxisSelector
+                  title="Comparación modelo estimación - reales. Fallecidos"
+                  width={100}
+                  height={isMobile() ? 60 : 60}
+                  xAxisStepSize={isMobile() ? 7 : 1}
+                  xLabelsField="updatedAt"
+                  yDatasets={{
+                    'Total Fallecidos Estimados': 'estimatedTotalDeaths',
+                    'Total Fallecidos Reales': 'realTotalDeaths',
+                  }}
+                />
+              </div>
+              <div className={styles.widget}>
+                <RenderLineChart
+                  data={simulatedLethality}
+                  colors={["#09c", "#387"]}
+                  yAxisScale="linear"
+                  xAxisType="time"
+                  showYAxisSelector
+                  yAxisMin={0}
+                  title="Comparación modelo estimación - reales. Letalidad"
+                  width={100}
+                  height={isMobile() ? 60 : 60}
+                  xAxisStepSize={isMobile() ? 7 : 1}
+                  xLabelsField="updatedAt"
+                  yDatasets={{
+                    'Letalidad Estimada': 'estimatedLethality',
+                    'Letalidad Real': 'realLethality',
+                  }}
+                />
+              </div>
+            </div>
+          </>
+        )}
 
-      <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
-        <div className={styles.widget}>
-          <RenderLineChart
-            data={simulatedTotalCases.map((x) => (
-              {
-                ...x,
-                updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
-              }
-            ))}
-            colors={["#09c", "#387"]}
-            yAxisScale="linear"
-            xAxisType="time"
-            showYAxisSelector
-            title="Comparación modelo estimación - reales. Casos"
-            width={100}
-            height={isMobile() ? 60 : 60}
-            xAxisStepSize={isMobile() ? 7 : 1}
-            xLabelsField="updatedAt"
-            yDatasets={{
-              'Total Casos Estimados': 'estimatedTotalCases',
-              'Total Casos Reales': 'realTotalCases',
-            }}
-          />
-        </div>
-        <div className={styles.widget}>
-          <RenderLineChart
-            data={simulatedTotalDeaths.map((x) => (
-              {
-                ...x,
-                updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
-              }
-            ))}
-            colors={["#09c", "#387"]}
-            yAxisScale="linear"
-            xAxisType="time"
-            showYAxisSelector
-            title="Comparación modelo estimación - reales. Fallecidos"
-            width={100}
-            height={isMobile() ? 60 : 60}
-            xAxisStepSize={isMobile() ? 7 : 1}
-            xLabelsField="updatedAt"
-            yDatasets={{
-              'Total Fallecidos Estimados': 'estimatedTotalDeaths',
-              'Total Fallecidos Reales': 'realTotalDeaths',
-            }}
-          />
-        </div>
-        <div className={styles.widget}>
-          <RenderLineChart
-            data={simulatedLethality}
-            colors={["#09c", "#387"]}
-            yAxisScale="linear"
-            xAxisType="time"
-            showYAxisSelector
-            yAxisMin={0}
-            title="Comparación modelo estimación - reales. Letalidad"
-            width={100}
-            height={isMobile() ? 60 : 60}
-            xAxisStepSize={isMobile() ? 7 : 1}
-            xLabelsField="updatedAt"
-            yDatasets={{
-              'Letalidad Estimada': 'estimatedLethality',
-              'Letalidad Real': 'realLethality',
-            }}
-          />
-        </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          data={regionesData['13'].data}
+          colors={["#09c", "#387"]}
+          yAxisScale="linear"
+          xAxisType="time"
+          showYAxisSelector
+          yAxisMin={0}
+          title="Casos activos - RM"
+          width={100}
+          height={isMobile() ? 60 : 30}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Casos activos': 'activeCases',
+          }}
+        />
+      </div>
+      <div className={styles.grid3Cols1Col}>
+        {Object.keys(comunasData).map((c) => (
+          comunasData[c].regionCode === '13'
+            && (
+              <div className={styles.widget} key={c}>
+                <RenderLineChart
+                  data={comunasData[c].data}
+                  colors={["#09c", "#387"]}
+                  yAxisScale="log"
+                  xAxisType="time"
+                  showYAxisSelector
+                  yAxisMin={0}
+                  title={`Casos activos - ${comunasData[c].label}`}
+                  width={33}
+                  height={isMobile() ? 60 : 25}
+                  xAxisStepSize={isMobile() ? 7 : 1}
+                  xLabelsField="updatedAt"
+                  yDatasets={{
+                    'Casos': 'activeCases',
+                  }}
+                />
+              </div>
+            )
+        ))}
+
       </div>
 
       <div className={styles.widget}>
