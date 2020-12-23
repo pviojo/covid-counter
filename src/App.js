@@ -1,7 +1,4 @@
 /* eslint-disable no-shadow */
-/* eslint-disable object-curly-spacing */
-/* eslint-disable quote-props */
-/* eslint-disable quotes */
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import numeral from 'numeral';
@@ -185,7 +182,7 @@ const App = () => {
               recommended: 10,
             }
           ))}
-          colors={["#387", "#f60", "#39f", "#c03"]}
+          colors={['#387', '#f60', '#39f', '#c03']}
           yAxisScale="linear"
           title="% Positividad PCR (Nuevos casos / Test reportados)"
           xAxisType="time"
@@ -210,7 +207,7 @@ const App = () => {
               <div className={styles.widget}>
                 <RenderLineChart
                   data={data.slice(7)}
-                  colors={["#387", "#f60"]}
+                  colors={['#387', '#f60']}
                   yAxisScale="linear"
                   title="Fallecidos Totales y COVID-19 Chile"
                   xAxisType="time"
@@ -220,8 +217,8 @@ const App = () => {
                   yAxisMin={0}
                   xLabelsField="updatedAt"
                   yDatasets={{
-                    'COVID': 'avg7DayDeathsCovid',
-                    'Total': 'avg7DayAllDeaths',
+                    COVID: 'avg7DayDeathsCovid',
+                    Total: 'avg7DayAllDeaths',
                   }}
                 />
                 * Media movil 7 días
@@ -238,7 +235,7 @@ const App = () => {
                         : 0,
                     }
                   ))}
-                  colors={["#387", "#f60"]}
+                  colors={['#387', '#f60']}
                   yAxisScale="linear"
                   title="% Fallecidos COVID sobre Total de Fallecidos Chile"
                   xAxisType="time"
@@ -258,7 +255,7 @@ const App = () => {
               <div className={styles.widget}>
                 <RenderBarChart
                   data={dataDeathsCovidByReportDay.slice(-14)}
-                  colors={["#c30", "#f60", "#fc0", "#093", "#06c", "#a3c"]}
+                  colors={['#c30', '#f60', '#fc0', '#093', '#06c', '#a3c']}
                   yAxisScale="linear"
                   title="Fallecidos Últimos 14 días por día de reporte"
                   xAxisType="time"
@@ -277,7 +274,7 @@ const App = () => {
               <div className={styles.widget}>
                 <RenderLineChart
                   data={data.slice(0, 100)}
-                  colors={["#387"]}
+                  colors={['#387']}
                   yAxisScale="linear"
                   xAxisType="time"
                   showYAxisSelector
@@ -308,7 +305,7 @@ const App = () => {
                       totalDeaths: x.totalDeathsCovid,
                     }
                   ))}
-                  colors={["#387"]}
+                  colors={['#387']}
                   yAxisScale="linear"
                   title="Total de Fallecidos COVID-19 Chile"
                   xAxisType="time"
@@ -334,7 +331,7 @@ const App = () => {
                       updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
                     }
                   ))}
-                  colors={["#387"]}
+                  colors={['#387']}
                   yAxisScale="linear"
                   title="Letalidad COVID-19 Chile (%)"
                   xAxisType="time"
@@ -346,7 +343,7 @@ const App = () => {
                   yAxisMin={0}
                   xLabelsField="updatedAt"
                   yDatasets={{
-                    'Letalidad': 'lethality',
+                    Letalidad: 'lethality',
                   }}
                 />
                 * Fallecidos usa info del Registro Civil disponible en
@@ -364,7 +361,7 @@ const App = () => {
                       updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
                     }
                   ))}
-                  colors={["#09c", "#387"]}
+                  colors={['#09c', '#387']}
                   yAxisScale="linear"
                   xAxisType="time"
                   showYAxisSelector
@@ -387,7 +384,7 @@ const App = () => {
                       updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
                     }
                   ))}
-                  colors={["#09c", "#387"]}
+                  colors={['#09c', '#387']}
                   yAxisScale="linear"
                   xAxisType="time"
                   showYAxisSelector
@@ -405,7 +402,7 @@ const App = () => {
               <div className={styles.widget}>
                 <RenderLineChart
                   data={simulatedLethality}
-                  colors={["#09c", "#387"]}
+                  colors={['#09c', '#387']}
                   yAxisScale="linear"
                   xAxisType="time"
                   showYAxisSelector
@@ -428,7 +425,7 @@ const App = () => {
       <div className={styles.widget}>
         <RenderLineChart
           data={regionesData['13'].data}
-          colors={["#09c", "#387"]}
+          colors={['#09c', '#387']}
           yAxisScale="linear"
           xAxisType="time"
           showYAxisSelector
@@ -450,18 +447,18 @@ const App = () => {
               <div className={styles.widget} key={c}>
                 <RenderLineChart
                   data={comunasData[c].data}
-                  colors={["#09c", "#387"]}
-                  yAxisScale="log"
+                  colors={['#09c', '#387']}
+                  yAxisScale="linear"
                   xAxisType="time"
                   showYAxisSelector
                   yAxisMin={0}
-                  title={`Casos activos - ${comunasData[c].label}`}
+                  title={`Prevalencia Casos activos - ${comunasData[c].label} (pob: ${numeral(comunasData[c].population).format('0,0')} hab)`}
                   width={33}
                   height={isMobile() ? 60 : 25}
                   xAxisStepSize={isMobile() ? 7 : 1}
                   xLabelsField="updatedAt"
                   yDatasets={{
-                    'Casos': 'activeCases',
+                    'Prevalencia 100.000 hab': 'prevalenceActiveCases',
                   }}
                 />
               </div>

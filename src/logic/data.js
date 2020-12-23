@@ -111,11 +111,12 @@ const getComunasData = async () => {
         // totalCases: t,
         // newCases: t - prevCases,
         activeCases: parseInt(row[i + 5], 10),
+        prevalenceActiveCases: parseInt(row[i + 5], 10) / (r.population / 100000),
       });
       // prevCases = t;
       return null;
     });
-    rsp[r.comunaCode] = r;
+    rsp[r.label] = r;
     return null;
   });
   return rsp;
@@ -155,7 +156,6 @@ const getRegionesData = (comunasData) => {
 const getDataDeathsCovid = async () => {
   const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto37/Defunciones_deis.csv');
   const confirmedRows = rows.filter((r) => r[0] === 'confirmados');
-  // const dates = confirmedRows.map((x) => x[1]);
   const deathsCovid = confirmedRows.map((row) => ({
     updatedAt: moment(row[1]).subtract(3, 'hours').format(),
     newDeathsCovid: parseInt(row.slice(3).reduce((acc, current) => acc + current, 0) || 0, 10),
@@ -165,26 +165,6 @@ const getDataDeathsCovid = async () => {
     deathsCovid,
     deathsCovidByReportDay,
   };
-  /*
-  deathsCovidByReportDay = dates.map((date, index) => {
-    const data = {
-      updatedAt: moment(date).format(),
-    };
-    let prevAccReported = 0;
-    allRows.slice(-6).map((r) => {
-      const accReported = parseInt(r[index + 1] || 0, 10) + 0;
-      data[`reported_${r[0].replace('Defunciones_', '').replace(/-/gi, '')}`] = accReported;
-      data[`new_reported_${r[0].replace('Defunciones_', '').replace(/-/gi, '')}`] =
-        accReported - prevAccReported;
-      prevAccReported = accReported;
-      return null;
-    });
-    return data;
-  });
-  return {
-    deathsCovid,
-    deathsCovidByReportDay,
-  }; */
 };
 
 export const getData = async () => {
