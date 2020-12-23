@@ -452,7 +452,7 @@ const App = () => {
                   xAxisType="time"
                   showYAxisSelector
                   yAxisMin={0}
-                  title={`Prevalencia Casos activos - ${comunasData[c].label} (pob: ${numeral(comunasData[c].population).format('0,0')} hab)`}
+                  title={`Prevalencia Casos activos - ${comunasData[c].label} <br/><small>(pob: ${numeral(comunasData[c].population).format('0,0')} hab)</small>`}
                   width={33}
                   height={isMobile() ? 60 : 25}
                   xAxisStepSize={isMobile() ? 7 : 1}

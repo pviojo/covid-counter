@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from 'react';
@@ -149,7 +150,7 @@ export const RenderChart = ({
   };
   return (
     <div className={styles.cnt}>
-      <div className={styles.title}>{title}</div>
+      <div className={styles.title} dangerouslySetInnerHTML={{ __html: title }} />
       {showYAxisSelector
         && (
           <div className={styles.tools}>
