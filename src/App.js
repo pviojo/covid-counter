@@ -16,6 +16,7 @@ import { RenderLineChart, RenderBarChart } from './components/Charts';
 
 import { generatePolynomialRegression } from './logic/parameters';
 import { getData } from './logic/data';
+import { maxWeekly, delta } from './helpers/data';
 
 import './global.scss';
 import styles from './index.module.scss';
@@ -26,7 +27,6 @@ const App = () => {
   const addCases = 0;
 
   const [loading, setLoading] = useState(true);
-  const [, setNow] = useState(moment());
   const [data, setData] = useState(null);
   const [, setProbableDeaths] = useState(null);
   const [comunasData, setComunasData] = useState(null);
@@ -37,14 +37,6 @@ const App = () => {
   const [modelLethality, setModelLethality] = useState(null);
   useEffect(() => {
     const tsParam = (new URLSearchParams(window.location.search.slice(1))).get('ts');
-    if (tsParam) {
-      setNow(moment(tsParam));
-    } else {
-      window.setInterval(() => {
-        setNow(moment());
-      }, 1000);
-    }
-
     const initData = (covidData) => {
       const filteredCovidData = !tsParam
         ? covidData
@@ -424,19 +416,42 @@ const App = () => {
 
       <div className={styles.widget}>
         <RenderLineChart
-          data={regionesData['13'].data}
+          data={maxWeekly(regionesData['13'].data, 'activeCases')}
           colors={['#09c', '#387']}
           yAxisScale="linear"
-          xAxisType="time"
+          xAxisType="linear"
           showYAxisSelector
           yAxisMin={0}
-          title="Casos activos - RM"
+          title="Casos activos - RM (máx por semana)"
           width={100}
-          height={isMobile() ? 60 : 30}
+          height={isMobile() ? 60 : 25}
           xAxisStepSize={isMobile() ? 7 : 1}
           xLabelsField="updatedAt"
           yDatasets={{
             'Casos activos': 'activeCases',
+          }}
+        />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
+          data={
+            delta(
+              maxWeekly(regionesData['13'].data, 'activeCases'),
+              2,
+              'activeCases',
+            )
+          }
+          colors={['#09c', '#387']}
+          yAxisScale="linear"
+          yAxisType="percentage"
+          xAxisType="linear"
+          title="Variación casos activos - RM (2 semanas)"
+          width={100}
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Var Casos activos (2 sem)': 'activeCases',
           }}
         />
       </div>
