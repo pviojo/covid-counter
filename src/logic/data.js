@@ -188,6 +188,8 @@ export const getData = async () => {
   data = accumulate(data, 'testsPCR', 'totalTestsPCR');
   data = avgLast(data, 7, 'newDeathsCovid', 'avg7DayDeathsCovid');
   data = avgLast(data, 7, 'positivity', 'avg7DPositivity');
+  data = avgLast(data, 7, 'testsPCR', 'avg7DtestsPCR');
+  data = avgLast(data, 14, 'positivity', 'avg14DPositivity');
 
   let totalCasesSinceApr9 = 0;
   data = data.map((row) => {

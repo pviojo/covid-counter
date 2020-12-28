@@ -170,24 +170,52 @@ const App = () => {
               ...x,
               positivity: x.positivity ? x.positivity * 100 : null,
               avg7DPositivity: x.positivity ? x.avg7DPositivity * 100 : null,
-              accumulatedPositivity: x.accumulatedPositivity ? x.accumulatedPositivity * 100 : null,
-              recommended: 10,
+              avg14DPositivity: x.positivity ? x.avg14DPositivity * 100 : null,
+              recommended: 5,
             }
           ))}
           colors={['#387', '#f60', '#39f', '#c03']}
-          yAxisScale="linear"
+          yAxisScale="log"
           title="% Positividad PCR (Nuevos casos / Test reportados)"
           xAxisType="time"
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
+          showYAxisSelector
           height={isMobile() ? 80 : 25}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
             '% Test PCR Positivos': 'positivity',
             '% Test PCR Positivos (Media Móvil 7D)': 'avg7DPositivity',
-            '% Test PCR Positivos Acumulado': 'accumulatedPositivity',
-            'Recomendado (10%)': 'recommended',
+            '% Test PCR Positivos (Media Móvil 14D)': 'avg14DPositivity',
+            'Recomendado (5%)': 'recommended',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          data={data.map((x) => (
+            {
+              ...x,
+              positivity: x.positivity ? x.positivity * 100 : null,
+              avg7DPositivity: x.positivity ? x.avg7DPositivity * 100 : null,
+              avg14DPositivity: x.positivity ? x.avg14DPositivity * 100 : null,
+              recommended: 5,
+            }
+          ))}
+          colors={['#387', '#f60', '#39f', '#c03']}
+          yAxisScale="linear"
+          title="Test PCR reportados"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Test PCR (Media Móvil 7D)': 'avg7DtestsPCR',
           }}
         />
         <br />
