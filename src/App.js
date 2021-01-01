@@ -4,6 +4,7 @@ import moment from 'moment';
 import numeral from 'numeral';
 // eslint-disable-next-line
 import numerales from "numeral/locales/es";
+import Select from 'react-select';
 import ReactLoading from 'react-loading';
 import isMobile from 'is-mobile';
 import { CSVLink } from 'react-csv';
@@ -26,6 +27,7 @@ const App = () => {
 
   const addCases = 0;
 
+  const [selectedRegion, setSelectedRegion] = useState('13');
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [, setProbableDeaths] = useState(null);
@@ -468,16 +470,39 @@ const App = () => {
             </div>
           </>
         )}
-
+      <div className={styles.select}>
+        <div className={styles.label}>
+          Elige una región para ver detalles
+        </div>
+        <Select
+          className="select"
+          classNamePrefix="select"
+          isSearchable
+          name="color"
+          defaultValue={{
+            value: regionesData[selectedRegion].regionCode,
+            label: regionesData[selectedRegion].region,
+          }}
+          onChange={(e) => setSelectedRegion(e.value)}
+          options={
+            Object.values(regionesData).sort(
+              (a, b) => ((a.region > b.region) ? 1 : -1),
+            ).map((r) => ({
+              value: r.regionCode,
+              label: r.region,
+            }))
+          }
+        />
+      </div>
       <div className={styles.widget}>
         <RenderLineChart
-          data={maxWeekly(regionesData['13'].data, 'activeCases')}
+          data={regionesData[selectedRegion].data}
           colors={['#09c', '#387']}
           yAxisScale="linear"
           xAxisType="linear"
           showYAxisSelector
           yAxisMin={0}
-          title="Casos activos - RM (máx por semana)"
+          title={`Casos activos - ${regionesData[selectedRegion].region}`}
           width={100}
           height={isMobile() ? 60 : 25}
           xAxisStepSize={isMobile() ? 7 : 1}
@@ -491,7 +516,7 @@ const App = () => {
         <RenderBarChart
           data={
             delta(
-              maxWeekly(regionesData['13'].data, 'activeCases'),
+              maxWeekly(regionesData[selectedRegion].data, 'activeCases'),
               2,
               'activeCases',
             )
@@ -500,7 +525,7 @@ const App = () => {
           yAxisScale="linear"
           yAxisType="percentage"
           xAxisType="linear"
-          title="Variación casos activos - RM (2 semanas)"
+          title={`Variación Casos activos - ${regionesData[selectedRegion].region} (2 semanas)`}
           width={100}
           height={isMobile() ? 60 : 25}
           xAxisStepSize={isMobile() ? 7 : 1}
@@ -512,7 +537,7 @@ const App = () => {
       </div>
       <div className={styles.grid3Cols1Col}>
         {Object.keys(comunasData).map((c) => (
-          comunasData[c].regionCode === '13'
+          comunasData[c].regionCode === selectedRegion
             && (
               <div className={styles.widget} key={c}>
                 <RenderLineChart
@@ -561,18 +586,6 @@ const App = () => {
               <th className="right">
                 Total de Casos
               </th>
-              <th className="right">
-                Total de Fallecidos nuevos
-              </th>
-              <th className="right">
-                Total de Fallecidos acumulados
-              </th>
-              <th className="right">
-                Prom fallecidos diarios por millón (ult 7 d)
-              </th>
-              <th className="center">
-                Letalidad (%)
-              </th>
             </tr>
           </thead>
           <tbody>
@@ -581,10 +594,6 @@ const App = () => {
                 <td>{moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD')}</td>
                 <td className="right">{row.newCases}</td>
                 <td className="right">{row.totalCases}</td>
-                <td className="right">{row.newDeathsCovid || 0}</td>
-                <td className="right">{row.totalDeathsCovid}</td>
-                <td className="right">{numeral(row.avg7DayDeathsCovid ? row.avg7DayDeathsCovid / 18 : null).format('0,0.00')}</td>
-                <td className="center">{row.lethality && Math.round(row.lethality * 100 * 100, 2) / 100}</td>
               </tr>
             ))}
           </tbody>
