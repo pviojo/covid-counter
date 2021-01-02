@@ -164,7 +164,33 @@ const App = () => {
 
   return (
     <div className="App">
-
+      <div className={styles.widget}>
+        <RenderLineChart
+          data={data.map((x) => (
+            {
+              ...x,
+              last7DNewCases: x.avg7DNewCases * 7,
+              last14DNewCases: x.avg14DNewCases * 14,
+            }
+          ))}
+          colors={['#387', '#f60', '#39f', '#c03']}
+          yAxisScale="linear"
+          title="Casos nuevos"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Casos nuevos': 'newCases',
+            'Casos nuevos (ult 7D)': 'last7DNewCases',
+            'Casos nuevos (ult 14D)': 'last14DNewCases',
+          }}
+        />
+        <br />
+      </div>
       <div className={styles.widget}>
         <RenderLineChart
           data={data.map((x) => (
@@ -222,33 +248,7 @@ const App = () => {
         />
         <br />
       </div>
-      <div className={styles.widget}>
-        <RenderLineChart
-          data={data.map((x) => (
-            {
-              ...x,
-              last7DNewCases: x.avg7DNewCases * 7,
-              last14DNewCases: x.avg14DNewCases * 14,
-            }
-          ))}
-          colors={['#387', '#f60', '#39f', '#c03']}
-          yAxisScale="linear"
-          title="Casos nuevos"
-          xAxisType="time"
-          xAxisStepSize={isMobile() ? 7 : 4}
-          width={100}
-          showYAxisSelector
-          height={isMobile() ? 80 : 25}
-          yAxisMin={0}
-          xLabelsField="updatedAt"
-          yDatasets={{
-            'Casos nuevos': 'newCases',
-            'Casos nuevos (ult 7D)': 'last7DNewCases',
-            'Casos nuevos (ult 14D)': 'last14DNewCases',
-          }}
-        />
-        <br />
-      </div>
+      
       {false
         && (
           <>
