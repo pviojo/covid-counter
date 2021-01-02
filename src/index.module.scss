@@ -23,7 +23,8 @@ body {
   border:none;
   color:#fff;
 }
-:global(.select .select__single-value){
+:global(.select .select__single-value),
+:global(.select .select__value-container--has-value .select__input){
   color:#fff;
 }
 :global(.select .select__menu){
