@@ -548,8 +548,8 @@ const App = () => {
                   yAxisMin={0}
                   title={`${comunasData[c].label}<br/><small>Prevalencia Casos activos</small><br/><small>(pob: ${numeral(comunasData[c].population).format('0,0')} hab)</small>`}
                   width={33}
-                  height={isMobile() ? 60 : 25}
-                  xAxisStepSize={isMobile() ? 7 : 1}
+                  height={isMobile() ? 25 : 25}
+                  xAxisStepSize={isMobile() ? 14 : 1}
                   xLabelsField="updatedAt"
                   yDatasets={{
                     'Prevalencia 100.000 hab': 'prevalenceActiveCases',
