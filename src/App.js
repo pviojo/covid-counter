@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-shadow */
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
@@ -33,6 +34,7 @@ const App = () => {
   const [, setProbableDeaths] = useState(null);
   const [comunasData, setComunasData] = useState(null);
   const [regionesData, setRegionesData] = useState(null);
+  const [newCasesRegionData, setNewCasesRegionData] = useState(null);
   const [dataDeathsCovidByReportDay, setDataDeathsCovidByReportDay] = useState(null);
   const [modelCases, setModelCases] = useState(null);
   const [modelDeaths, setModelDeaths] = useState(null);
@@ -90,6 +92,7 @@ const App = () => {
         dailyData: loadedData,
         comunasData,
         regionesData,
+        newCasesRegionData,
         dataDeathsCovidByReportDay,
         probableDeaths,
       } = await getData();
@@ -97,6 +100,7 @@ const App = () => {
       setProbableDeaths(probableDeaths);
       setComunasData(comunasData);
       setRegionesData(regionesData);
+      setNewCasesRegionData(newCasesRegionData);
       setDataDeathsCovidByReportDay(dataDeathsCovidByReportDay);
       setLoading(false);
     };
@@ -187,6 +191,33 @@ const App = () => {
             'Casos nuevos': 'newCases',
             'Casos nuevos (ult 7D)': 'last7DNewCases',
             'Casos nuevos (ult 14D)': 'last14DNewCases',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
+          data={data.map((x) => (
+            {
+              ...x,
+              percentAvg7DNewCasesWithSymptoms: parseInt((x.avg7DNewCasesWithSymptoms / (x.avg7DNewCasesWithSymptoms + x.avg7DNewCasesWithoutSymptoms)) * 100, 10),
+              percentAvg7DNewCasesWithoutSymptoms: parseInt((x.avg7DNewCasesWithoutSymptoms / (x.avg7DNewCasesWithSymptoms + x.avg7DNewCasesWithoutSymptoms)) * 100, 10),
+            }
+          ))}
+          colors={['#387', '#999']}
+          yAxisScale="linear"
+          title="% Casos nuevos con y sin sintomas (promedio ult 7d)"
+          stack
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Con sintomas': 'percentAvg7DNewCasesWithSymptoms',
+            'Sin sintomas': 'percentAvg7DNewCasesWithoutSymptoms',
           }}
         />
         <br />
@@ -496,7 +527,7 @@ const App = () => {
       <div className={styles.widget}>
         <RenderLineChart
           data={regionesData[selectedRegion].data}
-          colors={['#09c', '#387']}
+          colors={['#09c']}
           yAxisScale="linear"
           xAxisType="linear"
           showYAxisSelector
@@ -508,6 +539,46 @@ const App = () => {
           xLabelsField="updatedAt"
           yDatasets={{
             'Casos activos': 'activeCases',
+          }}
+        />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
+          data={newCasesRegionData[selectedRegion].data}
+          colors={['#09c', '#999']}
+          yAxisScale="linear"
+          xAxisType="linear"
+          showYAxisSelector
+          yAxisMin={0}
+          title={`Casos nuevos - ${regionesData[selectedRegion].region}`}
+          width={100}
+          stack
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Con sintomas': 'newCaseWithSymptoms',
+            'Sin sintomas': 'newCaseWithoutSymptoms',
+          }}
+        />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
+          data={newCasesRegionData[selectedRegion].data}
+          colors={['#09c', '#999']}
+          yAxisScale="linear"
+          xAxisType="linear"
+          showYAxisSelector
+          yAxisMin={0}
+          stack
+          title={`Casos nuevos (% del total)- ${regionesData[selectedRegion].region}`}
+          width={100}
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Con sintomas': 'percentNewCaseWithSymptoms',
+            'Sin sintomas': 'percentNewCaseWithoutSymptoms',
           }}
         />
       </div>

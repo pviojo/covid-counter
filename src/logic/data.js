@@ -2,6 +2,25 @@
 import axios from 'axios';
 import moment from 'moment';
 
+const nameCodeRegion = {
+  'Arica y Parinacota': '15',
+  Tarapacá: '01',
+  Antofagasta: '02',
+  Atacama: '03',
+  Coquimbo: '04',
+  Valparaíso: '05',
+  Metropolitana: '13',
+  'O’Higgins': '06',
+  Maule: '07',
+  Ñuble: '16',
+  Biobío: '08',
+  Araucanía: '09',
+  'Los Ríos': '14',
+  'Los Lagos': '10',
+  Aysén: '11',
+  Magallanes: '12',
+};
+
 const readCsv = async (url) => {
   const rows = await axios.get(url)
     .then((rsp) => rsp.data)
@@ -57,10 +76,14 @@ const getDataCovid = async () => {
     testsPCR: row.slice(1).reduce((a, i) => a + (parseInt(i, 10) || 0), 0),
   }));
   const dates = (rows[0]).slice(1);
+  const dataNewCasesWithSymptoms = (rows[1]).slice(1);
+  const dataNewCasesWithoutSymptoms = (rows[6]).slice(1);
   const dataNewCases = (rows[7]).slice(1);
   const rsp = dates.map((date, index) => {
     const d = moment(date).subtract(3, 'hours').format();
     const newCases = parseInt(dataNewCases[index] || 0, 10);
+    const newCasesWithSymptoms = parseInt(dataNewCasesWithSymptoms[index] || 0, 10);
+    const newCasesWithoutSymptoms = parseInt(dataNewCasesWithoutSymptoms[index] || 0, 10);
     const testsPCR = parseInt(
       (casesPcr.find((x) => x.updatedAt === d) || { testsPCR: 0 }).testsPCR,
       10,
@@ -69,6 +92,8 @@ const getDataCovid = async () => {
     return {
       updatedAt: d,
       newCases,
+      newCasesWithSymptoms,
+      newCasesWithoutSymptoms,
       testsPCR,
       positivity,
     };
@@ -122,7 +147,7 @@ const getComunasData = async () => {
   return rsp;
 };
 
-const getRegionesData = (comunasData) => {
+const getRegionesData = async (comunasData) => {
   const rsp = {};
   Object.values(comunasData).map((comuna) => {
     const { regionCode } = comuna;
@@ -146,8 +171,72 @@ const getRegionesData = (comunasData) => {
     });
     return null;
   });
+
   Object.keys(rsp).map((k) => {
-    rsp[k].data = Object.values(rsp[k].data);
+    rsp[k].data = Object.values(rsp[k].data).sort((a, b) => (a.updatedAt < b.updatedAt ? -1 : 1));
+    return null;
+  });
+  return rsp;
+};
+
+const getNewCasesRegionData = async () => {
+  const rsp = {};
+  let rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto27/CasosNuevosSinSintomas.csv');
+  let dates = rows[0].slice(1);
+  rows = rows.slice(1, -1);
+  rows.map((row) => {
+    dates.map((d, i) => {
+      const regionCode = nameCodeRegion[row[0]];
+      if (!rsp[regionCode]) {
+        rsp[regionCode] = { data: {} };
+        return null;
+      }
+      if (!rsp[regionCode].data[d]) {
+        rsp[regionCode].data[d] = {
+          updatedAt: d,
+          newCases: 0,
+          newCaseWithSymptoms: 0,
+          newCaseWithoutSymptoms: 0,
+        };
+      }
+      rsp[regionCode].data[d].newCaseWithoutSymptoms = parseInt(row[i + 1], 10);
+      rsp[regionCode].data[d].newCases += parseInt(row[i + 1], 10);
+      return null;
+    });
+    return null;
+  });
+
+  rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto26/CasosNuevosConSintomas.csv');
+  dates = rows[0].slice(1);
+  rows = rows.slice(1, -1);
+  rows.map((row) => {
+    dates.map((d, i) => {
+      const regionCode = nameCodeRegion[row[0]];
+      if (!rsp[regionCode]) {
+        rsp[regionCode] = { data: {} };
+        return null;
+      }
+      if (!rsp[regionCode].data[d]) {
+        rsp[regionCode].data[d] = {
+          updatedAt: d,
+          newCases: 0,
+          newCaseWithSymptoms: 0,
+          newCaseWithoutSymptoms: 0,
+        };
+      }
+      rsp[regionCode].data[d].newCaseWithSymptoms = parseInt(row[i + 1], 10);
+      rsp[regionCode].data[d].newCases += parseInt(row[i + 1], 10);
+      // eslint-disable-next-line max-len
+      rsp[regionCode].data[d].percentNewCaseWithoutSymptoms = rsp[regionCode].data[d].newCaseWithoutSymptoms / rsp[regionCode].data[d].newCases;
+      // eslint-disable-next-line max-len
+      rsp[regionCode].data[d].percentNewCaseWithSymptoms = rsp[regionCode].data[d].newCaseWithSymptoms / rsp[regionCode].data[d].newCases;
+      return null;
+    });
+    return null;
+  });
+
+  Object.keys(rsp).map((k) => {
+    rsp[k].data = Object.values(rsp[k].data).sort((a, b) => (a.updatedAt < b.updatedAt ? -1 : 1));
     return null;
   });
   return rsp;
@@ -188,6 +277,13 @@ export const getData = async () => {
   data = accumulate(data, 'testsPCR', 'totalTestsPCR');
   data = avgLast(data, 7, 'newCases', 'avg7DNewCases');
   data = avgLast(data, 14, 'newCases', 'avg14DNewCases');
+
+  data = avgLast(data, 7, 'newCasesWithSymptoms', 'avg7DNewCasesWithSymptoms');
+  data = avgLast(data, 14, 'newCasesWithSymptoms', 'avg14DNewCasesWithSymptoms');
+
+  data = avgLast(data, 7, 'newCasesWithoutSymptoms', 'avg7DNewCasesWithoutSymptoms');
+  data = avgLast(data, 14, 'newCasesWithoutSymptoms', 'avg14DNewCasesWithoutSymptoms');
+
   data = avgLast(data, 7, 'newDeathsCovid', 'avg7DayDeathsCovid');
   data = avgLast(data, 7, 'positivity', 'avg7DPositivity');
   data = avgLast(data, 7, 'testsPCR', 'avg7DtestsPCR');
@@ -220,11 +316,14 @@ export const getData = async () => {
   }));
 
   const comunasData = await getComunasData();
-
+  const regionesData = await getRegionesData(comunasData);
+  const newCasesRegionData = await getNewCasesRegionData();
+  console.log('newCasesRegionData', newCasesRegionData);
   return {
     dailyData: data,
     comunasData,
-    regionesData: getRegionesData(comunasData),
+    regionesData,
+    newCasesRegionData,
     dataDeathsCovidByReportDay,
     probableDeaths: {
       n: 3069,
