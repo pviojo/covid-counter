@@ -206,7 +206,7 @@ const App = () => {
           ))}
           colors={['#387', '#999']}
           yAxisScale="linear"
-          title="% Casos nuevos con y sin sintomas (promedio ult 7d)"
+          title="% Casos nuevos con y sin síntomas (promedio ult 7d)"
           stack
           xAxisType="time"
           xAxisStepSize={isMobile() ? 7 : 4}
@@ -216,8 +216,8 @@ const App = () => {
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
-            'Con sintomas': 'percentAvg7DNewCasesWithSymptoms',
-            'Sin sintomas': 'percentAvg7DNewCasesWithoutSymptoms',
+            'Con síntomas': 'percentAvg7DNewCasesWithSymptoms',
+            'Sin síntomas': 'percentAvg7DNewCasesWithoutSymptoms',
           }}
         />
         <br />
@@ -557,8 +557,8 @@ const App = () => {
           xAxisStepSize={isMobile() ? 7 : 1}
           xLabelsField="updatedAt"
           yDatasets={{
-            'Con sintomas': 'newCaseWithSymptoms',
-            'Sin sintomas': 'newCaseWithoutSymptoms',
+            'Con síntomas': 'newCaseWithSymptoms',
+            'Sin síntomas': 'newCaseWithoutSymptoms',
           }}
         />
       </div>
@@ -577,8 +577,8 @@ const App = () => {
           xAxisStepSize={isMobile() ? 7 : 1}
           xLabelsField="updatedAt"
           yDatasets={{
-            'Con sintomas': 'percentNewCaseWithSymptoms',
-            'Sin sintomas': 'percentNewCaseWithoutSymptoms',
+            'Con síntomas': 'percentNewCaseWithSymptoms',
+            'Sin síntomas': 'percentNewCaseWithoutSymptoms',
           }}
         />
       </div>
