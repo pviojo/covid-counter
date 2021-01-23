@@ -318,7 +318,7 @@ export const getData = async () => {
   const comunasData = await getComunasData();
   const regionesData = await getRegionesData(comunasData);
   const newCasesRegionData = await getNewCasesRegionData();
-  console.log('newCasesRegionData', newCasesRegionData);
+
   return {
     dailyData: data,
     comunasData,
