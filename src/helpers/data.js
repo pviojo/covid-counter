@@ -24,7 +24,7 @@ export const delta = (data, offset, field) => {
     }
     return {
       ...r,
-      [field]: r[field] / data[i - offset][field] - 1,
+      [field]: Math.round((r[field] / data[i - offset][field] - 1) * 100) / 100,
     };
   }).filter((x) => !!x);
   return rsp;

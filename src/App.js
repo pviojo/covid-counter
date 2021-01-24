@@ -165,7 +165,6 @@ const App = () => {
       return null;
     });
   }
-
   return (
     <div className="App">
       <div className={styles.widget}>
@@ -197,6 +196,30 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderBarChart
+          data={
+            delta(
+              data,
+              7,
+              'newCases',
+            ).slice(30)
+          }
+          colors={['#09c', '#387']}
+          yAxisScale="log"
+          yAxisType="percentage"
+          xAxisType="time"
+          showYAxisSelector
+          title="Variación Casos nuevos (7 días)"
+          width={100}
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Var Casos activos (7 días)': 'newCases',
+          }}
+        />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
           data={data.map((x) => (
             {
               ...x,
@@ -204,7 +227,7 @@ const App = () => {
               percentAvg7DNewCasesWithoutSymptoms: parseInt((x.avg7DNewCasesWithoutSymptoms / (x.avg7DNewCasesWithSymptoms + x.avg7DNewCasesWithoutSymptoms)) * 100, 10),
             }
           ))}
-          colors={['#387', '#999']}
+          colors={['#09c', '#999']}
           yAxisScale="linear"
           title="% Casos nuevos con y sin síntomas (promedio ult 7d)"
           stack
@@ -544,6 +567,29 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderBarChart
+          data={
+            delta(
+              maxWeekly(regionesData[selectedRegion].data, 'activeCases'),
+              2,
+              'activeCases',
+            )
+          }
+          colors={['#09c', '#387']}
+          yAxisScale="linear"
+          yAxisType="percentage"
+          xAxisType="linear"
+          title={`Variación Casos activos - ${regionesData[selectedRegion].region} (2 semanas)`}
+          width={100}
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Var Casos activos (2 sem)': 'activeCases',
+          }}
+        />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
           data={newCasesRegionData[selectedRegion].data}
           colors={['#09c', '#999']}
           yAxisScale="linear"
@@ -582,29 +628,7 @@ const App = () => {
           }}
         />
       </div>
-      <div className={styles.widget}>
-        <RenderBarChart
-          data={
-            delta(
-              maxWeekly(regionesData[selectedRegion].data, 'activeCases'),
-              2,
-              'activeCases',
-            )
-          }
-          colors={['#09c', '#387']}
-          yAxisScale="linear"
-          yAxisType="percentage"
-          xAxisType="linear"
-          title={`Variación Casos activos - ${regionesData[selectedRegion].region} (2 semanas)`}
-          width={100}
-          height={isMobile() ? 60 : 25}
-          xAxisStepSize={isMobile() ? 7 : 1}
-          xLabelsField="updatedAt"
-          yDatasets={{
-            'Var Casos activos (2 sem)': 'activeCases',
-          }}
-        />
-      </div>
+
       <div className={styles.grid3Cols1Col}>
         {Object.keys(comunasData).map((c) => (
           comunasData[c].regionCode === selectedRegion

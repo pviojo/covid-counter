@@ -315,6 +315,7 @@ export const getData = async () => {
     ) / 100 / 100,
   }));
 
+  data = data.reverse();
   const comunasData = await getComunasData();
   const regionesData = await getRegionesData(comunasData);
   const newCasesRegionData = await getNewCasesRegionData();
