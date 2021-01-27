@@ -280,6 +280,31 @@ const App = () => {
           data={data.map((x) => (
             {
               ...x,
+              last7DNewCases: x.avg7DNewCases * 7,
+              last14DNewCases: x.avg14DNewCases * 14,
+            }
+          ))}
+          colors={['#387']}
+          yAxisScale="linear"
+          title="Casos activos"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Casos activos': 'activeCases',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          data={data.map((x) => (
+            {
+              ...x,
               positivity: x.positivity ? x.positivity * 100 : null,
               avg7DPositivity: x.positivity ? x.avg7DPositivity * 100 : null,
               avg14DPositivity: x.positivity ? x.avg14DPositivity * 100 : null,

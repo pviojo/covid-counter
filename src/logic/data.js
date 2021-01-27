@@ -79,11 +79,13 @@ const getDataCovid = async () => {
   const dataNewCasesWithSymptoms = (rows[1]).slice(1);
   const dataNewCasesWithoutSymptoms = (rows[6]).slice(1);
   const dataNewCases = (rows[7]).slice(1);
+  const dataActiveCases = (rows[8]).slice(1);
   const rsp = dates.map((date, index) => {
     const d = moment(date).subtract(3, 'hours').format();
     const newCases = parseInt(dataNewCases[index] || 0, 10);
     const newCasesWithSymptoms = parseInt(dataNewCasesWithSymptoms[index] || 0, 10);
     const newCasesWithoutSymptoms = parseInt(dataNewCasesWithoutSymptoms[index] || 0, 10);
+    const activeCases = parseInt(dataActiveCases[index] || 0, 10);
     const testsPCR = parseInt(
       (casesPcr.find((x) => x.updatedAt === d) || { testsPCR: 0 }).testsPCR,
       10,
@@ -93,6 +95,7 @@ const getDataCovid = async () => {
       updatedAt: d,
       newCases,
       newCasesWithSymptoms,
+      activeCases,
       newCasesWithoutSymptoms,
       testsPCR,
       positivity,
