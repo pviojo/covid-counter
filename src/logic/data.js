@@ -103,6 +103,22 @@ const getDataCovid = async () => {
   });
   return rsp;
 };
+const getDataVaccines = async () => {
+  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto76/vacunacion.csv');
+  const dates = (rows[0]).slice(2);
+  const dataFirstDose = (rows[1]).slice(2);
+  const dataSecondDose = (rows[2]).slice(2);
+  const rsp = dates.map((date, index) => {
+    const firstDose = parseInt(dataFirstDose[index] || 0, 10);
+    const secondDose = parseInt(dataSecondDose[index] || 0, 10);
+    return {
+      date,
+      firstDose,
+      secondDose,
+    };
+  });
+  return rsp;
+};
 
 const getDataDeaths2020 = async () => {
   const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto32/2020-Defunciones_T.csv');
@@ -322,9 +338,11 @@ export const getData = async () => {
   const comunasData = await getComunasData();
   const regionesData = await getRegionesData(comunasData);
   const newCasesRegionData = await getNewCasesRegionData();
+  const vaccinesData = await getDataVaccines();
 
   return {
     dailyData: data,
+    vaccinesData,
     comunasData,
     regionesData,
     newCasesRegionData,

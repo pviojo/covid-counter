@@ -33,6 +33,7 @@ const App = () => {
   const [data, setData] = useState(null);
   const [, setProbableDeaths] = useState(null);
   const [comunasData, setComunasData] = useState(null);
+  const [vaccinesData, setVaccinesData] = useState(null);
   const [regionesData, setRegionesData] = useState(null);
   const [newCasesRegionData, setNewCasesRegionData] = useState(null);
   const [dataDeathsCovidByReportDay, setDataDeathsCovidByReportDay] = useState(null);
@@ -92,6 +93,7 @@ const App = () => {
         dailyData: loadedData,
         comunasData,
         regionesData,
+        vaccinesData,
         newCasesRegionData,
         dataDeathsCovidByReportDay,
         probableDeaths,
@@ -99,6 +101,7 @@ const App = () => {
       initData(loadedData);
       setProbableDeaths(probableDeaths);
       setComunasData(comunasData);
+      setVaccinesData(vaccinesData);
       setRegionesData(regionesData);
       setNewCasesRegionData(newCasesRegionData);
       setDataDeathsCovidByReportDay(dataDeathsCovidByReportDay);
@@ -271,6 +274,26 @@ const App = () => {
             '% Test PCR Positivos (Media Móvil 7D)': 'avg7DPositivity',
             '% Test PCR Positivos (Media Móvil 14D)': 'avg14DPositivity',
             'Recomendado (5%)': 'recommended',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          data={vaccinesData}
+          colors={['#387', '#f60', '#39f', '#c03']}
+          yAxisScale="linear"
+          title="Vacunados"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="date"
+          yDatasets={{
+            'Primera dosis': 'firstDose',
+            'Segunda dosis': 'secondDose',
           }}
         />
         <br />
