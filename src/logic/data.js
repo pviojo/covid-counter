@@ -104,7 +104,7 @@ const getDataCovid = async () => {
   return rsp;
 };
 const getDataVaccines = async () => {
-  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto76/vacunacion.csv');
+  const rows = await readCsv('https://raw.githubusercontent.com/juancri/covid19-vaccination/master/output/chile-vaccination.csv');
   const dates = (rows[0]).slice(2);
   const dataFirstDose = (rows[1]).slice(2);
   const dataSecondDose = (rows[2]).slice(2);

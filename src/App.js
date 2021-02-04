@@ -752,6 +752,8 @@ const App = () => {
             </a>
             {', '}
             <a href="https://github.com/MinCiencia/Datos-COVID19">Min Ciencias</a>
+            <br />
+            <a href="https://github.com/juancri/covid19-vaccination">COVID-19 Vaccination (JC Olivares)</a>
           </small>
         </div>
         <div>
