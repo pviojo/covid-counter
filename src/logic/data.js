@@ -79,12 +79,18 @@ const getDataCovid = async () => {
   const dataNewCasesWithSymptoms = (rows[1]).slice(1);
   const dataNewCasesWithoutSymptoms = (rows[6]).slice(1);
   const dataNewCases = (rows[7]).slice(1);
+  const dataDeaths = (rows[4]).slice(1);
   const dataActiveCases = (rows[8]).slice(1);
+  let prevDeaths = 0;
   const rsp = dates.map((date, index) => {
     const d = moment(date).subtract(3, 'hours').format();
     const newCases = parseInt(dataNewCases[index] || 0, 10);
     const newCasesWithSymptoms = parseInt(dataNewCasesWithSymptoms[index] || 0, 10);
     const newCasesWithoutSymptoms = parseInt(dataNewCasesWithoutSymptoms[index] || 0, 10);
+    const accDeaths = parseInt(dataDeaths[index] || prevDeaths, 10);
+    const deaths = accDeaths - prevDeaths;
+    prevDeaths = accDeaths;
+
     const activeCases = parseInt(dataActiveCases[index] || 0, 10);
     const testsPCR = parseInt(
       (casesPcr.find((x) => x.updatedAt === d) || { testsPCR: 0 }).testsPCR,
@@ -94,6 +100,7 @@ const getDataCovid = async () => {
     return {
       updatedAt: d,
       newCases,
+      deaths,
       newCasesWithSymptoms,
       activeCases,
       newCasesWithoutSymptoms,
@@ -307,6 +314,9 @@ export const getData = async () => {
   data = avgLast(data, 7, 'positivity', 'avg7DPositivity');
   data = avgLast(data, 7, 'testsPCR', 'avg7DtestsPCR');
   data = avgLast(data, 14, 'positivity', 'avg14DPositivity');
+
+  data = avgLast(data, 7, 'deaths', 'avg7DDeaths');
+  data = avgLast(data, 14, 'deaths', 'avg14DDeaths');
 
   let totalCasesSinceApr9 = 0;
   data = data.map((row) => {

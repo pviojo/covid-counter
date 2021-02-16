@@ -280,6 +280,57 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderLineChart
+          data={data.map((x) => (
+            {
+              ...x,
+              last7DDeaths: x.avg7DDeaths * 7,
+              last14DDeaths: x.avg14DDeaths * 14,
+            }
+          ))}
+          colors={['#387', '#f60', '#39f', '#c03']}
+          yAxisScale="linear"
+          title="Fallecidos"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            Fallecidos: 'deaths',
+            'Fallecidos (ult 7D)': 'last7DDeaths',
+            'Fallecidos (ult 14D)': 'last14DDeaths',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
+          data={
+            delta(
+              data,
+              7,
+              'deaths',
+            )
+          }
+          colors={['#09c', '#387']}
+          yAxisScale="log"
+          yAxisType="percentage"
+          xAxisType="time"
+          showYAxisSelector
+          title="Variación Fallecidos (7 días)"
+          width={100}
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Var Fallecidos (7 días)': 'deaths',
+          }}
+        />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
           data={vaccinesData}
           colors={['#387', '#f60', '#39f', '#c03']}
           yAxisScale="linear"
