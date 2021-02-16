@@ -204,10 +204,13 @@ const App = () => {
               data,
               7,
               'newCases',
-            ).slice(30)
+            ).map((x) => ({
+              ...x,
+              newCases: Math.min(Math.max(x.newCases, -1), 1),
+            }))
           }
           colors={['#09c', '#387']}
-          yAxisScale="log"
+          yAxisScale="linear"
           yAxisType="percentage"
           xAxisType="time"
           showYAxisSelector
@@ -217,9 +220,10 @@ const App = () => {
           xAxisStepSize={isMobile() ? 7 : 1}
           xLabelsField="updatedAt"
           yDatasets={{
-            'Var Casos activos (7 días)': 'newCases',
+            'Var %': 'newCases',
           }}
         />
+        <small>* Limitiado en rango +/- 100%</small>
       </div>
       <div className={styles.widget}>
         <RenderBarChart
@@ -312,22 +316,54 @@ const App = () => {
               data,
               7,
               'deaths',
-            )
+            ).map((x) => ({
+              ...x,
+              avg7DDeaths: Math.min(Math.max(x.deaths, -1), 1),
+            }))
           }
           colors={['#09c', '#387']}
-          yAxisScale="log"
+          yAxisScale="linear"
           yAxisType="percentage"
           xAxisType="time"
           showYAxisSelector
-          title="Variación Fallecidos (7 días)"
+          title="Variación en 7 días Fallecidos"
           width={100}
           height={isMobile() ? 60 : 25}
           xAxisStepSize={isMobile() ? 7 : 1}
           xLabelsField="updatedAt"
           yDatasets={{
-            'Var Fallecidos (7 días)': 'deaths',
+            'Var %': 'deaths',
           }}
         />
+        <small>* Limitiado en rango +/- 100%</small>
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
+          data={
+            delta(
+              data,
+              7,
+              'avg7DDeaths',
+            ).map((x) => ({
+              ...x,
+              avg7DDeaths: Math.min(Math.max(x.avg7DDeaths, -1), 1),
+            }))
+          }
+          colors={['#09c', '#387']}
+          yAxisScale="linear"
+          yAxisType="percentage"
+          xAxisType="time"
+          showYAxisSelector
+          title="Variación en 7 días de Media 7d Fallecidos"
+          width={100}
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Var %': 'avg7DDeaths',
+          }}
+        />
+        <small>* Limitiado en rango +/- 100%</small>
       </div>
       <div className={styles.widget}>
         <RenderLineChart
