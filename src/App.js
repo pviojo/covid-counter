@@ -318,7 +318,7 @@ const App = () => {
               'deaths',
             ).map((x) => ({
               ...x,
-              avg7DDeaths: Math.min(Math.max(x.deaths, -1), 1),
+              deaths: Math.min(Math.max(x.deaths, -1), 1),
             }))
           }
           colors={['#09c', '#387']}
