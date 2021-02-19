@@ -412,15 +412,7 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderLineChart
-          data={data.map((x) => (
-            {
-              ...x,
-              positivity: x.positivity ? x.positivity * 100 : null,
-              avg7DPositivity: x.positivity ? x.avg7DPositivity * 100 : null,
-              avg14DPositivity: x.positivity ? x.avg14DPositivity * 100 : null,
-              recommended: 5,
-            }
-          ))}
+          data={data}
           colors={['#387', '#f60', '#39f', '#c03']}
           yAxisScale="linear"
           title="Test PCR reportados"
@@ -432,6 +424,7 @@ const App = () => {
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
+            'Test PCR': 'testsPCR',
             'Test PCR (Media Móvil 7D)': 'avg7DtestsPCR',
           }}
         />
