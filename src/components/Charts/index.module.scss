@@ -11,3 +11,25 @@
   }
 }
 
+:local(.theme-light){
+  :global(.btn){
+    background:#916CB588;
+    color:#444;
+  }
+  :local(.title){
+    color: #916CB5;
+  }
+  :local(.selected){
+    background:#916CB5;
+    color:#fff;
+  }
+  
+}
+:local(.theme-dark){
+  :global(.btn){
+    background:#444;
+  }
+  :local(.title){
+    color: #444;
+  }
+}

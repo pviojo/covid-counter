@@ -7,24 +7,11 @@ a {
  border-collapse: collapse;
  text-align: left;
 }
-.table tr:nth-child(2n) td{
-  background:#1a1a1a;
-}
 
-.table tr:hover td{
-  background:#222222;
-}
 .table td,
 .table th
 {
   padding:5px;
-  color:#666;
-}
-.table td{
-  border-bottom:1px solid #222;
-}
-.table th{
-  border-bottom:2px solid #444;
 }
 
 

@@ -3,41 +3,23 @@
 }
 html, body {
   box-sizing: border-box;
+  margin:0px;
+  padding:0;
+  height:100vh;
 }
 
 body {
-  background: #222;
-  color: #387;
   font-size: 12px;;
-  padding: 10px;
-  margin:0px 0px;
+  margin:0px;
+  padding:0;
   text-align: center;
   font-family: "Noto Sans Jp", "Helvetica", sans-serif;
 }
-.App {
+:local(.app) {
+  padding:10px;
+  margin:0px;
   font-family: sans-serif;
   text-align: center;
-}
-:global(.select .select__control){
-  background:#444;
-  border:none;
-  color:#fff;
-}
-:global(.select .select__single-value),
-:global(.select .select__value-container--has-value .select__input){
-  color:#fff;
-}
-:global(.select .select__menu){
-  background:#444;
-  border:none;
-  color:#fff;
-}
-:global(.select .select__option:hover),
-:global(.select .select__option--is-focused){
-  background:#333;
-}
-:global(.select .select__option--is-selected){
-  background:#666;
 }
 
 :local(.loading){
@@ -188,3 +170,62 @@ body {
   }
 }
 
+
+
+:local(.theme-light){
+  &:local(.app){
+    background: #eee;
+    color: #999;
+  
+  }
+  :local(.widget){
+    background:#fff;
+  }
+
+  :global(.table td){
+    border-bottom:1px solid #ccc;
+  }
+  :global(.table th){
+    border-bottom:2px solid #ccc;
+  }
+  
+}
+
+:local(.theme-dark){
+  &:local(.app){
+    background: #222;
+    color: #ccc;
+  
+  }
+  :local(.widget){
+    background:#111;
+  }
+  :global(.select .select__control){
+    background:#444;
+    border:none;
+    color:#fff;
+  }
+  :global(.select .select__single-value),
+  :global(.select .select__value-container--has-value .select__input){
+    color:#fff;
+  }
+  :global(.select .select__menu){
+    background:#444;
+    border:none;
+    color:#fff;
+  }
+  :global(.select .select__option:hover),
+  :global(.select .select__option--is-focused){
+    background:#333;
+  }
+  :global(.select .select__option--is-selected){
+    background:#666;
+  }
+  :global(.table td){
+    border-bottom:1px solid #444;
+  }
+  :global(.table th){
+    border-bottom:2px solid #444;
+  }
+  
+}

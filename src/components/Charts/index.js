@@ -30,16 +30,37 @@ const dataset = ({
 
   return localDataset;
 };
-
-export const chartColors = [
-  '#3498DB',
-  '#CB4335',
-  '#F1C40F',
-  '#16A085',
-  '#673AB7',
-  '#8E44AD',
-  '#53a318',
-];
+export const chartColorsTheme = {
+  light: {
+    gridLines: {
+      color: '#eee',
+      zeroLineColor: '#916CB5',
+    },
+    series: [
+      '#28b4c8',
+      '#ff6358',
+      '#78d237',
+      '#ffd246',
+      '#2d73f5',
+      '#aa46be',
+    ],
+  },
+  dark: {
+    gridLines: {
+      color: '#222',
+      zeroLineColor: '#333',
+    },
+    series: [
+      '#3498DB',
+      '#CB4335',
+      '#F1C40F',
+      '#16A085',
+      '#673AB7',
+      '#8E44AD',
+      '#53a318',
+    ],
+  },
+};
 
 export const RenderChart = ({
   data,
@@ -49,6 +70,7 @@ export const RenderChart = ({
   yDatasets,
   colors,
   labels,
+  theme,
   datasets,
   height,
   width,
@@ -90,18 +112,12 @@ export const RenderChart = ({
 
   chartOptions.scales.xAxes = [{
     ticks: {},
-    gridLines: {
-      color: '#222',
-      zeroLineColor: '#333',
-    },
+    gridLines: chartColorsTheme[theme].gridLines,
   }];
 
   chartOptions.scales.yAxes = [{
     ticks: {},
-    gridLines: {
-      color: '#222',
-      zeroLineColor: '#333',
-    },
+    gridLines: chartColorsTheme[theme].gridLines,
   }];
 
   if (selectedYAxisScale === 'log') {
@@ -128,14 +144,11 @@ export const RenderChart = ({
     chartOptions.scales.yAxes[0].ticks.max = yAxisMax;
   }
 
+  const colorsUse = colors || chartColorsTheme[theme].series;
   localDatasets = localDatasets.map((ds, index) => ({
     ...ds,
-    borderColor: colors
-      ? colors[index % colors.length]
-      : chartColors[index % chartColors.length],
-    backgroundColor: colors
-      ? colors[index % colors.length]
-      : chartColors[index % chartColors.length],
+    borderColor: colorsUse[index % colorsUse.length],
+    backgroundColor: colorsUse[index % colorsUse.length],
   }));
 
   const chartData = {
@@ -149,7 +162,7 @@ export const RenderChart = ({
     },
   };
   return (
-    <div className={styles.cnt}>
+    <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
       <div className={styles.title} dangerouslySetInnerHTML={{ __html: title }} />
       {showYAxisSelector
         && (
@@ -197,6 +210,7 @@ RenderChart.defaultProps = {
   legend: 'bottom',
   yAxisMin: null,
   yAxisMax: null,
+  colors: null,
   xAxisType: 'default',
   yAxisType: 'default',
   yAxisScale: 'linear',
@@ -205,6 +219,7 @@ RenderChart.defaultProps = {
   labels: null,
   datasets: null,
   stack: false,
+  theme: null,
   showYAxisSelector: false,
 };
 
@@ -213,7 +228,7 @@ RenderChart.propTypes = {
   chartType: PropTypes.string,
   xLabelsField: PropTypes.string.isRequired,
   yDatasets: PropTypes.object.isRequired,
-  colors: PropTypes.array.isRequired,
+  colors: PropTypes.array,
   labels: PropTypes.array,
   datasets: PropTypes.object,
   height: PropTypes.number.isRequired,
@@ -226,6 +241,7 @@ RenderChart.propTypes = {
   xAxisStepSize: PropTypes.number,
   yAxisType: PropTypes.string,
   yAxisScale: PropTypes.string,
+  theme: PropTypes.string,
   stack: PropTypes.bool,
   showYAxisSelector: PropTypes.bool,
 };
@@ -235,7 +251,7 @@ export const RenderLineChart = (props) => <RenderChart {...props} chartType="lin
 export const RenderBarChart = (props) => <RenderChart {...props} chartType="bar" />;
 
 export default {
-  chartColors,
+  chartColorsTheme,
   RenderLineChart,
   RenderBarChart,
   RenderChart,

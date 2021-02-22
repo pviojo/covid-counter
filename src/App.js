@@ -14,7 +14,7 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import pjson from '../package.json';
 
-import { RenderLineChart, RenderBarChart } from './components/Charts';
+import { RenderLineChart, RenderBarChart, chartColorsTheme } from './components/Charts';
 
 import { generatePolynomialRegression } from './logic/parameters';
 import { getData } from './logic/data';
@@ -28,6 +28,7 @@ const App = () => {
 
   const addCases = 0;
 
+  const [theme] = useState('light');
   const [selectedRegion, setSelectedRegion] = useState('13');
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
@@ -112,11 +113,13 @@ const App = () => {
   }, []);
   if (loading) {
     return (
-      <div className={styles.loading}>
-        <ReactLoading
-          type="spin"
-          color="#96c"
-        />
+      <div className={`${styles.app} ${styles[`theme-${theme}`]}`}>
+        <div className={styles.loading}>
+          <ReactLoading
+            type="spin"
+            color="#96c"
+          />
+        </div>
       </div>
     );
   }
@@ -169,9 +172,10 @@ const App = () => {
     });
   }
   return (
-    <div className="App">
+    <div className={`${styles.app} ${styles[`theme-${theme}`]}`}>
       <div className={styles.widget}>
         <RenderLineChart
+          theme={theme}
           data={data.map((x) => (
             {
               ...x,
@@ -179,7 +183,7 @@ const App = () => {
               last14DNewCases: x.avg14DNewCases * 14,
             }
           ))}
-          colors={['#387', '#f60', '#39f', '#c03']}
+          xcolors={chartColorsTheme[theme]}
           yAxisScale="linear"
           title="Casos nuevos"
           xAxisType="time"
@@ -199,6 +203,7 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderBarChart
+          theme={theme}
           data={
             delta(
               data,
@@ -209,7 +214,6 @@ const App = () => {
               newCases: Math.min(Math.max(x.newCases, -1), 1),
             }))
           }
-          colors={['#09c', '#387']}
           yAxisScale="linear"
           yAxisType="percentage"
           xAxisType="time"
@@ -227,6 +231,7 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderBarChart
+          theme={theme}
           data={data.map((x) => (
             {
               ...x,
@@ -234,7 +239,6 @@ const App = () => {
               percentAvg7DNewCasesWithoutSymptoms: parseInt((x.avg7DNewCasesWithoutSymptoms / (x.avg7DNewCasesWithSymptoms + x.avg7DNewCasesWithoutSymptoms)) * 100, 10),
             }
           ))}
-          colors={['#09c', '#999']}
           yAxisScale="linear"
           title="% Casos nuevos con y sin síntomas (promedio ult 7d)"
           stack
@@ -254,6 +258,7 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderLineChart
+          theme={theme}
           data={data.map((x) => (
             {
               ...x,
@@ -263,7 +268,6 @@ const App = () => {
               recommended: 5,
             }
           ))}
-          colors={['#387', '#f60', '#39f', '#c03']}
           yAxisScale="log"
           title="% Positividad PCR (Nuevos casos / Test reportados)"
           xAxisType="time"
@@ -284,6 +288,7 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderLineChart
+          theme={theme}
           data={data.map((x) => (
             {
               ...x,
@@ -291,7 +296,6 @@ const App = () => {
               last14DDeaths: x.avg14DDeaths * 14,
             }
           ))}
-          colors={['#387', '#f60', '#39f', '#c03']}
           yAxisScale="linear"
           title="Fallecidos"
           xAxisType="time"
@@ -311,6 +315,7 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderBarChart
+          theme={theme}
           data={
             delta(
               data,
@@ -321,7 +326,6 @@ const App = () => {
               deaths: Math.min(Math.max(x.deaths, -1), 1),
             }))
           }
-          colors={['#09c', '#387']}
           yAxisScale="linear"
           yAxisType="percentage"
           xAxisType="time"
@@ -339,6 +343,7 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderBarChart
+          theme={theme}
           data={
             delta(
               data,
@@ -349,7 +354,6 @@ const App = () => {
               avg7DDeaths: Math.min(Math.max(x.avg7DDeaths, -1), 1),
             }))
           }
-          colors={['#09c', '#387']}
           yAxisScale="linear"
           yAxisType="percentage"
           xAxisType="time"
@@ -367,8 +371,8 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderLineChart
+          theme={theme}
           data={vaccinesData}
-          colors={['#387', '#f60', '#39f', '#c03']}
           yAxisScale="linear"
           title="Vacunados"
           xAxisType="time"
@@ -387,6 +391,7 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderLineChart
+          theme={theme}
           data={data.map((x) => (
             {
               ...x,
@@ -394,7 +399,6 @@ const App = () => {
               last14DNewCases: x.avg14DNewCases * 14,
             }
           ))}
-          colors={['#387']}
           yAxisScale="linear"
           title="Casos activos"
           xAxisType="time"
@@ -412,8 +416,8 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderLineChart
+          theme={theme}
           data={data}
-          colors={['#387', '#f60', '#39f', '#c03']}
           yAxisScale="linear"
           title="Test PCR reportados"
           xAxisType="time"
@@ -436,8 +440,8 @@ const App = () => {
             <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
               <div className={styles.widget}>
                 <RenderLineChart
+                  theme={theme}
                   data={data.slice(7)}
-                  colors={['#387', '#f60']}
                   yAxisScale="linear"
                   title="Fallecidos Totales y COVID-19 Chile"
                   xAxisType="time"
@@ -457,6 +461,7 @@ const App = () => {
               </div>
               <div className={styles.widget}>
                 <RenderLineChart
+                  theme={theme}
                   data={data.slice(7).map((x) => (
                     {
                       ...x,
@@ -465,7 +470,6 @@ const App = () => {
                         : 0,
                     }
                   ))}
-                  colors={['#387', '#f60']}
                   yAxisScale="linear"
                   title="% Fallecidos COVID sobre Total de Fallecidos Chile"
                   xAxisType="time"
@@ -484,8 +488,8 @@ const App = () => {
               </div>
               <div className={styles.widget}>
                 <RenderBarChart
+                  theme={theme}
                   data={dataDeathsCovidByReportDay.slice(-14)}
-                  colors={['#c30', '#f60', '#fc0', '#093', '#06c', '#a3c']}
                   yAxisScale="linear"
                   title="Fallecidos Últimos 14 días por día de reporte"
                   xAxisType="time"
@@ -503,8 +507,8 @@ const App = () => {
             <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
               <div className={styles.widget}>
                 <RenderLineChart
+                  theme={theme}
                   data={data.slice(0, 100)}
-                  colors={['#387']}
                   yAxisScale="linear"
                   xAxisType="time"
                   showYAxisSelector
@@ -528,6 +532,7 @@ const App = () => {
               </div>
               <div className={styles.widget}>
                 <RenderLineChart
+                  theme={theme}
                   data={data.slice(0, 100).map((x) => (
                     {
                       ...x,
@@ -535,7 +540,6 @@ const App = () => {
                       totalDeaths: x.totalDeathsCovid,
                     }
                   ))}
-                  colors={['#387']}
                   yAxisScale="linear"
                   title="Total de Fallecidos COVID-19 Chile"
                   xAxisType="time"
@@ -555,13 +559,13 @@ const App = () => {
               </div>
               <div className={styles.widget}>
                 <RenderLineChart
+                  theme={theme}
                   data={data.slice(0, 100).map((x) => (
                     {
                       ...x,
                       updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
                     }
                   ))}
-                  colors={['#387']}
                   yAxisScale="linear"
                   title="Letalidad COVID-19 Chile (%)"
                   xAxisType="time"
@@ -585,13 +589,13 @@ const App = () => {
             <div className={`${styles.charts} ${styles.grid3Cols1Col}`}>
               <div className={styles.widget}>
                 <RenderLineChart
+                  theme={theme}
                   data={simulatedTotalCases.map((x) => (
                     {
                       ...x,
                       updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
                     }
                   ))}
-                  colors={['#09c', '#387']}
                   yAxisScale="linear"
                   xAxisType="time"
                   showYAxisSelector
@@ -608,13 +612,13 @@ const App = () => {
               </div>
               <div className={styles.widget}>
                 <RenderLineChart
+                  theme={theme}
                   data={simulatedTotalDeaths.map((x) => (
                     {
                       ...x,
                       updatedAt: moment(x.updatedAt).add(3, 'hours').format(),
                     }
                   ))}
-                  colors={['#09c', '#387']}
                   yAxisScale="linear"
                   xAxisType="time"
                   showYAxisSelector
@@ -631,8 +635,8 @@ const App = () => {
               </div>
               <div className={styles.widget}>
                 <RenderLineChart
+                  theme={theme}
                   data={simulatedLethality}
-                  colors={['#09c', '#387']}
                   yAxisScale="linear"
                   xAxisType="time"
                   showYAxisSelector
@@ -677,8 +681,8 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderLineChart
+          theme={theme}
           data={regionesData[selectedRegion].data}
-          colors={['#09c']}
           yAxisScale="linear"
           xAxisType="linear"
           showYAxisSelector
@@ -695,6 +699,7 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderBarChart
+          theme={theme}
           data={
             delta(
               maxWeekly(regionesData[selectedRegion].data, 'activeCases'),
@@ -702,7 +707,6 @@ const App = () => {
               'activeCases',
             )
           }
-          colors={['#09c', '#387']}
           yAxisScale="linear"
           yAxisType="percentage"
           xAxisType="linear"
@@ -718,8 +722,8 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderBarChart
+          theme={theme}
           data={newCasesRegionData[selectedRegion].data}
-          colors={['#09c', '#999']}
           yAxisScale="linear"
           xAxisType="linear"
           showYAxisSelector
@@ -738,8 +742,8 @@ const App = () => {
       </div>
       <div className={styles.widget}>
         <RenderBarChart
+          theme={theme}
           data={newCasesRegionData[selectedRegion].data}
-          colors={['#09c', '#999']}
           yAxisScale="linear"
           xAxisType="linear"
           showYAxisSelector
@@ -763,8 +767,8 @@ const App = () => {
             && (
               <div className={styles.widget} key={c}>
                 <RenderLineChart
+                  theme={theme}
                   data={comunasData[c].data}
-                  colors={['#09c', '#387']}
                   yAxisScale="linear"
                   xAxisType="time"
                   showYAxisSelector
