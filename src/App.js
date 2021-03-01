@@ -23,6 +23,24 @@ import { maxWeekly, delta } from './helpers/data';
 import './global.scss';
 import styles from './index.module.scss';
 
+const faseData = {
+  1: {
+    color: '#F75C5C',
+    name: 'Cuarentena',
+  },
+  2: {
+    color: '#FFBF01',
+    name: 'Transición',
+  },
+  3: {
+    color: '#A69B01',
+    name: 'Preparación',
+  },
+  4: {
+    color: '#338AD1',
+    name: 'Apertura Inicial',
+  },
+};
 const App = () => {
   numeral.locale('es');
 
@@ -773,7 +791,7 @@ const App = () => {
                   xAxisType="time"
                   showYAxisSelector
                   yAxisMin={0}
-                  title={`${comunasData[c].label}<br/><small>Prevalencia Casos activos</small><br/><small>(pob: ${numeral(comunasData[c].population).format('0,0')} hab)</small>`}
+                  title={`${comunasData[c].label}<br/><small>Prevalencia Casos activos</small><br/><small>(pob: ${numeral(comunasData[c].population).format('0,0')} hab, <span style="color:${faseData[comunasData[c].fase].color}">Fase: ${comunasData[c].fase}, ${faseData[comunasData[c].fase].name})<span></small>`}
                   width={33}
                   height={isMobile() ? 25 : 25}
                   xAxisStepSize={isMobile() ? 14 : 1}

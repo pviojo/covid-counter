@@ -141,6 +141,14 @@ const getDataDeaths2020 = async () => {
 const getComunasData = async () => {
   const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto19/CasosActivosPorComuna.csv');
   const dates = rows[0].slice(5);
+
+  const fasesRows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto74/paso_a_paso.csv');
+  const fasePerComuna = fasesRows.slice(1).reduce((f, r) => {
+    // eslint-disable-next-line no-param-reassign
+    f[r[2]] = parseInt(r[r.length - 1], 10);
+    return f;
+  }, {});
+
   const rsp = {};
   rows.slice(1).map((row) => {
     if (!row[3]) {
@@ -153,6 +161,7 @@ const getComunasData = async () => {
     r.comuna = row[2];
     r.comunaCode = row[3];
     r.population = parseInt(row[4], 10);
+    r.fase = fasePerComuna[r.comunaCode] || '';
     r.data = [];
     // let prevCases = 0;
     dates.map((d, i) => {
