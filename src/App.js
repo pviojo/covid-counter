@@ -40,6 +40,10 @@ const faseData = {
     color: '#338AD1',
     name: 'Apertura Inicial',
   },
+  5: {
+    color: '#338AD1',
+    name: 'Apertura Avanzada',
+  },
 };
 const App = () => {
   numeral.locale('es');
@@ -245,7 +249,7 @@ const App = () => {
             'Var %': 'newCases',
           }}
         />
-        <small>* Limitiado en rango +/- 100%</small>
+        <small>* Limitado en rango +/- 100%</small>
       </div>
       <div className={styles.widget}>
         <RenderBarChart
@@ -357,7 +361,7 @@ const App = () => {
             'Var %': 'deaths',
           }}
         />
-        <small>* Limitiado en rango +/- 100%</small>
+        <small>* Limitado en rango +/- 100%</small>
       </div>
       <div className={styles.widget}>
         <RenderBarChart
@@ -385,7 +389,7 @@ const App = () => {
             'Var %': 'avg7DDeaths',
           }}
         />
-        <small>* Limitiado en rango +/- 100%</small>
+        <small>* Limitado en rango +/- 100%</small>
       </div>
       <div className={styles.widget}>
         <RenderLineChart
@@ -759,6 +763,48 @@ const App = () => {
         />
       </div>
       <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={newCasesRegionData[selectedRegion].data}
+          yAxisScale="linear"
+          xAxisType="linear"
+          showYAxisSelector
+          yAxisMin={0}
+          title={`Test PCR - ${regionesData[selectedRegion].region}`}
+          width={100}
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Test PCR': 'pcr',
+            'Test PCR (Media Móvil 7D)': 'avg7DPCR',
+          }}
+        />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={newCasesRegionData[selectedRegion].data.map((x) => ({
+            ...x,
+            positivityPercent: x.positivity * 100,
+            avg7DPositivityPercent: x.avg7DPositivity * 100,
+          }))}
+          yAxisScale="linear"
+          xAxisType="linear"
+          showYAxisSelector
+          yAxisMin={0}
+          title={`% Positividad - ${regionesData[selectedRegion].region}`}
+          width={100}
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            '% Positividad': 'positivityPercent',
+            '% Positividad (Media Móvil 7D)': 'avg7DPositivityPercent',
+          }}
+        />
+      </div>
+      <div className={styles.widget}>
         <RenderBarChart
           theme={theme}
           data={newCasesRegionData[selectedRegion].data}
@@ -791,7 +837,7 @@ const App = () => {
                   xAxisType="time"
                   showYAxisSelector
                   yAxisMin={0}
-                  title={`${comunasData[c].label}<br/><small>Prevalencia Casos activos</small><br/><small>(pob: ${numeral(comunasData[c].population).format('0,0')} hab, <span style="color:${faseData[comunasData[c].fase].color}">Fase: ${comunasData[c].fase}, ${faseData[comunasData[c].fase].name})<span></small>`}
+                  title={`${comunasData[c].label}<br/><small>Prevalencia Casos activos</small><br/><small>(pob: ${numeral(comunasData[c].population).format('0,0')} hab, <span style="color:${faseData[comunasData[c].fase] && faseData[comunasData[c].fase].color}">Fase: ${comunasData[c].fase}, ${faseData[comunasData[c].fase] && faseData[comunasData[c].fase].name})<span></small>`}
                   width={33}
                   height={isMobile() ? 25 : 25}
                   xAxisStepSize={isMobile() ? 14 : 1}

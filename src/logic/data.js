@@ -161,7 +161,7 @@ const getComunasData = async () => {
     r.comuna = row[2];
     r.comunaCode = row[3];
     r.population = parseInt(row[4], 10);
-    r.fase = fasePerComuna[r.comunaCode] || '';
+    r.fase = fasePerComuna[parseInt(r.comunaCode, 10)] || '';
     r.data = [];
     // let prevCases = 0;
     dates.map((d, i) => {
@@ -230,6 +230,7 @@ const getNewCasesRegionData = async () => {
         rsp[regionCode].data[d] = {
           updatedAt: d,
           newCases: 0,
+          pcr: 0,
           newCaseWithSymptoms: 0,
           newCaseWithoutSymptoms: 0,
         };
@@ -270,8 +271,44 @@ const getNewCasesRegionData = async () => {
     return null;
   });
 
+  rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto7/PCR.csv');
+  dates = rows[0].slice(3);
+  rows = rows.slice(1);
+  rows.map((row) => {
+    dates.map((d, i) => {
+      const regionCode = nameCodeRegion[row[0]];
+      if (!rsp[regionCode]) {
+        rsp[regionCode] = { data: {} };
+        return null;
+      }
+      if (!rsp[regionCode].data[d]) {
+        rsp[regionCode].data[d] = {
+          updatedAt: d,
+          pcr: 0,
+          newCaseWithSymptoms: 0,
+          newCaseWithoutSymptoms: 0,
+        };
+      }
+      rsp[regionCode].data[d].pcr = parseInt(row[i + 3], 10);
+      // eslint-disable-next-line max-len
+      rsp[regionCode].data[d].positivity = (rsp[regionCode].data[d].pcr && rsp[regionCode].data[d].newCases)
+        ? rsp[regionCode].data[d].newCases / rsp[regionCode].data[d].pcr
+        : 0;
+      return null;
+    });
+    return null;
+  });
+
   Object.keys(rsp).map((k) => {
     rsp[k].data = Object.values(rsp[k].data).sort((a, b) => (a.updatedAt < b.updatedAt ? -1 : 1));
+    rsp[k].data = avgLast(rsp[k].data, 7, 'pcr', 'avg7DPCR');
+    rsp[k].data = avgLast(rsp[k].data, 7, 'newCases', 'avg7DNewCases');
+    rsp[k].data = rsp[k].data.map((x) => ({
+      ...x,
+      avg7DPositivity: (x.avg7DNewCases && x.avg7DPCR)
+        ? x.avg7DNewCases / x.avg7DPCR
+        : 0,
+    }));
     return null;
   });
   return rsp;
