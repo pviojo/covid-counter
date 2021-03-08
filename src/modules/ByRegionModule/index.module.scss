@@ -1,0 +1,295 @@
+*{
+  box-sizing: border-box;
+}
+html, body {
+  box-sizing: border-box;
+  margin:0px;
+  padding:0;
+  height:100vh;
+}
+
+body {
+  font-size: 12px;;
+  margin:0px;
+  padding:0;
+  text-align: center;
+  font-family: "Noto Sans Jp", "Helvetica", sans-serif;
+}
+:local(.app) {
+  padding:10px;
+  margin:0px;
+  font-family: sans-serif;
+  text-align: center;
+}
+
+:local(.loading){
+  text-align: center;
+  margin:0px auto;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+}
+:local(.select){
+  margin:0px 10px 20px;
+  color:#999;
+  font-size:16px;
+  text-align: left;
+}
+:local(.select .label){
+  margin-bottom: 10px;
+}
+:local(.widget){
+  overflow: hidden;
+  border-radius:5px;
+  appearance: none;
+  background:#111;
+  margin:10px;
+  padding:20px;
+  :local(.title){
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+}
+:local(.share){
+  display: inline-block;
+  margin-left:20px;
+  :local(.btn) {
+    margin:0px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+:local(.topCounter){
+  :local(.counters) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding:0px 0px 20px;
+  }
+  :local(.calculatedAt) {
+    border-top:1px solid #222;
+    font-size:12px;
+    padding:20px 0 0 0;
+    :local(small){
+      font-size: 10px;
+    }
+  }
+  :local(.sound){
+    float: right;
+    margin-right: 10px;
+  }
+  margin-bottom: 20px;
+}
+:local(.lastUpdate small) {
+  font-size:12px;
+  font-weight: 400;
+}
+:local(.lastUpdate small small){
+  font-size:10px;
+  font-weight: 400;
+}
+:local(.calculatedAt small) {
+  display: block;
+  font-size: 18px;
+  margin-top: 5px;
+  font-weight: 300;
+}
+
+
+:local(.officialInfo){
+  font-weight: bold;
+}
+:local(.estimation){
+  color:#96c;
+}
+:local(.officialInfo big){
+  font-size:18px;
+  display: block;
+  margin-top:10px;
+}
+
+:local(.sources){
+  margin:50px 0;
+  :local(div){
+    margin-bottom:10px;
+  }
+}
+
+
+@media(max-width:600px){
+  body{
+    margin:0px 0px;
+  }
+  :local(.share){
+    display: block;
+    margin-top: 20px;
+    margin-left: 0px;
+  }
+  :local(.topCounter){
+    :local(.counters) {
+      display: grid;
+      grid-template-columns: 1fr;
+      row-gap: 10px;
+    }
+  }
+  :local(.calculatedAt) {
+    margin: 10px 0;
+  }  
+}
+;:local(.tools){
+  float:right;
+}
+:local(.grid2Cols1Col){
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+:local(.grid3Cols1Col){
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+:local(.grid4Cols1Col){
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media(max-width:800px){
+  :local(.grid2Cols1Col),
+  :local(.grid3Cols1Col),
+  :local(.grid4Cols1Col)
+  {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+:local(.theme-light){
+  &:local(.app){
+    background: #eee;
+    color: #999;
+  
+  }
+  :local(.widget){
+    background:#fff;
+    border:1px solid #ddd;
+  }
+
+  :global(.table td){
+    border-bottom:1px solid #ccc;
+  }
+  :global(.table th){
+    border-bottom:2px solid #ccc;
+  }
+  
+}
+
+:local(.theme-dark){
+  &:local(.app){
+    background: #222;
+    color: #ccc;
+  
+  }
+  :local(.widget){
+    background:#111;
+    border:1px solid #333;
+  }
+  :global(.select .select__control){
+    background:#444;
+    border:none;
+    color:#fff;
+  }
+  :global(.select .select__single-value),
+  :global(.select .select__value-container--has-value .select__input){
+    color:#fff;
+  }
+  :global(.select .select__menu){
+    background:#444;
+    border:none;
+    color:#fff;
+  }
+  :global(.select .select__option:hover),
+  :global(.select .select__option--is-focused){
+    background:#333;
+  }
+  :global(.select .select__option--is-selected){
+    background:#666;
+  }
+  :global(.table td){
+    border-bottom:1px solid #444;
+  }
+  :global(.table th){
+    border-bottom:2px solid #444;
+  }
+  
+}
+
+
+:local(.map){
+  svg{
+    margin-left:-500px;
+    height:800px;
+    stroke: #fff;
+
+    // All layers are just path elements
+    path {
+      fill: #916CB566;
+      cursor: pointer;
+      outline: none;
+
+      // When a layer is hovered
+      &:hover {
+        fill: #916CB5cc;
+      }
+
+      // When a layer is focused.
+      &:focus {
+        fill: #916CB5cc;
+      }
+
+      // When a layer is 'checked' (via checkedLayers prop).
+      &[aria-checked='true'] {
+        fill: #916CB5;
+      }
+
+      // When a layer is 'selected' (via currentLayers prop).
+      &[aria-current='true'] {
+        fill: rgba(56,43,168,0.83);
+      }
+    }
+
+  }
+}
+
+:local(.cnt){
+  display:grid;
+  grid-template-columns: 200px 1fr;
+  gap:50px;
+  :local(.map){
+    grid-column: 1/span 1;
+  }
+  :local(.main){
+    grid-column: 2/span 1;
+  }
+}
+
+@media(max-width:640px){
+  :local(.cnt){
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:50px;
+    :local(.map){
+      display: none;
+    }
+    :local(.main){
+      grid-column: 1/span 1;
+    }
+  }
+}
