@@ -51,7 +51,7 @@ const App = () => {
   const addCases = 0;
 
   const [theme] = useState('light');
-  const [selectedRegion, setSelectedRegion] = useState('13');
+  const [selectedRegion, setSelectedRegion] = useState(localStorage.getItem('selectedRegion') || '13');
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [, setProbableDeaths] = useState(null);
@@ -133,6 +133,11 @@ const App = () => {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('selectedRegion', selectedRegion);
+  }, [selectedRegion]);
+
   if (loading) {
     return (
       <div className={`${styles.app} ${styles[`theme-${theme}`]}`}>
@@ -198,13 +203,7 @@ const App = () => {
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
-          data={data.map((x) => (
-            {
-              ...x,
-              last7DNewCases: x.avg7DNewCases * 7,
-              last14DNewCases: x.avg14DNewCases * 14,
-            }
-          ))}
+          data={data}
           xcolors={chartColorsTheme[theme]}
           yAxisScale="linear"
           title="Casos nuevos"
@@ -217,8 +216,8 @@ const App = () => {
           xLabelsField="updatedAt"
           yDatasets={{
             'Casos nuevos': 'newCases',
-            'Casos nuevos (ult 7D)': 'last7DNewCases',
-            'Casos nuevos (ult 14D)': 'last14DNewCases',
+            'Promedio Casos nuevos (ult 7D)': 'avg7DNewCases',
+            'Promedio Casos nuevos (ult 14D)': 'avg14DNewCases',
           }}
         />
         <br />
@@ -316,6 +315,7 @@ const App = () => {
               ...x,
               last7DDeaths: x.avg7DDeaths * 7,
               last14DDeaths: x.avg14DDeaths * 14,
+              deaths: Math.min(Math.max(x.deaths, 0), 300),
             }
           ))}
           yAxisScale="linear"
@@ -329,10 +329,11 @@ const App = () => {
           xLabelsField="updatedAt"
           yDatasets={{
             Fallecidos: 'deaths',
-            'Fallecidos (ult 7D)': 'last7DDeaths',
-            'Fallecidos (ult 14D)': 'last14DDeaths',
+            'Promedio Fallecidos (ult 7D)': 'avg7DDeaths',
+            'Promedio Fallecidos (ult 14D)': 'avg14DDeaths',
           }}
         />
+        <small>* Limitado en rango 0-300 para omitir peaks de computos retrasados</small>
         <br />
       </div>
       <div className={styles.widget}>
