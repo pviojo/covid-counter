@@ -12,11 +12,12 @@ body {
   font-size: 12px;;
   margin:0px;
   padding:0;
+  background:#f5f5f5;
   text-align: center;
   font-family: "Noto Sans Jp", "Helvetica", sans-serif;
 }
 :local(.app) {
-  padding:10px;
+  padding:0px;
   margin:0px;
   font-family: sans-serif;
   text-align: center;
@@ -46,7 +47,7 @@ body {
 }
 
 :local(.navbar){
-  margin:20px 0;
+  margin:20px 0 0;
   border-bottom:1px solid #ccc;
 }
 :local(.navbar .option){
@@ -60,8 +61,10 @@ body {
   border-bottom:0px; 
   cursor: pointer;
   font-weight: bold;
+  background:#fff;
   &:local(.selected){
     border-bottom:1px solid #fff;
+    background:#fff;
     a{
       color:#916CB5;
     }
@@ -76,9 +79,10 @@ body {
 @media(max-width:600px){
   body{
     margin:0px 0px;
+    padding:0;
   }
   :local(.main){
-    margin-top:20px;
+    padding-top:0px;
   }
   :local(.sources){
     padding-bottom:100px;
@@ -100,5 +104,8 @@ body {
   :local(.navbar .option){
     border:0;
     margin-bottom:0;
+    &:local(.selected){
+      background-color: #fff;
+    }
   }
 }
