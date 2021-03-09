@@ -10,8 +10,19 @@
   appearance: none;
   margin:0 10px 10px 0px;
   padding:20px;
+  background: #fff;
   :local(.title){
     font-size: 16px;
     margin-bottom: 20px;
   }
+}
+
+@media(max-width: 640px){
+
+  :local(.grid6Cols1Col){
+    display: grid;
+    margin:0 -5px 0 5px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
 }
