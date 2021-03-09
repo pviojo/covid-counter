@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import numeral from 'numeral';
 // eslint-disable-next-line
 import numerales from "numeral/locales/es";
+import moment from 'moment';
 import isMobile from 'is-mobile';
 
 import { RenderLineChart, RenderBarChart, chartColorsTheme } from '../../components/Charts';
@@ -33,24 +34,45 @@ const GeneralModule = ({
       <div className={styles.grid3Cols1Col}>
         <div className={styles.widget}>
           <Metric
+            color={data[data.length - 1].positivity * 100 > 5 ? '#c30' : '#777'}
             n={`${numeral(data[data.length - 1].positivity * 100).format('0.00')}%`}
             subn={`${numeral(data[data.length - 1].avg7DPositivity * 100).format('0.00')}% ult 7 días`}
             subtitle="Positividad en todo el país"
           />
+          <br />
+          <small>
+            * Actualizado
+            {' '}
+            {moment(data[data.length - 1].updatedAt).add(3, 'hours').format('YYYY-MM-DD')}
+          </small>
         </div>
         <div className={styles.widget}>
           <Metric
+            color={deltaCases > 0 ? '#c30' : '#777'}
             n={`${numeral(newCasesLast7D).format('0,000')}`}
             subn={`${deltaCases > 0 ? '+' : ''}${numeral(deltaCases).format('0.00')}% vs semana anterior (${numeral(newCasesPrev7D).format('0,000')})`}
             subtitle="Casos nuevos últimos 7 dias"
           />
+          <br />
+          <small>
+            * Actualizado
+            {' '}
+            {moment(data[data.length - 1].updatedAt).add(3, 'hours').format('YYYY-MM-DD')}
+          </small>
         </div>
         <div className={styles.widget}>
           <Metric
+            color={deltaDeaths > 0 ? '#c30' : '#777'}
             n={`${numeral(deathsLast7D).format('0,000')}`}
             subn={`${deltaDeaths > 0 ? '+' : ''}${numeral(deltaDeaths).format('0.00')}% vs semana anterior (${numeral(deathsPrev7D).format('0,000')})`}
             subtitle="Fallecidos últimos 7 dias"
           />
+          <br />
+          <small>
+            * Actualizado
+            {' '}
+            {moment(data[data.length - 1].updatedAt).add(3, 'hours').format('YYYY-MM-DD')}
+          </small>
         </div>
       </div>
       <div className={styles.widget}>
