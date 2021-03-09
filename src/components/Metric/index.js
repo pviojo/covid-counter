@@ -16,7 +16,9 @@ const Metric = ({
           <small>{!isNaN(subn) ? numeral(subn).format('0,0') : subn}</small>
         </div>
       )}
-    <div className={styles.subtitle} dangerouslySetInnerHTML={{ __html: subtitle }} />
+    <div className={styles.subtitle}>
+      {subtitle}
+    </div>
   </div>
 );
 Metric.defaultProps = {

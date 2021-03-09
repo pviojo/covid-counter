@@ -1,0 +1,17 @@
+
+:local(.grid6Cols1Col){
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+:local(.widget){
+  overflow: hidden;
+  border-bottom:1px solid #ddd;
+  appearance: none;
+  margin:0 10px 10px 0px;
+  padding:20px;
+  :local(.title){
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+}

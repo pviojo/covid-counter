@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import numeral from 'numeral';
+import styled from 'styled-components';
 // eslint-disable-next-line
 import numerales from "numeral/locales/es";
 
@@ -13,6 +14,8 @@ import { VectorMap } from '@south-paw/react-vector-maps';
 import { maxWeekly, delta } from '../../helpers/data';
 
 import { RenderLineChart, RenderBarChart } from '../../components/Charts';
+import ComunasByStep from '../../components/ComunasByStep';
+
 import chileMap from '../../data/chile.json';
 import {
   faseData,
@@ -20,6 +23,8 @@ import {
 
 import '../../global.scss';
 import styles from './index.module.scss';
+
+const getLayerCss = (l, regionData) => (`&[id="${l.id}"] { fill: ${regionData && faseData[regionData.minFase].color}}  &[id="${l.id}", aria-checked='true'] {fill: #916CB5 !important;}`);
 
 const ByRegionModule = ({
   comunasData,
@@ -29,6 +34,16 @@ const ByRegionModule = ({
 }) => {
   const [selectedRegion, setSelectedRegion] = useState(localStorage.getItem('selectedRegion') || '13');
 
+  const mapData = chileMap;
+  const layerProps = {};
+  const MapStyle = styled.div`
+    svg{
+      path {
+        ${mapData.layers.map((l) => getLayerCss(l, regionesData[l.id.substring(2)]))}
+      }
+    }
+  `;
+
   useEffect(() => {
     localStorage.setItem('selectedRegion', selectedRegion);
   }, [selectedRegion]);
@@ -37,7 +52,7 @@ const ByRegionModule = ({
     if (!region) {
       return;
     }
-    const regionCode = `${region < 10 ? '0' : ''}${region.toString()}`;
+    const regionCode = `${region.toString().substring(2)}`;
     setSelectedRegion(regionCode);
     window.scrollTo(0, 0);
   };
@@ -45,11 +60,14 @@ const ByRegionModule = ({
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
       <div className={styles.map}>
-        <VectorMap
-          {...chileMap}
-          onClick={({ target }) => setSelectedInMap(target.attributes.id && target.attributes.id.value)}
-          checkedLayers={[parseInt(selectedRegion, 10).toString()]}
-        />
+        <MapStyle>
+          <VectorMap
+            {...mapData}
+            layerProps={layerProps}
+            onClick={({ target }) => setSelectedInMap(target.attributes.id && target.attributes.id.value)}
+            checkedLayers={[`r-${parseInt(selectedRegion, 10).toString()}`]}
+          />
+        </MapStyle>
       </div>
       <div clasName={styles.main}>
         <div className={styles.select}>
@@ -80,6 +98,7 @@ const ByRegionModule = ({
           }
           />
         </div>
+        <ComunasByStep fases={regionesData[selectedRegion].fases} />
         <div className={styles.widget}>
           <RenderLineChart
             theme={theme}

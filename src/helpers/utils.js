@@ -18,7 +18,7 @@ export const faseData = {
     name: 'Apertura Inicial',
   },
   5: {
-    color: '#338AD1',
+    color: '#082C5A',
     name: 'Apertura Avanzada',
   },
 };

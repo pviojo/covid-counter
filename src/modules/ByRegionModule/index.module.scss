@@ -223,13 +223,12 @@
 
     // All layers are just path elements
     path {
-      fill: #916CB566;
       cursor: pointer;
       outline: none;
 
       // When a layer is hovered
       &:hover {
-        fill: #916CB5cc;
+        fill: #916CB5cc!important;
       }
 
       // When a layer is focused.
@@ -237,15 +236,6 @@
         fill: #916CB5cc;
       }
 
-      // When a layer is 'checked' (via checkedLayers prop).
-      &[aria-checked='true'] {
-        fill: #916CB5;
-      }
-
-      // When a layer is 'selected' (via currentLayers prop).
-      &[aria-current='true'] {
-        fill: rgba(56,43,168,0.83);
-      }
     }
 
   }

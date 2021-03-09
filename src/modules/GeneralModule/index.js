@@ -11,6 +11,7 @@ import isMobile from 'is-mobile';
 import { RenderLineChart, RenderBarChart, chartColorsTheme } from '../../components/Charts';
 
 import Metric from '../../components/Metric';
+import ComunasByStep from '../../components/ComunasByStep';
 import { delta } from '../../helpers/data';
 
 import '../../global.scss';
@@ -20,6 +21,7 @@ const GeneralModule = ({
   data,
   vaccinesData,
   theme,
+  regionesData,
 }) => {
   numeral.locale('es');
 
@@ -29,6 +31,9 @@ const GeneralModule = ({
   const deathsLast7D = data[data.length - 1].avg7DDeaths * 7;
   const deathsPrev7D = data[data.length - 1].avg14DDeaths * 14 - data[data.length - 1].avg7DDeaths * 7;
   const deltaDeaths = ((deathsLast7D / deathsPrev7D) - 1) * 100;
+
+  const allFases = regionesData ? Object.values(regionesData).reduce((a, b) => a.concat(b.fases), []) : [];
+
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
       <div className={styles.grid3Cols1Col}>
@@ -75,6 +80,9 @@ const GeneralModule = ({
           </small>
         </div>
       </div>
+
+      <ComunasByStep fases={allFases} />
+
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
@@ -343,6 +351,7 @@ GeneralModule.defaultProps = {
 GeneralModule.propTypes = {
   data: PropTypes.object.isRequired,
   vaccinesData: PropTypes.object.isRequired,
+  regionesData: PropTypes.object.isRequired,
   theme: PropTypes.string,
 };
 

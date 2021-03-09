@@ -107,6 +107,7 @@ const App = () => {
             <GeneralModule
               data={data}
               vaccinesData={vaccinesData}
+              regionesData={regionesData}
               theme={theme}
             />
             )}
