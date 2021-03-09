@@ -28,10 +28,9 @@
 }
 :local(.widget){
   overflow: hidden;
-  border-radius:5px;
   appearance: none;
   background:#111;
-  margin:0px 0px 10px;
+  margin:0px 5px 10px;
   padding:20px;
   :local(.title){
     font-size: 16px;
@@ -162,7 +161,7 @@
   }
   :local(.widget){
     background:#fff;
-    border:1px solid #ddd;
+    border-bottom:1px solid #ddd;
   }
 
   :global(.table td){

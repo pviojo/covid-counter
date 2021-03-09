@@ -9,6 +9,7 @@ import isMobile from 'is-mobile';
 
 import { RenderLineChart, RenderBarChart, chartColorsTheme } from '../../components/Charts';
 
+import Metric from '../../components/Metric';
 import { delta } from '../../helpers/data';
 
 import '../../global.scss';
@@ -21,8 +22,37 @@ const GeneralModule = ({
 }) => {
   numeral.locale('es');
 
+  const newCasesLast7D = data[data.length - 1].avg7DNewCases * 7;
+  const newCasesPrev7D = data[data.length - 1].avg14DNewCases * 14 - data[data.length - 1].avg7DNewCases * 7;
+  const deltaCases = ((newCasesLast7D / newCasesPrev7D) - 1) * 100;
+  const deathsLast7D = data[data.length - 1].avg7DDeaths * 7;
+  const deathsPrev7D = data[data.length - 1].avg14DDeaths * 14 - data[data.length - 1].avg7DDeaths * 7;
+  const deltaDeaths = ((deathsLast7D / deathsPrev7D) - 1) * 100;
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
+      <div className={styles.grid3Cols1Col}>
+        <div className={styles.widget}>
+          <Metric
+            n={`${numeral(data[data.length - 1].positivity * 100).format('0.00')}%`}
+            subn={`${numeral(data[data.length - 1].avg7DPositivity * 100).format('0.00')}% ult 7 días`}
+            subtitle="Positividad en todo el país"
+          />
+        </div>
+        <div className={styles.widget}>
+          <Metric
+            n={`${numeral(newCasesLast7D).format('0,000')}`}
+            subn={`${deltaCases > 0 ? '+' : ''}${numeral(deltaCases).format('0.00')}% vs semana anterior (${numeral(newCasesPrev7D).format('0,000')})`}
+            subtitle="Casos nuevos últimos 7 dias"
+          />
+        </div>
+        <div className={styles.widget}>
+          <Metric
+            n={`${numeral(deathsLast7D).format('0,000')}`}
+            subn={`${deltaDeaths > 0 ? '+' : ''}${numeral(deltaDeaths).format('0.00')}% vs semana anterior (${numeral(deathsPrev7D).format('0,000')})`}
+            subtitle="Fallecidos últimos 7 dias"
+          />
+        </div>
+      </div>
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}

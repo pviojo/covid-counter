@@ -1,5 +1,6 @@
 :local(.cnt) {
   text-align: center;
+  color:#666;
 }
 
 :local(.n) {
@@ -8,7 +9,7 @@
 }
 :local(.subn) {
   font-size: 20px;
-  margin-top: -10px;
+  margin-top: -5px;
   font-weight: 400;
   margin-bottom: 10px;
 }

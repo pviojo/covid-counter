@@ -29,7 +29,6 @@
 }
 :local(.widget){
   overflow: hidden;
-  border-radius:5px;
   appearance: none;
   background:#111;
   margin:0 10px 10px 0px;
@@ -163,7 +162,7 @@
   }
   :local(.widget){
     background:#fff;
-    border:1px solid #ddd;
+    border-bottom:1px solid #ddd;
   }
 
   :global(.table td){
