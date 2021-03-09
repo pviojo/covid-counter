@@ -278,7 +278,10 @@ const GeneralModule = ({
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
-          data={vaccinesData}
+          data={vaccinesData.map((x) => ({
+            ...x,
+            total: x.firstDose + x.secondDose,
+          }))}
           yAxisScale="linear"
           title="Vacunados"
           xAxisType="time"
@@ -291,6 +294,7 @@ const GeneralModule = ({
           yDatasets={{
             'Primera dosis': 'firstDose',
             'Segunda dosis': 'secondDose',
+            Total: 'total',
           }}
         />
         <br />
