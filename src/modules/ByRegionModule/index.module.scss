@@ -19,7 +19,7 @@
   bottom:0;
 }
 :local(.select){
-  margin:0px 10px 20px;
+  margin:0px 10px 20px 0;
   color:#999;
   font-size:16px;
   text-align: left;
@@ -32,7 +32,7 @@
   border-radius:5px;
   appearance: none;
   background:#111;
-  margin:0 0 10px;
+  margin:0 10px 10px 0px;
   padding:20px;
   :local(.title){
     font-size: 16px;
@@ -265,6 +265,12 @@
 }
 
 @media(max-width:640px){
+  :local(.select){
+    margin:0px 0px 10px;
+  }
+  :local(.widget){
+    margin:0px 0px 10px;
+  }
   :local(.theme-light){
     &:local(.cnt){
       background: #eee;
