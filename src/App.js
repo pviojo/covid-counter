@@ -18,11 +18,12 @@ import {
 import pjson from '../package.json';
 
 import GeneralModule from './modules/GeneralModule';
+import ByRegionModule from './modules/ByRegionModule';
+import CompareComunasModule from './modules/CompareComunasModule';
 
 import { getData } from './logic/data';
 import './global.scss';
 import styles from './index.module.scss';
-import ByRegionModule from './modules/ByRegionModule';
 
 const App = () => {
   const location = useLocation();
@@ -99,6 +100,9 @@ const App = () => {
           <div className={`${styles.option} ${location.pathname === '/por-region' ? styles.selected : ''}`}>
             <a onClick={() => history.push('/por-region')}>Por Región</a>
           </div>
+          <div className={`${styles.option} ${location.pathname.startsWith('/comparar-comunas') ? styles.selected : ''}`}>
+            <a onClick={() => history.push('/comparar-comunas')}>Comparar comunas</a>
+          </div>
 
         </div>
         <div className={`${styles.main}`}>
@@ -117,6 +121,13 @@ const App = () => {
               comunasData={comunasData}
               regionesData={regionesData}
               newCasesRegionData={newCasesRegionData}
+              theme={theme}
+            />
+            )}
+          {location.pathname.startsWith('/comparar-comunas')
+            && (
+            <CompareComunasModule
+              comunasData={comunasData}
               theme={theme}
             />
             )}

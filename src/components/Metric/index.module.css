@@ -4,31 +4,31 @@
 }
 
 :local(.n) {
-  font-size: 72px;
+  font-size: 48px;
   font-weight: 400;
 }
 :local(.subn) {
-  font-size: 20px;
-  margin-top: -5px;
-  font-weight: 400;
+  font-size: 16px;
+  margin-top: 0px;
+  font-weight: 100;
   margin-bottom: 10px;
 }
 
 :local(.subtitle) {
   margin-top: 0px;
-  font-size: 18px;
-  font-weight: 100;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 @media(max-width:600px){
   :local(.n) {
-    font-size: 72px;
+    font-size: 48px;
   }
   :local(.subn) {
-    font-size: 18px;
+    font-size: 16px;
   }
   :local(.subtitle) {
-    font-size: 14px;
+    font-size: 12px;
   }
 }
 
@@ -37,7 +37,7 @@
     font-size: 48px;
   }
   :local(.subn) {
-    font-size: 18px;
+    font-size: 16px;
   }
   :local(.subtitle) {
     font-size: 14px;
