@@ -86,6 +86,56 @@ const getDataCovid = async () => {
   const dataDeaths = (rows[4]).slice(1);
   const dataActiveCases = (rows[8]).slice(1);
   let prevDeaths = 0;
+
+  const ventiladoresRow = (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto20/NumeroVentiladores_T.csv')).slice(1);
+  const ventiladores = {};
+  ventiladoresRow.map((r) => {
+    ventiladores[r[0]] = {
+      total: parseInt(r[1], 10),
+      available: parseInt(r[2], 10),
+      busy: parseInt(r[3], 10),
+    };
+    return null;
+  });
+
+  const camasRow = (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto58/Camas_UCI_diarias_std.csv')).filter((x) => x[0] === 'Total');
+  const camas = {};
+  camasRow.map((x) => {
+    if (!camas[x[2]]) {
+      camas[x[2]] = {
+        total: 0,
+        available: 0,
+        busy: 0,
+        busy_covid19: 0,
+        busy_noncovid19: 0,
+      };
+    }
+    if (x[1] === 'Camas UCI habilitadas') {
+      camas[x[2]].total = parseInt(x[3], 10);
+    }
+    if (x[1] === 'Camas UCI ocupadas COVID-19') {
+      camas[x[2]].busy_covid19 = parseInt(x[3], 10);
+    }
+    if (x[1] === 'Camas UCI ocupadas no COVID-19') {
+      camas[x[2]].busy_noncovid19 = parseInt(x[3], 10);
+    }
+    if (x[1] === 'Camas UCI ocupadas') {
+      camas[x[2]].busy = parseInt(x[3], 10);
+    }
+    camas[x[2]].available = camas[x[2]].total - camas[x[2]].busy;
+    return null;
+  });
+
+  console.log(camas);
+
+  let ventiladoresAvailable = 0;
+  let ventiladoresBusy = 0;
+  let ventiladoresTotal = 0;
+  let camasAvailable = 0;
+  let camasBusy = 0;
+  let camasBusyCovid19 = 0;
+  let camasBusyNonCovid19 = 0;
+  let camasTotal = 0;
   const rsp = dates.map((date, index) => {
     const d = moment(date).subtract(3, 'hours').format();
     const newCases = parseInt(dataNewCases[index] || 0, 10);
@@ -101,6 +151,18 @@ const getDataCovid = async () => {
       10,
     );
     const positivity = testsPCR > 0 ? newCases / testsPCR : null;
+    if (date !== '2020-09-30') {
+      // eslint-disable-next-line max-len
+      ventiladoresAvailable = ventiladores[date] ? ventiladores[date].available : ventiladoresAvailable;
+      ventiladoresBusy = ventiladores[date] ? ventiladores[date].busy : ventiladoresBusy;
+      ventiladoresTotal = ventiladores[date] ? ventiladores[date].total : ventiladoresTotal;
+    }
+
+    camasAvailable = camas[date] ? camas[date].available : camasAvailable;
+    camasBusy = camas[date] ? camas[date].busy : camasBusy;
+    camasBusyCovid19 = camas[date] ? camas[date].busy_covid19 : camasBusyCovid19;
+    camasBusyNonCovid19 = camas[date] ? camas[date].busy_noncovid19 : camasBusyNonCovid19;
+    camasTotal = camasAvailable + camasBusy;
     return {
       updatedAt: d,
       newCases,
@@ -110,8 +172,21 @@ const getDataCovid = async () => {
       newCasesWithoutSymptoms,
       testsPCR,
       positivity,
+      ventiladoresAvailable,
+      ventiladoresBusy,
+      ventiladoresTotal,
+      pctVentiladoresAvailable: (ventiladoresAvailable / ventiladoresTotal) * 100,
+      pctVentiladoresBusy: (ventiladoresBusy / ventiladoresTotal) * 100,
+      camasAvailable,
+      camasBusy,
+      camasBusyCovid19,
+      camasBusyNonCovid19,
+      camasTotal,
+      pctCamasAvailable: (camasAvailable / camasTotal) * 100,
+      pctCamasBusy: (camasBusy / camasTotal) * 100,
     };
   });
+  console.log(rsp);
   return rsp;
 };
 const getDataVaccines = async () => {

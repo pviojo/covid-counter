@@ -155,6 +155,13 @@
     display: grid;
     grid-template-columns: 1fr;
   }
+
+  :local(.grid5Cols1Col){
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+
 }
 
 

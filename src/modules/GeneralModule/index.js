@@ -24,24 +24,32 @@ const GeneralModule = ({
   regionesData,
 }) => {
   numeral.locale('es');
-
   const newCasesLast7D = data[data.length - 1].avg7DNewCases * 7;
   const newCasesPrev7D = data[data.length - 1].avg14DNewCases * 14 - data[data.length - 1].avg7DNewCases * 7;
   const deltaCases = ((newCasesLast7D / newCasesPrev7D) - 1) * 100;
   const deathsLast7D = data[data.length - 1].avg7DDeaths * 7;
   const deathsPrev7D = data[data.length - 1].avg14DDeaths * 14 - data[data.length - 1].avg7DDeaths * 7;
   const deltaDeaths = ((deathsLast7D / deathsPrev7D) - 1) * 100;
+  const {
+    ventiladoresAvailable, pctVentiladoresAvailable,
+  } = data[data.length - 1];
+
+  const ventiladoresAvailable7DAgo = data[data.length - 8].ventiladoresAvailable;
+  const pctVentiladoresAvailable7DAgo = data[data.length - 8].pctVentiladoresAvailable;
+
+  const deltaVentiladores = ((ventiladoresAvailable / ventiladoresAvailable7DAgo) - 1) * 100;
+  const deltaPctVentiladores = pctVentiladoresAvailable7DAgo - pctVentiladoresAvailable;
 
   const allFases = regionesData ? Object.values(regionesData).reduce((a, b) => a.concat(b.fases), []) : [];
 
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
-      <div className={styles.grid3Cols1Col}>
+      <div className={styles.grid5Cols1Col}>
         <div className={styles.widget}>
           <Metric
             color={data[data.length - 1].positivity * 100 > 5 ? '#c30' : '#777'}
-            n={`${numeral(data[data.length - 1].positivity * 100).format('0.00')}%`}
-            subn={`${numeral(data[data.length - 1].avg7DPositivity * 100).format('0.00')}% ult 7 días`}
+            n={`${numeral(data[data.length - 1].positivity * 100).format('0.0')}%`}
+            subn={`${numeral(data[data.length - 1].avg7DPositivity * 100).format('0.0')}% ult 7 días`}
             subtitle="Positividad en todo el país"
           />
           <br />
@@ -55,7 +63,7 @@ const GeneralModule = ({
           <Metric
             color={deltaCases > 0 ? '#c30' : '#777'}
             n={`${numeral(newCasesLast7D).format('0,000')}`}
-            subn={`${deltaCases > 0 ? '+' : ''}${numeral(deltaCases).format('0.00')}% vs semana anterior (${numeral(newCasesPrev7D).format('0,000')})`}
+            subn={`${deltaCases > 0 ? '+' : ''}${numeral(deltaCases).format('0.0')}% vs semana anterior (${numeral(newCasesPrev7D).format('0,000')})`}
             subtitle="Casos nuevos últimos 7 dias"
           />
           <br />
@@ -69,8 +77,36 @@ const GeneralModule = ({
           <Metric
             color={deltaDeaths > 0 ? '#c30' : '#777'}
             n={`${numeral(deathsLast7D).format('0,000')}`}
-            subn={`${deltaDeaths > 0 ? '+' : ''}${numeral(deltaDeaths).format('0.00')}% vs semana anterior (${numeral(deathsPrev7D).format('0,000')})`}
+            subn={`${deltaDeaths > 0 ? '+' : ''}${numeral(deltaDeaths).format('0.0')}% vs semana anterior (${numeral(deathsPrev7D).format('0,000')})`}
             subtitle="Fallecidos últimos 7 dias"
+          />
+          <br />
+          <small>
+            * Actualizado
+            {' '}
+            {moment(data[data.length - 1].updatedAt).add(3, 'hours').format('YYYY-MM-DD')}
+          </small>
+        </div>
+        <div className={styles.widget}>
+          <Metric
+            color={(pctVentiladoresAvailable < 10 || deltaVentiladores < 0) ? '#c30' : '#777'}
+            n={`${numeral(ventiladoresAvailable).format('0,000')}`}
+            subn={`${deltaVentiladores > 0 ? '+' : ''}${numeral(deltaVentiladores).format('0.0')}% vs semana anterior (${numeral(ventiladoresAvailable7DAgo).format('0,000')})`}
+            subtitle="Camas críticas y Ventiladores disponibles"
+          />
+          <br />
+          <small>
+            * Actualizado
+            {' '}
+            {moment(data[data.length - 1].updatedAt).add(3, 'hours').format('YYYY-MM-DD')}
+          </small>
+        </div>
+        <div className={styles.widget}>
+          <Metric
+            color={(pctVentiladoresAvailable < 10 || deltaPctVentiladores < 0) ? '#c30' : '#777'}
+            n={`${numeral(100 - pctVentiladoresAvailable).format('0.0')}%`}
+            subn={`${deltaPctVentiladores > 0 ? '+' : ''}${numeral(deltaPctVentiladores).format('0.0')}% vs semana anterior (${numeral(100 - pctVentiladoresAvailable7DAgo).format('0.0')}%)`}
+            subtitle="Ocupación críticas y Ventiladores"
           />
           <br />
           <small>
@@ -280,7 +316,7 @@ const GeneralModule = ({
           theme={theme}
           data={vaccinesData}
           yAxisScale="linear"
-          title="Vacunados"
+          title="Vacunados total"
           xAxisType="time"
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
@@ -301,7 +337,7 @@ const GeneralModule = ({
           theme={theme}
           data={vaccinesData}
           yAxisScale="linear"
-          title="Vacunados"
+          title="Vacunados diarios"
           xAxisType="time"
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
@@ -313,6 +349,90 @@ const GeneralModule = ({
             'Primera dosis (promedio ult 7 dias)': 'avg7DNewFirstDose',
             'Segunda dosis (promedio ult 7 dias)': 'avg7DNewSecondDose',
             'Total (promedio ult 7 dias)': 'avg7DNewTotal',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={data}
+          yAxisScale="linear"
+          title="Ventiladores"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            Disponibles: 'ventiladoresAvailable',
+            Ocupados: 'ventiladoresBusy',
+            Totales: 'ventiladoresTotal',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
+          theme={theme}
+          data={data}
+          yAxisScale="linear"
+          title="% Ventiladores disponibles"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          stack
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            '% Disponibles': 'pctVentiladoresAvailable',
+            '% Ocupados': 'pctVentiladoresBusy',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={data}
+          yAxisScale="linear"
+          title="Camas críticas"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            Disponibles: 'camasAvailable',
+            Ocupados: 'camasBusy',
+            Totales: 'camasTotal',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
+          theme={theme}
+          data={data}
+          yAxisScale="linear"
+          title="% Camas críticas disponibles"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          stack
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            '% Disponibles': 'pctCamasAvailable',
+            '% Ocupados': 'pctCamasBusy',
           }}
         />
         <br />
