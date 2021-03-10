@@ -108,8 +108,8 @@ const CompareComunasModule = ({
             showYAxisSelector
             yAxisMin={0}
             title="Comparación Prevalencia Casos activos cada 100.000 hab"
-            width={33}
-            height={isMobile() ? 15 : 15}
+            width={100}
+            height={isMobile() ? 75 : 50}
             xAxisStepSize={isMobile() ? 14 : 1}
             xLabelsField="updatedAt"
             yDatasets={yDatasets}
