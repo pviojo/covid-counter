@@ -126,8 +126,6 @@ const getDataCovid = async () => {
     return null;
   });
 
-  console.log(camas);
-
   let ventiladoresAvailable = 0;
   let ventiladoresBusy = 0;
   let ventiladoresTotal = 0;
@@ -186,7 +184,6 @@ const getDataCovid = async () => {
       pctCamasBusy: (camasBusy / camasTotal) * 100,
     };
   });
-  console.log(rsp);
   return rsp;
 };
 const getDataVaccines = async () => {
