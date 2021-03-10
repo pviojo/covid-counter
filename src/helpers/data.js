@@ -30,6 +30,29 @@ export const delta = (data, offset, field) => {
   return rsp;
 };
 
+export const mergeByUpdatedAt = (a, b) => {
+  const rsp = a.map((x) => {
+    const f = b.find((y) => y.updatedAt === x.updatedAt);
+    if (f) {
+      return {
+        a: x,
+        b: f,
+      };
+    }
+    return {
+      a: x,
+      b: {},
+    };
+  });
+  return rsp;
+};
+
+export const mode = (arr) => [...new Set(arr)]
+  .map((value) => [value, arr.filter((v) => v === value).length])
+  .sort((a, b) => b[1] - a[1])
+  .filter((v, i, a) => v[1] === a[0][1])
+  .map((v) => v[0]);
+
 export default {
   maxWeekly,
 };

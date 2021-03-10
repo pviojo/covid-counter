@@ -2,6 +2,10 @@
 import axios from 'axios';
 import moment from 'moment';
 
+import {
+  mode,
+} from '../helpers/data';
+
 const nameCodeRegion = {
   'Arica y Parinacota': '15',
   Tarapacá: '01',
@@ -115,13 +119,21 @@ const getDataVaccines = async () => {
   const dates = (rows[0]).slice(2);
   const dataFirstDose = (rows[1]).slice(2);
   const dataSecondDose = (rows[2]).slice(2);
+  let firstDose = 0;
+  let secondDose = 0;
   const rsp = dates.map((date, index) => {
-    const firstDose = parseInt(dataFirstDose[index] || 0, 10);
-    const secondDose = parseInt(dataSecondDose[index] || 0, 10);
+    const newFirstDose = parseInt(dataFirstDose[index] || 0, 10) - firstDose;
+    const newSecondDose = parseInt(dataSecondDose[index] || 0, 10) - secondDose;
+    firstDose = parseInt(dataFirstDose[index] || 0, 10);
+    secondDose = parseInt(dataSecondDose[index] || 0, 10);
     return {
       date,
       firstDose,
       secondDose,
+      total: firstDose + secondDose,
+      newFirstDose,
+      newSecondDose,
+      newTotal: newFirstDose + newSecondDose,
     };
   });
   return rsp;
@@ -216,6 +228,7 @@ const getRegionesData = async (comunasData) => {
     rsp[k].avgFase = Math.round(
       rsp[k].fases.reduce((a, b) => a + b, 0) / rsp[k].fases.length,
     );
+    rsp[k].modeFase = Math.min(...mode(rsp[k].fases));
     return null;
   });
   return rsp;
@@ -401,8 +414,10 @@ export const getData = async () => {
   const comunasData = await getComunasData();
   const regionesData = await getRegionesData(comunasData);
   const newCasesRegionData = await getNewCasesRegionData();
-  const vaccinesData = await getDataVaccines();
-
+  let vaccinesData = await getDataVaccines();
+  vaccinesData = avgLast(vaccinesData, 7, 'newFirstDose', 'avg7DNewFirstDose');
+  vaccinesData = avgLast(vaccinesData, 7, 'newSecondDose', 'avg7DNewSecondDose');
+  vaccinesData = avgLast(vaccinesData, 7, 'newTotal', 'avg7DNewTotal');
   return {
     dailyData: data,
     vaccinesData,

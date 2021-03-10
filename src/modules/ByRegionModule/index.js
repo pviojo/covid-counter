@@ -11,7 +11,7 @@ import Select from 'react-select';
 import isMobile from 'is-mobile';
 
 import { VectorMap } from '@south-paw/react-vector-maps';
-import { maxWeekly, delta } from '../../helpers/data';
+import { maxWeekly, delta, mergeByUpdatedAt } from '../../helpers/data';
 
 import { RenderLineChart, RenderBarChart } from '../../components/Charts';
 import ComunasByStep from '../../components/ComunasByStep';
@@ -24,7 +24,7 @@ import {
 import '../../global.scss';
 import styles from './index.module.scss';
 
-const getLayerCss = (l, regionData) => (`&[id="${l.id}"] { fill: ${regionData && faseData[regionData.minFase].color}}  &[id="${l.id}", aria-checked='true'] {fill: #916CB5 !important;}`);
+const getLayerCss = (l, regionData) => (`&[id="${l.id}"] { fill: ${regionData && faseData[regionData.modeFase].color}}  &[id="${l.id}", aria-checked='true'] {fill: #916CB5 !important;}`);
 
 const ByRegionModule = ({
   comunasData,
@@ -247,9 +247,34 @@ const ByRegionModule = ({
               </div>
             )
           ))}
-
         </div>
-
+        {selectedRegion === '05s' && (
+        <>
+          <div className={styles.widget} key="comp">
+            <RenderLineChart
+              theme={theme}
+              data={mergeByUpdatedAt(comunasData['Valparaiso - Valparaiso'].data, comunasData['Valparaiso - Vina del Mar'].data).map((x) => ({
+                updatedAt: x.a.updatedAt,
+                prevalenceActiveCases1: x.a.prevalenceActiveCases,
+                prevalenceActiveCases2: x.b.prevalenceActiveCases,
+              }))}
+              yAxisScale="linear"
+              xAxisType="time"
+              showYAxisSelector
+              yAxisMin={0}
+              title="Comparación Viña del Mar vs Valparaiso"
+              width={33}
+              height={isMobile() ? 15 : 15}
+              xAxisStepSize={isMobile() ? 14 : 1}
+              xLabelsField="updatedAt"
+              yDatasets={{
+                'Prevalencia Viña del Mar': 'prevalenceActiveCases1',
+                'Prevalencia Valparaiso': 'prevalenceActiveCases2',
+              }}
+            />
+          </div>
+        </>
+        )}
       </div>
 
     </div>
