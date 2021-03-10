@@ -67,7 +67,7 @@ const CompareComunasModule = ({
           (y) => y.updatedAt === x.updatedAt,
         ) || {}).prevalenceActiveCases,
       }));
-      yDatasets[`Prevalencia ${c.label} (pob: ${numeral(comunasData[c.label].population).format('0,0')} hab)`] = k;
+      yDatasets[`Incidencia ${c.label} (pob: ${numeral(comunasData[c.label].population).format('0,0')} hab)`] = k;
       return null;
     });
   }
@@ -107,7 +107,7 @@ const CompareComunasModule = ({
             xAxisType="time"
             showYAxisSelector
             yAxisMin={0}
-            title="Comparación Prevalencia Casos activos cada 100.000 hab"
+            title="Comparación Incidencia Casos activos cada 100.000 hab"
             width={100}
             height={isMobile() ? 75 : 50}
             xAxisStepSize={isMobile() ? 14 : 1}

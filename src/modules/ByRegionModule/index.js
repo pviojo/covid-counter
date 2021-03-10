@@ -235,13 +235,13 @@ const ByRegionModule = ({
                   xAxisType="time"
                   showYAxisSelector
                   yAxisMin={0}
-                  title={`${comunasData[c].label}<br/><small>Prevalencia Casos activos</small><br/><small>(pob: ${numeral(comunasData[c].population).format('0,0')} hab, <span style="color:${faseData[comunasData[c].fase] && faseData[comunasData[c].fase].color}">Fase: ${comunasData[c].fase}, ${faseData[comunasData[c].fase] && faseData[comunasData[c].fase].name})<span></small>`}
+                  title={`${comunasData[c].label}<br/><small>Incidencia Casos activos</small><br/><small>(pob: ${numeral(comunasData[c].population).format('0,0')} hab, <span style="color:${faseData[comunasData[c].fase] && faseData[comunasData[c].fase].color}">Fase: ${comunasData[c].fase}, ${faseData[comunasData[c].fase] && faseData[comunasData[c].fase].name})<span></small>`}
                   width={33}
                   height={isMobile() ? 25 : 25}
                   xAxisStepSize={isMobile() ? 14 : 1}
                   xLabelsField="updatedAt"
                   yDatasets={{
-                    'Prevalencia 100.000 hab': 'prevalenceActiveCases',
+                    'Incidencia 100.000 hab': 'prevalenceActiveCases',
                   }}
                 />
               </div>
@@ -268,8 +268,8 @@ const ByRegionModule = ({
               xAxisStepSize={isMobile() ? 14 : 1}
               xLabelsField="updatedAt"
               yDatasets={{
-                'Prevalencia Viña del Mar': 'prevalenceActiveCases1',
-                'Prevalencia Valparaiso': 'prevalenceActiveCases2',
+                'Incidencia Viña del Mar': 'prevalenceActiveCases1',
+                'Incidencia Valparaiso': 'prevalenceActiveCases2',
               }}
             />
           </div>
