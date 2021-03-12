@@ -455,6 +455,7 @@ const GeneralModule = ({
             'Casos activos (FD)': 'activeCasesFD',
           }}
         />
+        <small>* FIS: Fecha inicio de sintomas, FD: Fecha de diagnostico</small>
         <br />
       </div>
       <div className={styles.widget}>
