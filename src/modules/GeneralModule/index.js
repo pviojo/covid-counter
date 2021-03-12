@@ -142,7 +142,7 @@ const GeneralModule = ({
         <br />
       </div>
       <div className={styles.widget}>
-        <RenderBarChart
+        <RenderLineChart
           theme={theme}
           data={
             delta(
@@ -192,6 +192,83 @@ const GeneralModule = ({
           yDatasets={{
             'Con síntomas': 'percentAvg7DNewCasesWithSymptoms',
             'Sin síntomas': 'percentAvg7DNewCasesWithoutSymptoms',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={data}
+          yAxisScale="linear"
+          title="Casos activos"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Casos activos (FIS)': 'activeCasesFIS',
+            'Casos activos (FD)': 'activeCasesFD',
+          }}
+        />
+        <small>* FIS: Fecha inicio de sintomas, FD: Fecha de diagnostico</small>
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={
+            delta(
+              delta(
+                data,
+                7,
+                'activeCasesFIS',
+              ).map((x) => ({
+                ...x,
+                activeCasesFIS: Math.min(Math.max(x.activeCasesFIS, -1), 1),
+              })),
+              7,
+              'activeCasesFD',
+            ).map((x) => ({
+              ...x,
+              activeCasesFD: Math.min(Math.max(x.activeCasesFD, -1), 1),
+            }))
+          }
+          yAxisScale="linear"
+          yAxisType="percentage"
+          xAxisType="time"
+          showYAxisSelector
+          title="Variación en 7 días de casos activos"
+          width={100}
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Var % (FIS)': 'activeCasesFIS',
+            'Var % (FD)': 'activeCasesFD',
+          }}
+        />
+        <small>* Limitado en rango +/- 100%</small>
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={data}
+          yAxisScale="linear"
+          title="Test PCR reportados"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Test PCR': 'testsPCR',
+            'Test PCR (Media Móvil 7D)': 'avg7DtestsPCR',
           }}
         />
         <br />
@@ -284,7 +361,7 @@ const GeneralModule = ({
         <small>* Limitado en rango +/- 100%</small>
       </div>
       <div className={styles.widget}>
-        <RenderBarChart
+        <RenderLineChart
           theme={theme}
           data={
             delta(
@@ -437,47 +514,7 @@ const GeneralModule = ({
         />
         <br />
       </div>
-      <div className={styles.widget}>
-        <RenderLineChart
-          theme={theme}
-          data={data}
-          yAxisScale="linear"
-          title="Casos activos"
-          xAxisType="time"
-          xAxisStepSize={isMobile() ? 7 : 4}
-          width={100}
-          showYAxisSelector
-          height={isMobile() ? 80 : 25}
-          yAxisMin={0}
-          xLabelsField="updatedAt"
-          yDatasets={{
-            'Casos activos (FIS)': 'activeCasesFIS',
-            'Casos activos (FD)': 'activeCasesFD',
-          }}
-        />
-        <small>* FIS: Fecha inicio de sintomas, FD: Fecha de diagnostico</small>
-        <br />
-      </div>
-      <div className={styles.widget}>
-        <RenderLineChart
-          theme={theme}
-          data={data}
-          yAxisScale="linear"
-          title="Test PCR reportados"
-          xAxisType="time"
-          xAxisStepSize={isMobile() ? 7 : 4}
-          width={100}
-          showYAxisSelector
-          height={isMobile() ? 80 : 25}
-          yAxisMin={0}
-          xLabelsField="updatedAt"
-          yDatasets={{
-            'Test PCR': 'testsPCR',
-            'Test PCR (Media Móvil 7D)': 'avg7DtestsPCR',
-          }}
-        />
-        <br />
-      </div>
+
     </div>
   );
 };
