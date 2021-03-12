@@ -84,7 +84,7 @@ const getDataCovid = async () => {
   const dataNewCasesWithoutSymptoms = (rows[6]).slice(1);
   const dataNewCases = (rows[7]).slice(1);
   const dataDeaths = (rows[4]).slice(1);
-  const dataActiveCases = (rows[8]).slice(1);
+  const dataActiveCases = (rows[9]).slice(1);
   let prevDeaths = 0;
 
   const ventiladoresRow = (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto20/NumeroVentiladores_T.csv')).slice(1);
