@@ -440,13 +440,7 @@ const GeneralModule = ({
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
-          data={data.map((x) => (
-            {
-              ...x,
-              last7DNewCases: x.avg7DNewCases * 7,
-              last14DNewCases: x.avg14DNewCases * 14,
-            }
-          ))}
+          data={data}
           yAxisScale="linear"
           title="Casos activos"
           xAxisType="time"
@@ -457,7 +451,8 @@ const GeneralModule = ({
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
-            'Casos activos': 'activeCases',
+            'Casos activos (FIS)': 'activeCasesFIS',
+            'Casos activos (FD)': 'activeCasesFD',
           }}
         />
         <br />
