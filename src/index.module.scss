@@ -96,13 +96,19 @@ body {
     right:0;
     background:#fff;
     border-top:1px solid #ccc;
-    border-bottom:0
+    border-bottom:0;
+    display:grid;
+    grid-template-columns: auto auto auto;
+    align-items: center;
+    justify-items: center;
   }
   :local(.app) {
     padding:0;
   }
   :local(.navbar .option){
     border:0;
+    padding:20px 10px;
+    font-size: 14px;
     margin-bottom:0;
     &:local(.selected){
       background-color: #fff;
