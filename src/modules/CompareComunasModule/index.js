@@ -56,9 +56,11 @@ const CompareComunasModule = ({
   }, [location]);
 
   let data = null;
+  let dataLast10 = null;
   const yDatasets = [];
   if (selectedComunas && selectedComunas.length > 0) {
     data = comunasData[selectedComunas[0].label].data;
+
     selectedComunas.map((c, i) => {
       const k = `prevalenceActiveCases${i + 1}`;
       data = data.map((x) => ({
@@ -67,6 +69,7 @@ const CompareComunasModule = ({
           (y) => y.updatedAt === x.updatedAt,
         ) || {}).prevalenceActiveCases,
       }));
+      dataLast10 = data.slice(-10);
       yDatasets[`Incidencia ${c.label} (pob: ${numeral(comunasData[c.label].population).format('0,0')} hab)`] = k;
       return null;
     });
@@ -99,22 +102,41 @@ const CompareComunasModule = ({
         </div>
         {selectedComunas && selectedComunas.length > 0
         && (
-        <div className={styles.widget} key="comp">
-          <RenderLineChart
-            theme={theme}
-            data={data}
-            yAxisScale="linear"
-            xAxisType="time"
-            showYAxisSelector
-            yAxisMin={0}
-            title="Comparación Incidencia Casos activos cada 100.000 hab"
-            width={100}
-            height={isMobile() ? 75 : 50}
-            xAxisStepSize={isMobile() ? 14 : 1}
-            xLabelsField="updatedAt"
-            yDatasets={yDatasets}
-          />
-        </div>
+          <>
+            <div className={styles.widget} key="comp">
+              <RenderLineChart
+                theme={theme}
+                data={data}
+                yAxisScale="linear"
+                xAxisType="time"
+                showYAxisSelector
+                yAxisMin={0}
+                title="Comparación Incidencia Casos activos cada 100.000 hab"
+                width={100}
+                height={isMobile() ? 75 : 50}
+                xAxisStepSize={isMobile() ? 14 : 1}
+                xLabelsField="updatedAt"
+                yDatasets={yDatasets}
+              />
+            </div>
+            <div className={styles.widget} key="comp">
+              <RenderLineChart
+                theme={theme}
+                data={dataLast10}
+                yAxisScale="linear"
+                xAxisType="time"
+                showYAxisSelector
+                yAxisMin={0}
+                title="Comparación Incidencia Casos activos cada 100.000 hab (ultimos 10 reportes)"
+                width={100}
+                height={isMobile() ? 75 : 50}
+                xAxisStepSize={isMobile() ? 14 : 1}
+                xLabelsField="updatedAt"
+                yDatasets={yDatasets}
+              />
+            </div>
+
+          </>
         )}
       </div>
     </div>
