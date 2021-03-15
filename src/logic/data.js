@@ -260,7 +260,9 @@ const getComunasData = async () => {
         // totalCases: t,
         // newCases: t - prevCases,
         activeCases: parseInt(row[i + 5], 10),
-        prevalenceActiveCases: parseInt(row[i + 5], 10) / (r.population / 100000),
+        prevalenceActiveCases: Math.round(
+          (parseInt(row[i + 5], 10) / (r.population / 100000)) * 10,
+        ) / 10,
       });
       // prevCases = t;
       return null;
