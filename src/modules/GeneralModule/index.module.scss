@@ -146,6 +146,11 @@
   grid-template-columns: repeat(5, 1fr);
 }
 
+:local(.grid6Cols1Col){
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
 
 @media(max-width:800px){
   :local(.grid2Cols1Col),
@@ -157,6 +162,10 @@
   }
 
   :local(.grid5Cols1Col){
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  :local(.grid6Cols1Col){
     display: grid;
     grid-template-columns: repeat(2, 1fr);
   }

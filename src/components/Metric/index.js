@@ -23,12 +23,13 @@ const Metric = ({
 );
 Metric.defaultProps = {
   color: '',
+  subn: null,
 };
 
 Metric.propTypes = {
-  subtitle: PropTypes.string.isRequired,
-  n: PropTypes.string.isRequired,
-  subn: PropTypes.string.isRequired,
+  subtitle: PropTypes.any.isRequired,
+  n: PropTypes.any.isRequired,
+  subn: PropTypes.string,
   color: PropTypes.string,
 };
 

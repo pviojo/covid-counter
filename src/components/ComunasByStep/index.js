@@ -57,7 +57,7 @@ const ComunasByStep = ({
 };
 
 ComunasByStep.propTypes = {
-  fases: PropTypes.object.isRequired,
+  fases: PropTypes.array.isRequired,
 };
 
 export default ComunasByStep;

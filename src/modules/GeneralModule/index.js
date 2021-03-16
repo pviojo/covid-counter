@@ -34,6 +34,9 @@ const GeneralModule = ({
     ventiladoresAvailable, pctVentiladoresAvailable,
   } = data[data.length - 1];
 
+  const newCasesToday = data[data.length - 1].newCases;
+  const newCases7DBefore = data[data.length - 1 - 7].newCases;
+  const deltaNewCases7D = ((newCasesToday / newCases7DBefore) - 1) * 100;
   const ventiladoresAvailable7DAgo = data[data.length - 8].ventiladoresAvailable;
   const pctVentiladoresAvailable7DAgo = data[data.length - 8].pctVentiladoresAvailable;
 
@@ -44,7 +47,21 @@ const GeneralModule = ({
 
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
-      <div className={styles.grid5Cols1Col}>
+      <div className={styles.grid6Cols1Col}>
+        <div className={styles.widget}>
+          <Metric
+            color={deltaNewCases7D > 0 ? '#c30' : '#777'}
+            n={`${numeral(newCasesToday).format('0,000')}`}
+            subn={`${numeral(newCases7DBefore).format('0,000')} hace 7 días (${deltaNewCases7D > 0 ? '+' : ''}${numeral(deltaNewCases7D).format('0.0')}% variación)`}
+            subtitle="Casos nuevos hoy"
+          />
+          <br />
+          <small>
+            * Actualizado
+            {' '}
+            {moment(data[data.length - 1].updatedAt).add(3, 'hours').format('YYYY-MM-DD')}
+          </small>
+        </div>
         <div className={styles.widget}>
           <Metric
             color={data[data.length - 1].positivity * 100 > 5 ? '#c30' : '#777'}
@@ -527,8 +544,8 @@ GeneralModule.defaultProps = {
 };
 
 GeneralModule.propTypes = {
-  data: PropTypes.object.isRequired,
-  vaccinesData: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  vaccinesData: PropTypes.array.isRequired,
   regionesData: PropTypes.object.isRequired,
   theme: PropTypes.string,
 };
