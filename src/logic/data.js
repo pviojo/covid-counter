@@ -187,6 +187,8 @@ const getDataCovid = async () => {
       camasTotal,
       pctCamasAvailable: (camasAvailable / camasTotal) * 100,
       pctCamasBusy: (camasBusy / camasTotal) * 100,
+      pctCamasBusyCovid19: (camasBusyCovid19 / camasTotal) * 100,
+      pctCamasBusyNonCovid19: (camasBusyNonCovid19 / camasTotal) * 100,
     };
   });
   return rsp;

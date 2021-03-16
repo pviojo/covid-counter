@@ -487,7 +487,9 @@ const GeneralModule = ({
           xLabelsField="updatedAt"
           yDatasets={{
             Disponibles: 'camasAvailable',
-            Ocupados: 'camasBusy',
+            'Ocupados COVID-19': 'camasBusyCovid19',
+            'Ocupados No COVID-19': 'camasBusyNonCovid19',
+            'Ocupados Total': 'camasBusy',
             Totales: 'camasTotal',
           }}
         />
@@ -509,7 +511,8 @@ const GeneralModule = ({
           xLabelsField="updatedAt"
           yDatasets={{
             '% Disponibles': 'pctCamasAvailable',
-            '% Ocupados': 'pctCamasBusy',
+            '% Ocupados COVID-19': 'pctCamasBusyCovid19',
+            '% Ocupados No COVID-19': 'pctCamasBusyNonCovid19',
           }}
         />
         <br />
