@@ -521,7 +521,6 @@ const GeneralModule = ({
             Totales: 'camasTotal',
           }}
         />
-        <br />
       </div>
       <div className={styles.widget}>
         <RenderBarChart
@@ -541,6 +540,58 @@ const GeneralModule = ({
             '% Disponibles': 'pctCamasAvailable',
             '% Ocupados COVID-19': 'pctCamasBusyCovid19',
             '% Ocupados No COVID-19': 'pctCamasBusyNonCovid19',
+          }}
+        />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={data.map((x) => ({
+            updatedAt: x.updatedAt,
+            ...x.hospitalizados,
+          }))}
+          yAxisScale="linear"
+          title="Hospitalizados UCI por edad"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Menos de 39': '0-39',
+            '40-49': '40-49',
+            '50-59': '50-59',
+            '60-69': '60-69',
+            'Mayor de 70': '70+',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
+          theme={theme}
+          data={data.map((x) => ({
+            updatedAt: x.updatedAt,
+            ...x.hospitalizados,
+          }))}
+          yAxisScale="linear"
+          title="% Hospitalizados UCI por edad"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          stack
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            '%Menos de 39': 'pct0-39',
+            '40-49': 'pct40-49',
+            '50-59': 'pct50-59',
+            '60-69': 'pct60-69',
+            'Mayor de 70': 'pct70+',
           }}
         />
         <br />

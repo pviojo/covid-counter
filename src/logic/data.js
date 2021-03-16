@@ -127,6 +127,33 @@ const getDataCovid = async () => {
     return null;
   });
 
+  const hospitalizadosRow = (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto9/HospitalizadosUCIEtario_T.csv')).slice(1);
+  const hospitalizados = {};
+  hospitalizadosRow.map((r) => {
+    hospitalizados[r[0]] = {
+      '0-39': parseInt(r[1], 10),
+      '40-49': parseInt(r[2], 10),
+      '50-59': parseInt(r[3], 10),
+      '60-69': parseInt(r[4], 10),
+      '70+': parseInt(r[5], 10),
+      total: parseInt(r[1], 10)
+        + parseInt(r[2], 10)
+        + parseInt(r[3], 10)
+        + parseInt(r[4], 10)
+        + parseInt(r[5], 10),
+    };
+    hospitalizados[r[0]] = {
+      ...hospitalizados[r[0]],
+      ...{
+        'pct0-39': (hospitalizados[r[0]]['0-39'] / hospitalizados[r[0]].total) * 100,
+        'pct40-49': (hospitalizados[r[0]]['40-49'] / hospitalizados[r[0]].total) * 100,
+        'pct50-59': (hospitalizados[r[0]]['50-59'] / hospitalizados[r[0]].total) * 100,
+        'pct60-69': (hospitalizados[r[0]]['60-69'] / hospitalizados[r[0]].total) * 100,
+        'pct70+': (hospitalizados[r[0]]['70+'] / hospitalizados[r[0]].total) * 100,
+      },
+    };
+    return null;
+  });
   let ventiladoresAvailable = 0;
   let ventiladoresBusy = 0;
   let ventiladoresTotal = 0;
@@ -164,6 +191,13 @@ const getDataCovid = async () => {
     camasBusyCovid19 = camas[date] ? camas[date].busy_covid19 : camasBusyCovid19;
     camasBusyNonCovid19 = camas[date] ? camas[date].busy_noncovid19 : camasBusyNonCovid19;
     camasTotal = camasAvailable + camasBusy;
+    const hosp = hospitalizados[date] || {
+      '0-39': 0,
+      '40-49': 0,
+      '50-59': 0,
+      '60-69': 0,
+      '70+': 0,
+    };
     return {
       updatedAt: d,
       newCases,
@@ -189,6 +223,7 @@ const getDataCovid = async () => {
       pctCamasBusy: (camasBusy / camasTotal) * 100,
       pctCamasBusyCovid19: (camasBusyCovid19 / camasTotal) * 100,
       pctCamasBusyNonCovid19: (camasBusyNonCovid19 / camasTotal) * 100,
+      hospitalizados: hosp,
     };
   });
   return rsp;
