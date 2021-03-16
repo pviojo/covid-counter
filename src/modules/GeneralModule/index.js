@@ -565,6 +565,7 @@ const GeneralModule = ({
             '50-59': '50-59',
             '60-69': '60-69',
             'Mayor de 70': '70+',
+            Total: 'total',
           }}
         />
         <br />
