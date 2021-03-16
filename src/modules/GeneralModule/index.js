@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable max-len */
 /* eslint-disable no-shadow */
 import React from 'react';
@@ -44,7 +45,17 @@ const GeneralModule = ({
   const deltaPctVentiladores = pctVentiladoresAvailable7DAgo - pctVentiladoresAvailable;
 
   const allFases = regionesData ? Object.values(regionesData).reduce((a, b) => a.concat(b.fases), []) : [];
-
+  const fasesData = regionesData ? Object.values(regionesData).reduce((a, b) => {
+    Object.keys(b.byFase).map((k) => {
+      if (!a[k]) {
+        a[k] = b.byFase[k];
+      } else {
+        a[k].population += b.byFase[k].population;
+      }
+      return null;
+    });
+    return a;
+  }, {}) : {};
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
       <div className={styles.grid6Cols1Col}>
@@ -134,7 +145,7 @@ const GeneralModule = ({
         </div>
       </div>
 
-      <ComunasByStep fases={allFases} />
+      <ComunasByStep fases={allFases} fasesData={fasesData} />
 
       <div className={styles.widget}>
         <RenderLineChart

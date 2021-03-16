@@ -286,6 +286,13 @@ const getRegionesData = async (comunasData) => {
         data: {},
         minFase: 100,
         fases: [],
+        byFase: {
+          1: { population: 0 },
+          2: { population: 0 },
+          3: { population: 0 },
+          4: { population: 0 },
+          5: { population: 0 },
+        },
       };
     }
     comuna.data.map((r) => {
@@ -301,6 +308,7 @@ const getRegionesData = async (comunasData) => {
     });
     rsp[regionCode].minFase = Math.min(rsp[regionCode].minFase, parseInt(comuna.fase, 10));
     rsp[regionCode].fases.push(parseInt(comuna.fase, 10));
+    rsp[regionCode].byFase[comuna.fase].population += parseInt(comuna.population, 10);
     return null;
   });
 

@@ -5,12 +5,13 @@ import PropTypes from 'prop-types';
 import numeral from 'numeral';
 
 import Metric from '../Metric';
-import { faseData } from '../../helpers/utils';
+import { faseData, roundMillionOrThousands } from '../../helpers/utils';
 
 import styles from './index.module.css';
 
 const ComunasByStep = ({
   fases,
+  fasesData,
 }) => {
   if (!fases) {
     return null;
@@ -32,15 +33,23 @@ const ComunasByStep = ({
             subn={`${numeral((comunasByStep[x + 1] / totalComunas) * 100).format('0.00')}%`}
             subtitle={(
               <>
-                Comunas en
-                {' '}
+                <small>
+                  Comunas en
+                </small>
+                <br />
                 {faseData[x + 1].name}
                 <br />
+                Paso
+                {' ' }
+                {x + 1}
+                <br />
+                <br />
                 <small>
-                  Paso
-                  {' ' }
-                  {x + 1}
+                  Poblacion:
+                  {' '}
+                  {roundMillionOrThousands(fasesData[x + 1].population)}
                 </small>
+
               </>
             )}
           />
@@ -58,6 +67,7 @@ const ComunasByStep = ({
 
 ComunasByStep.propTypes = {
   fases: PropTypes.array.isRequired,
+  fasesData: PropTypes.object.isRequired,
 };
 
 export default ComunasByStep;
