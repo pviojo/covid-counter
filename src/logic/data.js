@@ -127,6 +127,73 @@ const getDataCovid = async () => {
     return null;
   });
 
+  let agesRow = (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto16/CasosGeneroEtario_T.csv')).slice(2);
+  agesRow = agesRow.map((row, i) => {
+    if (i === 0) {
+      return row.map((col, k) => (k === 0 ? col : parseInt(col, 10)));
+    }
+    const delta = row.map((col, k) => (k === 0 ? col : (col - agesRow[i - 1][k])));
+    return delta;
+  });
+  const byAges = {};
+  agesRow.map((r) => {
+    byAges[r[0]] = {
+      M: {
+        '0-4': parseInt(r[1], 10),
+        '5-9': parseInt(r[2], 10),
+        '10-14': parseInt(r[3], 10),
+        '15-19': parseInt(r[4], 10),
+        '20-24': parseInt(r[5], 10),
+        '25-29': parseInt(r[6], 10),
+        '30-34': parseInt(r[7], 10),
+        '35-39': parseInt(r[8], 10),
+        '40-44': parseInt(r[9], 10),
+        '45-49': parseInt(r[10], 10),
+        '50-54': parseInt(r[11], 10),
+        '55-59': parseInt(r[12], 10),
+        '60-64': parseInt(r[13], 10),
+        '65-69': parseInt(r[14], 10),
+        '70-74': parseInt(r[15], 10),
+        '75-79': parseInt(r[16], 10),
+        '80+': parseInt(r[17], 10),
+      },
+      F: {
+        '0-4': parseInt(r[18], 10),
+        '5-9': parseInt(r[19], 10),
+        '10-14': parseInt(r[20], 10),
+        '15-19': parseInt(r[21], 10),
+        '20-24': parseInt(r[22], 10),
+        '25-29': parseInt(r[23], 10),
+        '30-34': parseInt(r[24], 10),
+        '35-39': parseInt(r[25], 10),
+        '40-44': parseInt(r[26], 10),
+        '45-49': parseInt(r[27], 10),
+        '50-54': parseInt(r[28], 10),
+        '55-59': parseInt(r[29], 10),
+        '60-64': parseInt(r[30], 10),
+        '65-69': parseInt(r[31], 10),
+        '70-74': parseInt(r[32], 10),
+        '75-79': parseInt(r[33], 10),
+        '80+': parseInt(r[34], 10),
+      },
+      total: 0,
+      general: {},
+      pct: {},
+    };
+    Object.keys(byAges[r[0]].M).map((k) => {
+      const x = byAges[r[0]].M[k] + byAges[r[0]].F[k];
+      byAges[r[0]].general[k] = x;
+      byAges[r[0]].total += x;
+      return null;
+    });
+    Object.keys(byAges[r[0]].M).map((k) => {
+      byAges[r[0]].pct[k] = Math.round(
+        ((byAges[r[0]].general[k] / byAges[r[0]].total) * 100) * 100,
+      ) / 100;
+      return null;
+    });
+    return null;
+  });
   const hospitalizadosRow = (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto9/HospitalizadosUCIEtario_T.csv')).slice(1);
   const hospitalizados = {};
   hospitalizadosRow.map((r) => {
@@ -191,6 +258,7 @@ const getDataCovid = async () => {
     camasBusyCovid19 = camas[date] ? camas[date].busy_covid19 : camasBusyCovid19;
     camasBusyNonCovid19 = camas[date] ? camas[date].busy_noncovid19 : camasBusyNonCovid19;
     camasTotal = camasAvailable + camasBusy;
+    const agesRowDate = byAges[date] || {};
     const hosp = hospitalizados[date] || {
       '0-39': 0,
       '40-49': 0,
@@ -199,6 +267,7 @@ const getDataCovid = async () => {
       '70+': 0,
     };
     return {
+      date,
       updatedAt: d,
       newCases,
       deaths,
@@ -224,6 +293,7 @@ const getDataCovid = async () => {
       pctCamasBusyCovid19: (camasBusyCovid19 / camasTotal) * 100,
       pctCamasBusyNonCovid19: (camasBusyNonCovid19 / camasTotal) * 100,
       hospitalizados: hosp,
+      agesRow: agesRowDate,
     };
   });
   return rsp;

@@ -586,6 +586,7 @@ const GeneralModule = ({
           showYAxisSelector
           height={isMobile() ? 80 : 25}
           yAxisMin={0}
+          yAxisMax={100}
           xLabelsField="updatedAt"
           yDatasets={{
             '%Menos de 39': 'pct0-39',
@@ -596,6 +597,83 @@ const GeneralModule = ({
           }}
         />
         <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
+          theme={theme}
+          data={data.filter((x) => x.agesRow.general).map((x) => ({
+            updatedAt: x.updatedAt,
+            ...x.agesRow.general,
+          }))}
+          yAxisScale="linear"
+          title="Casos por edad"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          stack
+          showYAxisSelector
+          height={isMobile() ? 80 : 60}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            '0-4': '0-4',
+            '5-9': '5-9',
+            '10-14': '10-14',
+            '15-19': '15-19',
+            '20-24': '20-24',
+            '25-29': '25-29',
+            '30-34': '30-34',
+            '35-39': '35-39',
+            '40-44': '40-44',
+            '45-49': '45-49',
+            '50-54': '50-54',
+            '55-59': '55-59',
+            '60-64': '60-64',
+            '65-69': '65-69',
+            '70-74': '70-74',
+            '75-79': '75-79',
+            '80+': '80+',
+          }}
+        />
+      </div>
+      <div className={styles.widget}>
+        <RenderBarChart
+          theme={theme}
+          data={data.filter((x) => x.agesRow.general).map((x) => ({
+            updatedAt: x.updatedAt,
+            ...x.agesRow.pct,
+          }))}
+          yAxisScale="linear"
+          title=" % Casos por edad"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          stack
+          showYAxisSelector
+          height={isMobile() ? 80 : 60}
+          yAxisMin={0}
+          yAxisMax={100}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            '0-4': '0-4',
+            '5-9': '5-9',
+            '10-14': '10-14',
+            '15-19': '15-19',
+            '20-24': '20-24',
+            '25-29': '25-29',
+            '30-34': '30-34',
+            '35-39': '35-39',
+            '40-44': '40-44',
+            '45-49': '45-49',
+            '50-54': '50-54',
+            '55-59': '55-59',
+            '60-64': '60-64',
+            '65-69': '65-69',
+            '70-74': '70-74',
+            '75-79': '75-79',
+            '80+': '80+',
+          }}
+        />
       </div>
 
     </div>
