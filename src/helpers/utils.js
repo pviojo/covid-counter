@@ -27,7 +27,7 @@ export const roundMillionOrThousands = (s) => {
   if (s > 1000000) {
     return `${parseInt(((s / 1000000) * 10), 10) / 10}M`;
   }
-  return `${parseInt(((s / 100000) * 10), 10) / 10}K`;
+  return `${parseInt(((s / 1000)), 10)}K`;
 };
 export default {
   pluck,

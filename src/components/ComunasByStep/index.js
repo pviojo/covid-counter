@@ -44,11 +44,14 @@ const ComunasByStep = ({
                 {x + 1}
                 <br />
                 <br />
-                <small>
-                  Poblacion:
-                  {' '}
-                  {roundMillionOrThousands(fasesData[x + 1].population)}
-                </small>
+                {comunasByStep[x + 1]
+                  ? (
+                    <small>
+                      Poblacion:
+                      {' '}
+                      {roundMillionOrThousands(fasesData[x + 1].population)}
+                    </small>
+                  ) : null}
 
               </>
             )}

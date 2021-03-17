@@ -98,7 +98,7 @@ const ByRegionModule = ({
           }
           />
         </div>
-        <ComunasByStep fases={regionesData[selectedRegion].fases} />
+        <ComunasByStep fases={regionesData[selectedRegion].fases} fasesData={regionesData[selectedRegion].byFase} />
         <div className={styles.widget}>
           <RenderLineChart
             theme={theme}
