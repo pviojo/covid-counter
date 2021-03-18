@@ -270,7 +270,13 @@ const ByRegionModule = ({
                   return (
                     <tr key={c.comunaCode} style={{ background: faseData[c.fase] && faseData[c.fase].colortr }}>
                       <td>
-                        {c.comuna}
+                        <span style={{
+                          verticalAlign: 'middle', background: faseData[c.fase] && faseData[c.fase].color, height: 20, width: 20, borderRadius: 20, marginRight: 10, display: 'inline-block',
+                        }}
+                        />
+                        <span style={{ verticalAlign: 'middle' }}>
+                          {c.comuna}
+                        </span>
                       </td>
                       {!isMobile() && (
                       <>
