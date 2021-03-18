@@ -269,20 +269,20 @@ const ByRegionModule = ({
                    - 1) * 100;
                   return (
                     <tr key={c.comunaCode} style={{ background: faseData[c.fase] && faseData[c.fase].colortr }}>
-                      <td style={{ color: faseData[c.fase] && faseData[c.fase].color }}>
+                      <td>
                         {c.comuna}
                       </td>
                       {!isMobile() && (
                       <>
-                        <td className="center" style={{ color: faseData[c.fase] && faseData[c.fase].color }}>
+                        <td className="center">
                           {c.fase}
                           {' '}
                           -
                           {' '}
                           {faseData[c.fase] && faseData[c.fase].name}
                         </td>
-                        <td className="right" style={{ color: delta5 >= 0 ? '#c30' : '#093' }}>{numeral(c.population).format('0,000')}</td>
-                        <td className="right">
+                        <td className="right">{numeral(c.population).format('0,000')}</td>
+                        <td className="right" style={{ color: delta5 >= 0 ? '#c30' : '#093' }}>
                           {c.data[c.data.length - 1 - 4].prevalenceActiveCases}
                           {' '}
                           (
