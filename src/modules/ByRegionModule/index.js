@@ -101,7 +101,7 @@ const ByRegionModule = ({
           />
         </MapStyle>
       </div>
-      <div clasName={styles.main}>
+      <div className={styles.main}>
         <div className={styles.select}>
           <div className={styles.label}>
             Elige una región para ver detalles
@@ -260,21 +260,23 @@ const ByRegionModule = ({
 
             <table className="table">
               <thead>
-                <th>Comuna</th>
-                {!isMobile() && (
-                  <>
-                    <th className="center">Fase</th>
-                    <th className="right">Población</th>
-                  </>
-                )}
-                {[...Array(isMobile() ? 4 : 5).keys()].reverse().map((k) => (
-                  <th className="right" key={k}>
-                    {' '}
-                    {moment(
-                      comunasInRegion[0].data[comunasInRegion[0].data.length - 1 - k].updatedAt,
-                    ).format('DD/MM')}
-                  </th>
-                ))}
+                <tr>
+                  <th>Comuna</th>
+                  {!isMobile() && (
+                    <>
+                      <th className="center">Fase</th>
+                      <th className="right">Población</th>
+                    </>
+                  )}
+                  {[...Array(isMobile() ? 4 : 5).keys()].reverse().map((k) => (
+                    <th className="right" key={k}>
+                      {' '}
+                      {moment(
+                        comunasInRegion[0].data[comunasInRegion[0].data.length - 1 - k].updatedAt,
+                      ).format('DD/MM')}
+                    </th>
+                  ))}
+                </tr>
               </thead>
               <tbody>
                 {comunasInRegion.map((c) => {

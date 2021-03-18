@@ -78,7 +78,7 @@ const CompareComunasModule = ({
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
 
-      <div clasName={styles.main}>
+      <div className={styles.main}>
         <div className={styles.select}>
           <div className={styles.label}>
             Elige comunas para compararlas
