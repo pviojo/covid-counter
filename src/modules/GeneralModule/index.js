@@ -146,7 +146,68 @@ const GeneralModule = ({
       </div>
 
       <ComunasByStep fases={allFases} fasesData={fasesData} />
-
+      <div className={styles.grid2Cols1Col}>
+        <div className={styles.widget}>
+          <RenderLineChart
+            theme={theme}
+            data={data.slice(-14).map((x, i) => ({
+              ...x,
+              newCasesPrevWeek: data.slice(-28, -14)[i].newCases,
+            }))}
+            xcolors={chartColorsTheme[theme]}
+            yAxisScale="linear"
+            title="Comparación Casos nuevos ultimos 14 días (vs anteriores 14)"
+            xAxisType="time"
+            xAxisStepSize={1}
+            width={100}
+            showYAxisSelector
+            height={isMobile() ? 80 : 50}
+            yAxisMin={0}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Casos nuevos ult 14 días': 'newCases',
+              'Casos nuevos anteriores 14 días': 'newCasesPrevWeek',
+            }}
+          />
+        </div>
+        <div className={styles.widget}>
+          <RenderLineChart
+            theme={theme}
+            data={
+            (() => {
+              let d = delta(
+                data.slice(-28),
+                7,
+                'newCases',
+              ).map((x) => ({
+                ...x,
+                newCases: Math.min(Math.max(x.newCases, -1), 1),
+              }));
+              const avg = d.map((x) => x.newCases).reduce((a, b) => a + b, 0) / d.length;
+              d = d.map((x) => ({
+                ...x,
+                avg: Math.round(avg * 10) / 10,
+              }));
+              return d;
+            })()
+          }
+            yAxisScale="linear"
+            yAxisType="percentage"
+            xAxisType="time"
+            showYAxisSelector
+            title="Variación Casos nuevos últimos 14 días (7 días)"
+            width={100}
+            height={isMobile() ? 80 : 50}
+            xAxisStepSize={isMobile() ? 7 : 1}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Var %': 'newCases',
+              Promedio: 'avg',
+            }}
+          />
+          <small>* Limitado en rango +/- 100%</small>
+        </div>
+      </div>
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
