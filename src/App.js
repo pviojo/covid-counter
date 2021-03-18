@@ -97,7 +97,7 @@ const App = () => {
           <div className={`${styles.option} ${location.pathname === '/' ? styles.selected : ''}`}>
             <a onClick={() => history.push('/')}>Todo el país</a>
           </div>
-          <div className={`${styles.option} ${location.pathname === '/por-region' ? styles.selected : ''}`}>
+          <div className={`${styles.option} ${location.pathname.startsWith('/por-region') ? styles.selected : ''}`}>
             <a onClick={() => history.push('/por-region')}>Por Región</a>
           </div>
           <div className={`${styles.option} ${location.pathname.startsWith('/comparar-comunas') ? styles.selected : ''}`}>
@@ -115,7 +115,7 @@ const App = () => {
               theme={theme}
             />
             )}
-          {location.pathname === '/por-region'
+          {location.pathname.startsWith('/por-region')
             && (
             <ByRegionModule
               comunasData={comunasData}

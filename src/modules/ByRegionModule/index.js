@@ -7,6 +7,10 @@ import numeral from 'numeral';
 import styled from 'styled-components';
 // eslint-disable-next-line
 import numerales from "numeral/locales/es";
+import {
+  useHistory,
+  useLocation,
+} from 'react-router-dom';
 
 import Select from 'react-select';
 import isMobile from 'is-mobile';
@@ -33,6 +37,8 @@ const ByRegionModule = ({
   newCasesRegionData,
   theme,
 }) => {
+  const history = useHistory();
+  const location = useLocation();
   const [selectedRegion, setSelectedRegion] = useState(localStorage.getItem('selectedRegion') || '13');
   const [comunasInRegion, setComunasInRegion] = useState([]);
 
@@ -46,11 +52,30 @@ const ByRegionModule = ({
     }
   `;
 
+  const selectRegion = (regionCode) => {
+    history.replace(`/por-region/${regionCode}`);
+    setSelectedRegion(regionCode);
+  };
+
+  useEffect(() => {
+    if (location) {
+      let id = location.pathname.replace('/por-region/', '');
+      id = id.replace('/por-region', '');
+      if (id) {
+        if (parseInt(id, 10) < 10) {
+          id = `0${id}`;
+        }
+        setSelectedRegion(id);
+      }
+    }
+  }, [location]);
+
   useEffect(() => {
     localStorage.setItem('selectedRegion', selectedRegion);
     const comunas = Object.values(comunasData).filter(
       (c) => c.regionCode === selectedRegion,
     );
+
     setComunasInRegion(comunas);
   }, [selectedRegion]);
 
@@ -59,10 +84,11 @@ const ByRegionModule = ({
       return;
     }
     const regionCode = `${region.toString().substring(2)}`;
-    setSelectedRegion(regionCode);
+    selectRegion(regionCode);
     window.scrollTo(0, 0);
   };
   numeral.locale('es');
+  if (!selectedRegion) { return null; }
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
       <div className={styles.map}>
@@ -93,7 +119,7 @@ const ByRegionModule = ({
               value: regionesData[selectedRegion].regionCode,
               label: regionesData[selectedRegion].region,
             }}
-            onChange={(e) => setSelectedRegion(e.value)}
+            onChange={(e) => selectRegion(e.value)}
             options={
             Object.values(regionesData).sort(
               (a, b) => ((a.region > b.region) ? 1 : -1),
