@@ -208,6 +208,67 @@ const GeneralModule = ({
           <small>* Limitado en rango +/- 100%</small>
         </div>
       </div>
+      <div className={styles.grid2Cols1Col}>
+        <div className={styles.widget}>
+          <RenderLineChart
+            theme={theme}
+            data={data.slice(-14).map((x, i) => ({
+              ...x,
+              deathsPrevWeek: data.slice(-28, -14)[i].deaths,
+            }))}
+            yAxisScale="linear"
+            title="Comparación Fallecidos ultimos 14 días (vs anteriores 14)"
+            xAxisType="time"
+            xAxisStepSize={1}
+            width={100}
+            showYAxisSelector
+            height={isMobile() ? 80 : 50}
+            yAxisMin={0}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Casos nuevos ult 14 días': 'deaths',
+              'Casos nuevos anteriores 14 días': 'deathsPrevWeek',
+            }}
+          />
+        </div>
+        <div className={styles.widget}>
+          <RenderLineChart
+            theme={theme}
+            data={
+            (() => {
+              let d = delta(
+                data.slice(-28),
+                7,
+                'deaths',
+              ).map((x) => ({
+                ...x,
+                deaths: Math.min(Math.max(x.deaths, -1), 1),
+              }));
+              const avg = d.map((x) => x.deaths).reduce((a, b) => a + b, 0) / d.length;
+              d = d.map((x) => ({
+                ...x,
+                avg: Math.round(avg * 10) / 10,
+              }));
+              return d;
+            })()
+          }
+            yAxisScale="linear"
+            yAxisType="percentage"
+            xAxisType="time"
+            showYAxisSelector
+            title="Variación Fallecidos últimos 14 días (7 días)"
+            width={100}
+            height={isMobile() ? 80 : 50}
+            xAxisStepSize={isMobile() ? 7 : 1}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Var %': 'deaths',
+              Promedio: 'avg',
+            }}
+          />
+          <small>* Limitado en rango +/- 100%</small>
+        </div>
+      </div>
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}

@@ -90,6 +90,7 @@ const ByRegionModule = ({
   };
   numeral.locale('es');
   if (!selectedRegion) { return null; }
+  const { data } = newCasesRegionData[selectedRegion];
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
       <div className={styles.map}>
@@ -194,6 +195,88 @@ const ByRegionModule = ({
           />
         </div>
         <div className={styles.widget}>
+          <RenderBarChart
+            theme={theme}
+            data={newCasesRegionData[selectedRegion].data}
+            yAxisScale="linear"
+            xAxisType="linear"
+            showYAxisSelector
+            yAxisMin={0}
+            stack
+            title={`Casos nuevos (% del total)- ${regionesData[selectedRegion].region}`}
+            width={100}
+            height={isMobile() ? 60 : 25}
+            xAxisStepSize={isMobile() ? 7 : 1}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Con síntomas': 'percentNewCaseWithSymptoms',
+              'Sin síntomas': 'percentNewCaseWithoutSymptoms',
+            }}
+          />
+        </div>
+        <div className={styles.grid2Cols1Col}>
+          <div className={styles.widget}>
+            <RenderLineChart
+              theme={theme}
+              data={data.slice(-14).map((x, i) => ({
+                ...x,
+                newCasesPrevWeek: data.slice(-28, -14)[i].newCases,
+              }))}
+              yAxisScale="linear"
+              title="Comparación Casos nuevos ultimos 14 días (vs anteriores 14)"
+              xAxisType="time"
+              xAxisStepSize={1}
+              width={100}
+              showYAxisSelector
+              height={isMobile() ? 80 : 50}
+              yAxisMin={0}
+              xLabelsField="updatedAt"
+              yDatasets={{
+                'Casos nuevos ult 14 días': 'newCases',
+                'Casos nuevos anteriores 14 días': 'newCasesPrevWeek',
+              }}
+            />
+          </div>
+          <div className={styles.widget}>
+            <RenderLineChart
+              theme={theme}
+              data={
+            (() => {
+              let d = delta(
+                data.slice(-28),
+                7,
+                'newCases',
+              ).map((x) => ({
+                ...x,
+                newCases: Math.min(Math.max(x.newCases, -1), 1),
+              }));
+              const avg = d.map((x) => x.newCases).reduce((a, b) => a + b, 0) / d.length;
+              d = d.map((x) => ({
+                ...x,
+                avg: Math.round(avg * 10) / 10,
+              }));
+              return d;
+            })()
+          }
+              yAxisScale="linear"
+              yAxisType="percentage"
+              xAxisType="time"
+              showYAxisSelector
+              title="Variación Casos nuevos últimos 14 días (7 días)"
+              width={100}
+              height={isMobile() ? 80 : 50}
+              xAxisStepSize={isMobile() ? 7 : 1}
+              xLabelsField="updatedAt"
+              yDatasets={{
+                'Var %': 'newCases',
+                Promedio: 'avg',
+              }}
+            />
+            <small>* Limitado en rango +/- 100%</small>
+          </div>
+        </div>
+
+        <div className={styles.widget}>
           <RenderLineChart
             theme={theme}
             data={newCasesRegionData[selectedRegion].data}
@@ -232,26 +315,6 @@ const ByRegionModule = ({
             yDatasets={{
               '% Positividad': 'positivityPercent',
               '% Positividad (Media Móvil 7D)': 'avg7DPositivityPercent',
-            }}
-          />
-        </div>
-        <div className={styles.widget}>
-          <RenderBarChart
-            theme={theme}
-            data={newCasesRegionData[selectedRegion].data}
-            yAxisScale="linear"
-            xAxisType="linear"
-            showYAxisSelector
-            yAxisMin={0}
-            stack
-            title={`Casos nuevos (% del total)- ${regionesData[selectedRegion].region}`}
-            width={100}
-            height={isMobile() ? 60 : 25}
-            xAxisStepSize={isMobile() ? 7 : 1}
-            xLabelsField="updatedAt"
-            yDatasets={{
-              'Con síntomas': 'percentNewCaseWithSymptoms',
-              'Sin síntomas': 'percentNewCaseWithoutSymptoms',
             }}
           />
         </div>
