@@ -51,7 +51,7 @@ body {
   border-bottom:1px solid #ccc;
 }
 :local(.navbar .option){
-  padding:20px 30px;
+  
   display:inline-block;
   margin-right:10px;
   margin-bottom:-1px;
@@ -70,6 +70,8 @@ body {
     }
   }
   a{
+    padding:20px 30px;
+    display:block;
     text-decoration: none;
   }
 }
@@ -107,9 +109,11 @@ body {
   }
   :local(.navbar .option){
     border:0;
-    padding:20px 10px;
     font-size: 14px;
     margin-bottom:0;
+    a{
+      padding:20px 10px;
+    }
     &:local(.selected){
       background-color: #fff;
     }
