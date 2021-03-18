@@ -2,6 +2,7 @@
 /* eslint-disable no-shadow */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import numeral from 'numeral';
 import styled from 'styled-components';
 // eslint-disable-next-line
@@ -33,6 +34,7 @@ const ByRegionModule = ({
   theme,
 }) => {
   const [selectedRegion, setSelectedRegion] = useState(localStorage.getItem('selectedRegion') || '13');
+  const [comunasInRegion, setComunasInRegion] = useState([]);
 
   const mapData = chileMap;
   const layerProps = {};
@@ -46,6 +48,10 @@ const ByRegionModule = ({
 
   useEffect(() => {
     localStorage.setItem('selectedRegion', selectedRegion);
+    const comunas = Object.values(comunasData).filter(
+      (c) => c.regionCode === selectedRegion,
+    );
+    setComunasInRegion(comunas);
   }, [selectedRegion]);
 
   const setSelectedInMap = (region) => {
@@ -222,6 +228,79 @@ const ByRegionModule = ({
             }}
           />
         </div>
+        {comunasInRegion && comunasInRegion[0] && (
+          <div className={styles.widget}>
+            <div className={styles.title}>Incidencia Activos cada 100.000 hab</div>
+
+            <table className="table">
+              <thead>
+                <th>Comuna</th>
+                <th>Población</th>
+                {[...Array(5).keys()].reverse().map((k) => (
+                  <th className="right" key={k}>
+                    {' '}
+                    {moment(
+                      comunasInRegion[0].data[comunasInRegion[0].data.length - 1 - k].updatedAt,
+                    ).format('YYYY-MM-DD')}
+                  </th>
+                ))}
+              </thead>
+              <tbody>
+                {comunasInRegion.map((c) => {
+                  const delta1 = (
+                    (c.data[c.data.length - 1].prevalenceActiveCases / c.data[c.data.length - 1 - 1].prevalenceActiveCases)
+                   - 1) * 100;
+                  const delta2 = (
+                    (c.data[c.data.length - 1 - 1].prevalenceActiveCases / c.data[c.data.length - 1 - 2].prevalenceActiveCases)
+                   - 1) * 100;
+                  const delta3 = (
+                    (c.data[c.data.length - 1 - 2].prevalenceActiveCases / c.data[c.data.length - 1 - 3].prevalenceActiveCases)
+                   - 1) * 100;
+                  const delta4 = (
+                    (c.data[c.data.length - 1 - 3].prevalenceActiveCases / c.data[c.data.length - 1 - 4].prevalenceActiveCases)
+                   - 1) * 100;
+                  return (
+                    <tr key={c.comunaCode}>
+                      <td>{c.comuna}</td>
+                      <td className="right">{numeral(c.population).format('0,000')}</td>
+                      <td className="right">
+                        {c.data[c.data.length - 1 - 4].prevalenceActiveCases}
+                      </td>
+                      <td className="right" style={{ color: delta4 >= 0 ? '#c30' : '#093' }}>
+                        {c.data[c.data.length - 1 - 3].prevalenceActiveCases}
+                        {' '}
+                        (
+                        {numeral(delta4).format('+0.0')}
+                        %)
+                      </td>
+                      <td className="right" style={{ color: delta3 >= 0 ? '#c30' : '#093' }}>
+                        {c.data[c.data.length - 1 - 2].prevalenceActiveCases}
+                        {' '}
+                        (
+                        {numeral(delta3).format('+0.0')}
+                        %)
+                      </td>
+                      <td className="right" style={{ color: delta2 >= 0 ? '#c30' : '#093' }}>
+                        {c.data[c.data.length - 1 - 1].prevalenceActiveCases}
+                        {' '}
+                        (
+                        {numeral(delta2).format('+0.0')}
+                        %)
+                      </td>
+                      <td className="right" style={{ color: delta1 >= 0 ? '#c30' : '#093' }}>
+                        {c.data[c.data.length - 1].prevalenceActiveCases}
+                        {' '}
+                        (
+                        {numeral(delta1).format('+0.0')}
+                        %)
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         <div className={styles.grid3Cols1Col}>
           {Object.keys(comunasData).map((c) => (
