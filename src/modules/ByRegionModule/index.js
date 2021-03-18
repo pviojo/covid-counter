@@ -235,14 +235,18 @@ const ByRegionModule = ({
             <table className="table">
               <thead>
                 <th>Comuna</th>
-                <th>Fase</th>
-                <th>Población</th>
-                {[...Array(5).keys()].reverse().map((k) => (
+                {!isMobile() && (
+                  <>
+                    <th>Fase</th>
+                    <th>Población</th>
+                  </>
+                )}
+                {[...Array(isMobile() ? 4 : 5).keys()].reverse().map((k) => (
                   <th className="right" key={k}>
                     {' '}
                     {moment(
                       comunasInRegion[0].data[comunasInRegion[0].data.length - 1 - k].updatedAt,
-                    ).format('YYYY-MM-DD')}
+                    ).format('DD/MM')}
                   </th>
                 ))}
               </thead>
@@ -260,22 +264,34 @@ const ByRegionModule = ({
                   const delta4 = (
                     (c.data[c.data.length - 1 - 3].prevalenceActiveCases / c.data[c.data.length - 1 - 4].prevalenceActiveCases)
                    - 1) * 100;
+                  const delta5 = (
+                    (c.data[c.data.length - 1 - 4].prevalenceActiveCases / c.data[c.data.length - 1 - 5].prevalenceActiveCases)
+                   - 1) * 100;
                   return (
                     <tr key={c.comunaCode} style={{ background: faseData[c.fase] && faseData[c.fase].colortr }}>
                       <td style={{ color: faseData[c.fase] && faseData[c.fase].color }}>
                         {c.comuna}
                       </td>
-                      <td className="center" style={{ color: faseData[c.fase] && faseData[c.fase].color }}>
-                        {c.fase}
-                        {' '}
-                        -
-                        {' '}
-                        {faseData[c.fase] && faseData[c.fase].name}
-                      </td>
-                      <td className="right">{numeral(c.population).format('0,000')}</td>
-                      <td className="right">
-                        {c.data[c.data.length - 1 - 4].prevalenceActiveCases}
-                      </td>
+                      {!isMobile() && (
+                      <>
+                        <td className="center" style={{ color: faseData[c.fase] && faseData[c.fase].color }}>
+                          {c.fase}
+                          {' '}
+                          -
+                          {' '}
+                          {faseData[c.fase] && faseData[c.fase].name}
+                        </td>
+                        <td className="right" style={{ color: delta5 >= 0 ? '#c30' : '#093' }}>{numeral(c.population).format('0,000')}</td>
+                        <td className="right">
+                          {c.data[c.data.length - 1 - 4].prevalenceActiveCases}
+                          {' '}
+                          (
+                          {numeral(delta5).format('+0.0')}
+                          %)
+                        </td>
+
+                      </>
+                      )}
                       <td className="right" style={{ color: delta4 >= 0 ? '#c30' : '#093' }}>
                         {c.data[c.data.length - 1 - 3].prevalenceActiveCases}
                         {' '}
