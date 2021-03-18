@@ -237,8 +237,8 @@ const ByRegionModule = ({
                 <th>Comuna</th>
                 {!isMobile() && (
                   <>
-                    <th>Fase</th>
-                    <th>Población</th>
+                    <th className="center">Fase</th>
+                    <th className="right">Población</th>
                   </>
                 )}
                 {[...Array(isMobile() ? 4 : 5).keys()].reverse().map((k) => (
