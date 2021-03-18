@@ -62,9 +62,11 @@ const ByRegionModule = ({
       let id = location.pathname.replace('/por-region/', '');
       id = id.replace('/por-region', '');
       if (id) {
+        console.log('id', id, parseInt(id, 10));
         if (parseInt(id, 10) < 10) {
-          id = `0${id}`;
+          id = `0${parseInt(id, 10)}`;
         }
+        console.log('id2', id);
         setSelectedRegion(id);
       }
     }
