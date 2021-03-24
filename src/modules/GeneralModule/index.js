@@ -77,7 +77,24 @@ const GeneralModule = ({
           <Metric
             color={data[data.length - 1].positivity * 100 > 5 ? '#c30' : '#777'}
             n={`${numeral(data[data.length - 1].positivity * 100).format('0.0')}%`}
-            subn={`${numeral(data[data.length - 1].avg7DPositivity * 100).format('0.0')}% ult 7 días`}
+            subn={(
+              <div>
+                {numeral(data[data.length - 1].avg7DPositivity * 100).format('0.0')}
+                % ult 7 días
+                <br />
+                {numeral(data[data.length - 1 - 7].avg7DPositivity * 100).format('0.0')}
+                %  7 días previos
+                (
+                {
+                  numeral(
+                    (
+                      (data[data.length - 1].avg7DPositivity / data[data.length - 1 - 7].avg7DPositivity) - 1
+                    ) * 100,
+                  ).format('+0.0')
+                }
+                % variación)
+              </div>
+            )}
             subtitle="Positividad en todo el país"
           />
           <br />

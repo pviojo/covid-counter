@@ -18,6 +18,7 @@ import {
 import pjson from '../package.json';
 
 import GeneralModule from './modules/GeneralModule';
+import DeathsModule from './modules/DeathsModule';
 import ByRegionModule from './modules/ByRegionModule';
 import CompareComunasModule from './modules/CompareComunasModule';
 
@@ -106,6 +107,10 @@ const App = () => {
 
         </div>
         <div className={`${styles.main}`}>
+          {location.pathname === '/deaths'
+          && (
+            <DeathsModule />
+          )}
           {location.pathname === '/'
             && (
             <GeneralModule

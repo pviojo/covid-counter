@@ -1,0 +1,10 @@
+:local(.deaths) {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(50, 1fr);
+}
+
+:local(.death) {
+  background:#777;
+  padding-bottom: 100%;
+}
