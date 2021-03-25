@@ -48,7 +48,7 @@ const GeneralModule = ({
   const fasesData = regionesData ? Object.values(regionesData).reduce((a, b) => {
     Object.keys(b.byFase).map((k) => {
       if (!a[k]) {
-        a[k] = b.byFase[k];
+        a[k] = { ...b.byFase[k] };
       } else {
         a[k].population += b.byFase[k].population;
       }
@@ -63,7 +63,7 @@ const GeneralModule = ({
           <Metric
             color={deltaNewCases7D > 0 ? '#c30' : '#777'}
             n={`${numeral(newCasesToday).format('0,000')}`}
-            subn={`${numeral(newCases7DBefore).format('0,000')} hace 7 días (${deltaNewCases7D > 0 ? '+' : ''}${numeral(deltaNewCases7D).format('0.0')}% variación)`}
+            subn={`${numeral(deltaNewCases7D).format('+0.0')}% vs semana anterior (${numeral(newCases7DBefore).format('0,000')})`}
             subtitle="Casos nuevos hoy"
           />
           <br />

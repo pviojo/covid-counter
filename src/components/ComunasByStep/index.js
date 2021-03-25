@@ -22,6 +22,7 @@ const ComunasByStep = ({
     return null;
   });
   const totalComunas = fases.length;
+  const totalPopulation = Object.keys(fasesData).reduce((a, b) => a + fasesData[b].population, 0);
 
   return (
     <div className={styles.grid6Cols1Col}>
@@ -50,6 +51,10 @@ const ComunasByStep = ({
                       Poblacion:
                       {' '}
                       {roundMillionOrThousands(fasesData[x + 1].population)}
+                      {' '}
+                      (
+                      {numeral(fasesData[x + 1].population / totalPopulation).format('0%')}
+                      )
                     </small>
                   ) : null}
 
