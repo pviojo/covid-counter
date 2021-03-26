@@ -326,13 +326,13 @@ const ByRegionModule = ({
               <thead>
                 <tr>
                   <th>Comuna</th>
+                  <th className="center">Fase</th>
                   {!isMobile() && (
                     <>
-                      <th className="center">Fase</th>
                       <th className="right">Población</th>
                     </>
                   )}
-                  {[...Array(isMobile() ? 4 : 5).keys()].reverse().map((k) => (
+                  {[...Array(isMobile() ? 3 : 5).keys()].reverse().map((k) => (
                     <th className="right" key={k}>
                       {' '}
                       {moment(
@@ -370,15 +370,43 @@ const ByRegionModule = ({
                           {c.comuna}
                         </span>
                       </td>
+                      <td className="center">
+                        {c.fase}
+                        {' '}
+                        -
+                        {' '}
+                        {faseData[c.fase] && faseData[c.fase].name}
+                        <br />
+                        Inicio:
+                        {' '}
+                        {moment(c.currentFase.start).format('DD/MM')}
+                        <br />
+                        Inc Activos Inicio:
+                        {' '}
+                        {numeral(c.currentFase.prevalence_active_cases_start).format('0,000.0')}
+                        {' '}
+                        (T:
+                        {' '}
+                        {numeral(c.currentFase.active_cases_start).format('0,000')}
+                        )
+                        <br />
+                        Inc Activos Actual:
+                        {' '}
+                        {numeral(c.currentFase.prevalence_active_cases_end).format('0,000.0')}
+                        {' '}
+                        (T:
+                        {' '}
+                        {numeral(c.currentFase.active_cases_end).format('0,000')}
+                        )
+                        <br />
+                        Variación Activos:
+                        {' '}
+                        <span style={{ color: c.currentFase.pct_delta_active_cases >= 0 ? '#c30' : '#093' }}>
+                          {numeral(c.currentFase.pct_delta_active_cases).format('+%0.0')}
+                        </span>
+                      </td>
                       {!isMobile() && (
                       <>
-                        <td className="center">
-                          {c.fase}
-                          {' '}
-                          -
-                          {' '}
-                          {faseData[c.fase] && faseData[c.fase].name}
-                        </td>
                         <td className="right">{numeral(c.population).format('0,000')}</td>
                         <td className="right" style={{ color: delta5 >= 0 ? '#c30' : '#093' }}>
                           {c.data[c.data.length - 1 - 4].prevalenceActiveCases}
@@ -387,16 +415,16 @@ const ByRegionModule = ({
                           {numeral(delta5).format('+0.0')}
                           %)
                         </td>
-
+                        <td className="right" style={{ color: delta4 >= 0 ? '#c30' : '#093' }}>
+                          {c.data[c.data.length - 1 - 3].prevalenceActiveCases}
+                          {' '}
+                          (
+                          {numeral(delta4).format('+0.0')}
+                          %)
+                        </td>
                       </>
                       )}
-                      <td className="right" style={{ color: delta4 >= 0 ? '#c30' : '#093' }}>
-                        {c.data[c.data.length - 1 - 3].prevalenceActiveCases}
-                        {' '}
-                        (
-                        {numeral(delta4).format('+0.0')}
-                        %)
-                      </td>
+
                       <td className="right" style={{ color: delta3 >= 0 ? '#c30' : '#093' }}>
                         {c.data[c.data.length - 1 - 2].prevalenceActiveCases}
                         {' '}

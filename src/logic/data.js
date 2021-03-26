@@ -338,6 +338,21 @@ const getComunasData = async () => {
   const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto19/CasosActivosPorComuna.csv');
   const dates = rows[0].slice(5);
 
+  const currentFasesRows = await readCsv('https://raw.githubusercontent.com/pviojo/covid-fases/main/output/current_fases.csv');
+  const currentFasePerComuna = currentFasesRows.slice(1).reduce((f, r) => {
+    // eslint-disable-next-line no-param-reassign
+    f[r[2]] = {
+      fase: r[5],
+      start: r[6],
+      end: r[7],
+      active_cases_start: r[8],
+      active_cases_end: r[9],
+      delta_active_cases: r[10],
+      pct_delta_active_cases: r[11] / 100,
+    };
+    return f;
+  }, {});
+
   const fasesRows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto74/paso_a_paso.csv');
   const fasePerComuna = fasesRows.slice(1).reduce((f, r) => {
     // eslint-disable-next-line no-param-reassign
@@ -358,6 +373,16 @@ const getComunasData = async () => {
     r.comunaCode = row[3];
     r.population = parseInt(row[4], 10);
     r.fase = fasePerComuna[parseInt(r.comunaCode, 10)] || '';
+
+    const cf = currentFasePerComuna[parseInt(r.comunaCode, 10)] || {};
+    if (cf.active_cases_start) {
+      cf.prevalence_active_cases_start = (cf.active_cases_start / r.population) * 100000;
+    }
+    if (cf.active_cases_end) {
+      cf.prevalence_active_cases_end = (cf.active_cases_end / r.population) * 100000;
+    }
+
+    r.currentFase = cf;
     r.data = [];
     // let prevCases = 0;
     dates.map((d, i) => {
