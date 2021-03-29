@@ -342,7 +342,7 @@ const getComunasData = async () => {
   const currentFasePerComuna = currentFasesRows.slice(1).reduce((f, r) => {
     // eslint-disable-next-line no-param-reassign
     f[r[2]] = {
-      fase: r[5],
+      fase: parseInt(r[5], 10),
       start: r[6],
       end: r[7],
       active_cases_start: r[8],

@@ -100,7 +100,8 @@ body {
     border-top:1px solid #ccc;
     border-bottom:0;
     display:grid;
-    grid-template-columns: auto auto auto;
+    gap:0;
+    grid-template-columns: auto auto auto auto;
     align-items: center;
     justify-items: center;
   }
@@ -111,8 +112,9 @@ body {
     border:0;
     font-size: 14px;
     margin-bottom:0;
+    margin-right:0px;
     a{
-      padding:20px 10px;
+      padding:20px 0px;
     }
     &:local(.selected){
       background-color: #fff;

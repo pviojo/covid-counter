@@ -21,6 +21,7 @@ import GeneralModule from './modules/GeneralModule';
 import DeathsModule from './modules/DeathsModule';
 import ByRegionModule from './modules/ByRegionModule';
 import CompareComunasModule from './modules/CompareComunasModule';
+import QuarantinesModule from './modules/QuarantinesModule';
 
 import { getData } from './logic/data';
 import './global.scss';
@@ -29,8 +30,10 @@ import styles from './index.module.scss';
 const App = () => {
   const location = useLocation();
   const history = useHistory();
+  const [currentLocation, setCurrentLocation] = useState('');
 
   useEffect(() => {
+    setCurrentLocation(location.pathname);
     window.scrollTo(0, 0);
   }, [location]);
 
@@ -91,27 +94,34 @@ const App = () => {
     return null;
   }
 
+  const onChangeLocation = () => {
+    setCurrentLocation(window.location.pathname);
+  };
+
   return (
     <Router>
       <div className={`${styles.app} ${styles[`theme-${theme}`]}`}>
         <div className={`${styles.navbar}`}>
-          <div className={`${styles.option} ${location.pathname === '/' ? styles.selected : ''}`}>
+          <div className={`${styles.option} ${currentLocation === '/' ? styles.selected : ''}`}>
             <a onClick={() => history.push('/')}>Todo el país</a>
           </div>
-          <div className={`${styles.option} ${location.pathname.startsWith('/por-region') ? styles.selected : ''}`}>
+          <div className={`${styles.option} ${currentLocation.startsWith('/por-region') ? styles.selected : ''}`}>
             <a onClick={() => history.push('/por-region')}>Por Región</a>
           </div>
-          <div className={`${styles.option} ${location.pathname.startsWith('/comparar-comunas') ? styles.selected : ''}`}>
+          <div className={`${styles.option} ${currentLocation.startsWith('/comparar-comunas') ? styles.selected : ''}`}>
             <a onClick={() => history.push('/comparar-comunas')}>Comparar comunas</a>
+          </div>
+          <div className={`${styles.option} ${currentLocation.startsWith('/cuarentenas') ? styles.selected : ''}`}>
+            <a onClick={() => history.push('/cuarentenas')}>Cuarentenas</a>
           </div>
 
         </div>
         <div className={`${styles.main}`}>
-          {location.pathname === '/deaths'
+          {currentLocation === '/deaths'
           && (
             <DeathsModule />
           )}
-          {location.pathname === '/'
+          {currentLocation === '/'
             && (
             <GeneralModule
               data={data}
@@ -120,7 +130,7 @@ const App = () => {
               theme={theme}
             />
             )}
-          {location.pathname.startsWith('/por-region')
+          {currentLocation.startsWith('/por-region')
             && (
             <ByRegionModule
               comunasData={comunasData}
@@ -129,9 +139,17 @@ const App = () => {
               theme={theme}
             />
             )}
-          {location.pathname.startsWith('/comparar-comunas')
+          {currentLocation.startsWith('/comparar-comunas')
             && (
             <CompareComunasModule
+              comunasData={comunasData}
+              theme={theme}
+            />
+            )}
+          {currentLocation.startsWith('/cuarentenas')
+            && (
+            <QuarantinesModule
+              onChangeLocation={onChangeLocation}
               comunasData={comunasData}
               theme={theme}
             />

@@ -1,9 +1,10 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/no-danger */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Line, Bar } from 'react-chartjs-2';
+import { Line, Bar, Scatter } from 'react-chartjs-2';
 
 import {
   pluck,
@@ -91,7 +92,7 @@ export const RenderChart = ({
     localLabels = pluck(data, xLabelsField);
   }
   let localDatasets = datasets;
-  if (!datasets && yDatasets) {
+  if (!datasets && yDatasets && chartType !== 'scatter') {
     localDatasets = Object.entries(yDatasets).map(([label, field]) => {
       let datasetData = pluck(data, field);
       if (yAxisType === 'percentage') {
@@ -145,22 +146,48 @@ export const RenderChart = ({
   }
 
   const colorsUse = colors || chartColorsTheme[theme].series;
-  localDatasets = localDatasets.map((ds, index) => ({
+  localDatasets = localDatasets && localDatasets.map((ds, index) => ({
     ...ds,
     borderColor: colorsUse[index % colorsUse.length],
     backgroundColor: colorsUse[index % colorsUse.length],
   }));
-
-  const chartData = {
-    labels: localLabels,
-    datasets: localDatasets,
-  };
-  chartOptions.legend = {
-    position: legend || 'bottom',
-    labels: {
-      padding: 5,
-    },
-  };
+  let chartData = {};
+  if (chartType !== 'scatter') {
+    chartData = {
+      labels: localLabels,
+      datasets: localDatasets,
+    };
+  } else {
+    chartData = {
+      datasets: [{
+        data,
+        borderColor: 'transparent',
+        pointBackgroundColor(context) {
+          const index = context.dataIndex;
+          const value = context.dataset.data[index].y;
+          return value > 0 ? '#c30' : '#093';
+        },
+      }],
+      labels: data.map((x) => x.label),
+    };
+    chartOptions.tooltips = {
+      callbacks: {
+        label(tooltipItem, xdata) {
+          return xdata.labels[tooltipItem.index] || `(${tooltipItem.xLabel}, ${tooltipItem.yLabel})`;
+        },
+      },
+    };
+  }
+  if (chartType !== 'scatter') {
+    chartOptions.legend = {
+      position: legend || 'bottom',
+      labels: {
+        padding: 5,
+      },
+    };
+  } else {
+    chartOptions.legend = { display: false };
+  }
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
       <div className={styles.title} dangerouslySetInnerHTML={{ __html: title }} />
@@ -194,6 +221,15 @@ export const RenderChart = ({
         { chartType === 'bar'
           && (
           <Bar
+            data={chartData}
+            height={height || 250}
+            width={width || 100}
+            options={chartOptions}
+          />
+          )}
+        { chartType === 'scatter'
+          && (
+          <Scatter
             data={chartData}
             height={height || 250}
             width={width || 100}
@@ -250,9 +286,12 @@ export const RenderLineChart = (props) => <RenderChart {...props} chartType="lin
 
 export const RenderBarChart = (props) => <RenderChart {...props} chartType="bar" />;
 
+export const RenderScatterChart = (props) => <RenderChart {...props} chartType="scatter" />;
+
 export default {
   chartColorsTheme,
   RenderLineChart,
   RenderBarChart,
   RenderChart,
+  RenderScatterChart,
 };
