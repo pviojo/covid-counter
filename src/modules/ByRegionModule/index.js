@@ -90,7 +90,7 @@ const ByRegionModule = ({
   };
   numeral.locale('es');
   if (!selectedRegion) { return null; }
-  const data = newCasesRegionData && newCasesRegionData[selectedRegion];
+  const data = newCasesRegionData && newCasesRegionData[selectedRegion] && newCasesRegionData[selectedRegion].data;
   if (!data) { return null; }
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
