@@ -16,7 +16,7 @@ import Select from 'react-select';
 import isMobile from 'is-mobile';
 
 import { VectorMap } from '@south-paw/react-vector-maps';
-import { maxWeekly, delta, mergeByUpdatedAt } from '../../helpers/data';
+import { maxWeekly, delta } from '../../helpers/data';
 
 import { RenderLineChart, RenderBarChart } from '../../components/Charts';
 import ComunasByStep from '../../components/ComunasByStep';
@@ -480,33 +480,6 @@ const ByRegionModule = ({
             )
           ))}
         </div>
-        {selectedRegion === '05s' && (
-        <>
-          <div className={styles.widget} key="comp">
-            <RenderLineChart
-              theme={theme}
-              data={mergeByUpdatedAt(comunasData['Valparaiso - Valparaiso'].data, comunasData['Valparaiso - Vina del Mar'].data).map((x) => ({
-                updatedAt: x.a.updatedAt,
-                prevalenceActiveCases1: x.a.prevalenceActiveCases,
-                prevalenceActiveCases2: x.b.prevalenceActiveCases,
-              }))}
-              yAxisScale="linear"
-              xAxisType="time"
-              showYAxisSelector
-              yAxisMin={0}
-              title="Comparación Viña del Mar vs Valparaiso"
-              width={33}
-              height={isMobile() ? 15 : 15}
-              xAxisStepSize={isMobile() ? 14 : 1}
-              xLabelsField="updatedAt"
-              yDatasets={{
-                'Incidencia Viña del Mar': 'prevalenceActiveCases1',
-                'Incidencia Valparaiso': 'prevalenceActiveCases2',
-              }}
-            />
-          </div>
-        </>
-        )}
       </div>
 
     </div>

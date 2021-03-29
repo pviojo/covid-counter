@@ -814,7 +814,29 @@ const GeneralModule = ({
           }}
         />
       </div>
+      <div className={styles.grid4Cols1Col}>
+        {Object.values(regionesData).sort((a, b) => (a.regionCode < b.regionCode ? -1 : 1)).map((r) => (
+          <div className={styles.widget} key={r}>
+            <RenderLineChart
+              theme={theme}
+              data={r.data}
+              yAxisScale="linear"
+              xAxisType="time"
+              showYAxisSelector
+              yAxisMin={0}
+              title={`${r.region}<br/><small>Casos activos</small>`}
+              width={33}
+              height={isMobile() ? 25 : 25}
+              xAxisStepSize={isMobile() ? 14 : 1}
+              xLabelsField="updatedAt"
+              yDatasets={{
+                'Incidencia 100.000 hab': 'activeCases',
+              }}
+            />
+          </div>
 
+        ))}
+      </div>
     </div>
   );
 };
