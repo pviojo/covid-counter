@@ -316,6 +316,8 @@ const GeneralModule = ({
             'Promedio Casos nuevos (ult 14D)': 'avg14DNewCases',
             'Promedio Casos nuevos (ult 21D)': 'avg21DNewCases',
             'Promedio Casos nuevos (ult 28D)': 'avg28DNewCases',
+            'Promedio Casos nuevos (ult 35D)': 'avg35DNewCases',
+            'Promedio Casos nuevos (ult 42D)': 'avg42DNewCases',
           }}
         />
         <br />

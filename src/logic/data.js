@@ -590,6 +590,8 @@ export const getData = async () => {
   data = avgLast(data, 14, 'newCases', 'avg14DNewCases');
   data = avgLast(data, 21, 'newCases', 'avg21DNewCases');
   data = avgLast(data, 28, 'newCases', 'avg28DNewCases');
+  data = avgLast(data, 35, 'newCases', 'avg35DNewCases');
+  data = avgLast(data, 42, 'newCases', 'avg42DNewCases');
 
   data = avgLast(data, 7, 'newCasesWithSymptoms', 'avg7DNewCasesWithSymptoms');
   data = avgLast(data, 14, 'newCasesWithSymptoms', 'avg14DNewCasesWithSymptoms');
