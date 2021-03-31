@@ -192,6 +192,7 @@ const GeneralModule = ({
             theme={theme}
             data={
             (() => {
+              const originalData = [...data];
               let d = delta(
                 data.slice(-28),
                 7,
@@ -200,10 +201,14 @@ const GeneralModule = ({
                 ...x,
                 newCases: Math.min(Math.max(x.newCases, -1), 1),
               }));
-              const avg = d.map((x) => x.newCases).reduce((a, b) => a + b, 0) / d.length;
+              const avg = (
+                (originalData.slice(-7).reduce((a, b) => a + b.newCases, 0))
+                / (originalData.slice(-14, -7).reduce((a, b) => a + b.newCases, 0))
+              ) - 1;
+
               d = d.map((x) => ({
                 ...x,
-                avg: Math.round(avg * 10) / 10,
+                avg: Math.round(avg * 100) / 100,
               }));
               return d;
             })()
@@ -212,7 +217,7 @@ const GeneralModule = ({
             yAxisType="percentage"
             xAxisType="time"
             showYAxisSelector
-            title="Variación Casos nuevos últimos 14 días (7 días)"
+            title="Variación Casos nuevos últimos 14 días (vs anteriores 14 días)"
             width={100}
             height={isMobile() ? 80 : 50}
             xAxisStepSize={isMobile() ? 7 : 1}
@@ -253,18 +258,23 @@ const GeneralModule = ({
             theme={theme}
             data={
             (() => {
+              const originalData = [...data];
               let d = delta(
                 data.slice(-28),
                 7,
                 'deaths',
               ).map((x) => ({
                 ...x,
+                deathsReal: x.deaths,
                 deaths: Math.min(Math.max(x.deaths, -1), 1),
               }));
-              const avg = d.map((x) => x.deaths).reduce((a, b) => a + b, 0) / d.length;
+              const avg = (
+                (originalData.slice(-7).reduce((a, b) => a + b.deaths, 0))
+                / (originalData.slice(-14, -7).reduce((a, b) => a + b.deaths, 0))
+              ) - 1;
               d = d.map((x) => ({
                 ...x,
-                avg: Math.round(avg * 10) / 10,
+                avg: Math.round(avg * 100) / 100,
               }));
               return d;
             })()
@@ -273,7 +283,7 @@ const GeneralModule = ({
             yAxisType="percentage"
             xAxisType="time"
             showYAxisSelector
-            title="Variación Fallecidos últimos 14 días (7 días)"
+            title="Variación Fallecidos últimos 14 días (vs anteriores 14 días)"
             width={100}
             height={isMobile() ? 80 : 50}
             xAxisStepSize={isMobile() ? 7 : 1}
