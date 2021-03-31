@@ -195,15 +195,15 @@ const GeneralModule = ({
               const originalData = [...data];
               let d = delta(
                 data.slice(-28),
-                7,
+                14,
                 'newCases',
               ).map((x) => ({
                 ...x,
                 newCases: Math.min(Math.max(x.newCases, -1), 1),
               }));
               const avg = (
-                (originalData.slice(-7).reduce((a, b) => a + b.newCases, 0))
-                / (originalData.slice(-14, -7).reduce((a, b) => a + b.newCases, 0))
+                (originalData.slice(-14).reduce((a, b) => a + b.newCases, 0))
+                / (originalData.slice(-28, -14).reduce((a, b) => a + b.newCases, 0))
               ) - 1;
 
               d = d.map((x) => ({
@@ -261,7 +261,7 @@ const GeneralModule = ({
               const originalData = [...data];
               let d = delta(
                 data.slice(-28),
-                7,
+                14,
                 'deaths',
               ).map((x) => ({
                 ...x,
@@ -269,8 +269,8 @@ const GeneralModule = ({
                 deaths: Math.min(Math.max(x.deaths, -1), 1),
               }));
               const avg = (
-                (originalData.slice(-7).reduce((a, b) => a + b.deaths, 0))
-                / (originalData.slice(-14, -7).reduce((a, b) => a + b.deaths, 0))
+                (originalData.slice(-14).reduce((a, b) => a + b.deaths, 0))
+                / (originalData.slice(-28, -14).reduce((a, b) => a + b.deaths, 0))
               ) - 1;
               d = d.map((x) => ({
                 ...x,
@@ -403,6 +403,26 @@ const GeneralModule = ({
           yDatasets={{
             'Con síntomas': 'percentAvg7DNewCasesWithSymptoms',
             'Sin síntomas': 'percentAvg7DNewCasesWithoutSymptoms',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={data}
+          xcolors={chartColorsTheme[theme]}
+          yAxisScale="linear"
+          title="Casos totales"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Casos totales': 'totalCases',
           }}
         />
         <br />
@@ -627,6 +647,26 @@ const GeneralModule = ({
           }}
         />
         <small>* Limitado en rango +/- 100%</small>
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={data}
+          xcolors={chartColorsTheme[theme]}
+          yAxisScale="linear"
+          title="Fallecidos totales"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Fallecidos totales': 'totalDeaths',
+          }}
+        />
+        <br />
       </div>
       <div className={styles.widget}>
         <RenderLineChart

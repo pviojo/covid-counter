@@ -81,6 +81,7 @@ const getDataCovid = async () => {
   }));
   const dates = (rows[0]).slice(1);
   const dataNewCasesWithSymptoms = (rows[1]).slice(1);
+  const dataTotalCases = (rows[2]).slice(1);
   const dataNewCasesWithoutSymptoms = (rows[6]).slice(1);
   const dataNewCases = (rows[7]).slice(1);
   const dataDeaths = (rows[4]).slice(1);
@@ -234,6 +235,7 @@ const getDataCovid = async () => {
     const newCases = parseInt(dataNewCases[index] || 0, 10);
     const newCasesWithSymptoms = parseInt(dataNewCasesWithSymptoms[index] || 0, 10);
     const newCasesWithoutSymptoms = parseInt(dataNewCasesWithoutSymptoms[index] || 0, 10);
+    const totalCases = parseInt(dataTotalCases[index] || 0, 10);
     const accDeaths = parseInt(dataDeaths[index] || prevDeaths, 10);
     const deaths = accDeaths - prevDeaths;
     prevDeaths = accDeaths;
@@ -270,6 +272,8 @@ const getDataCovid = async () => {
       date,
       updatedAt: d,
       newCases,
+      totalCases,
+      totalDeaths: accDeaths,
       deaths,
       newCasesWithSymptoms,
       activeCases,

@@ -246,15 +246,15 @@ const ByRegionModule = ({
               const originalData = [...data];
               let d = delta(
                 data.slice(-28),
-                7,
+                14,
                 'newCases',
               ).map((x) => ({
                 ...x,
                 newCases: Math.min(Math.max(x.newCases, -1), 1),
               }));
               const avg = (
-                (originalData.slice(-7).reduce((a, b) => a + b.newCases, 0))
-                / (originalData.slice(-14, -7).reduce((a, b) => a + b.newCases, 0))
+                (originalData.slice(-14).reduce((a, b) => a + b.newCases, 0))
+                / (originalData.slice(-28, -14).reduce((a, b) => a + b.newCases, 0))
               ) - 1;
               d = d.map((x) => ({
                 ...x,
