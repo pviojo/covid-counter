@@ -314,6 +314,8 @@ const GeneralModule = ({
             'Casos nuevos': 'newCases',
             'Promedio Casos nuevos (ult 7D)': 'avg7DNewCases',
             'Promedio Casos nuevos (ult 14D)': 'avg14DNewCases',
+            'Promedio Casos nuevos (ult 21D)': 'avg21DNewCases',
+            'Promedio Casos nuevos (ult 28D)': 'avg28DNewCases',
           }}
         />
         <br />
@@ -346,6 +348,36 @@ const GeneralModule = ({
         />
         <small>* Limitado en rango +/- 100%</small>
       </div>
+
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={
+            delta(
+              data,
+              7,
+              'avg7DNewCases',
+            ).map((x) => ({
+              ...x,
+              avg7DNewCases: Math.min(Math.max(x.avg7DNewCases, -1), 1),
+            }))
+          }
+          yAxisScale="linear"
+          yAxisType="percentage"
+          xAxisType="time"
+          showYAxisSelector
+          title="Variación en 7 días de Media 7d Casos nuevos"
+          width={100}
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Var %': 'avg7DNewCases',
+          }}
+        />
+        <small>* Limitado en rango +/- 100%</small>
+      </div>
+
       <div className={styles.widget}>
         <RenderBarChart
           theme={theme}
@@ -446,9 +478,38 @@ const GeneralModule = ({
           yDatasets={{
             'Test PCR': 'testsPCR',
             'Test PCR (Media Móvil 7D)': 'avg7DtestsPCR',
+            'Test PCR (Media Móvil 14D)': 'avg14DtestsPCR',
           }}
         />
         <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={
+            delta(
+              data,
+              7,
+              'avg7DtestsPCR',
+            ).map((x) => ({
+              ...x,
+              avg7DtestsPCR: Math.min(Math.max(x.avg7DtestsPCR, -1), 1),
+            }))
+          }
+          yAxisScale="linear"
+          yAxisType="percentage"
+          xAxisType="time"
+          showYAxisSelector
+          title="Variación en 7 días de Media 7d Test PCR reportados"
+          width={100}
+          height={isMobile() ? 60 : 25}
+          xAxisStepSize={isMobile() ? 7 : 1}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Var %': 'avg7DtestsPCR',
+          }}
+        />
+        <small>* Limitado en rango +/- 100%</small>
       </div>
       <div className={styles.widget}>
         <RenderLineChart
