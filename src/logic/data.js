@@ -443,6 +443,7 @@ const getRegionesData = async (comunasData) => {
     rsp[regionCode].minFase = Math.min(rsp[regionCode].minFase, parseInt(comuna.fase, 10));
     rsp[regionCode].fases.push(parseInt(comuna.fase, 10));
     rsp[regionCode].byFase[comuna.fase].population += parseInt(comuna.population, 10);
+
     return null;
   });
 
@@ -452,8 +453,51 @@ const getRegionesData = async (comunasData) => {
       rsp[k].fases.reduce((a, b) => a + b, 0) / rsp[k].fases.length,
     );
     rsp[k].modeFase = Math.min(...mode(rsp[k].fases));
+    rsp[k].re = {};
     return null;
   });
+
+  let rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto54/r.provincial_n.csv');
+  rows = rows.slice(1);
+  const re = {};
+  rows.map((r) => {
+    const provinciaCode = r[3];
+    const d = r[4];
+    if (!re[provinciaCode]) {
+      const region = r[0];
+      const regionCode = `${r[1] < 10 ? '0' : ''}${r[1]}`;
+      const provincia = r[2];
+      re[provinciaCode] = {
+        region,
+        regionCode,
+        provincia,
+        provinciaCode,
+        data: [],
+      };
+    }
+    const estimado = r[5];
+    const liminf = r[6];
+    const limsup = r[7];
+    const liminf80 = r[8];
+    const limsup80 = r[9];
+    re[provinciaCode].data.push({
+      updatedAt: d,
+      estimado,
+      b: 1,
+      liminf,
+      limsup,
+      liminf80,
+      limsup80,
+    });
+    return null;
+  });
+  Object.keys(re).map((k) => {
+    const regionCode = re[k].regionCode;
+    const provinciaCode = re[k].provinciaCode;
+    rsp[regionCode].re[provinciaCode] = re[k];
+    return null;
+  });
+
   return rsp;
 };
 

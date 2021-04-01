@@ -323,6 +323,37 @@ const ByRegionModule = ({
             }}
           />
         </div>
+
+        {selectedRegion && regionesData[selectedRegion] && (
+          <div className={styles.widget}>
+            <div className={styles.title}>Número de Reproducción efectivo por provincia</div>
+            <div className={styles.grid2Cols1Col}>
+              {Object.values(regionesData[selectedRegion].re).map((p) => (
+                <div className={styles.widget} key={p.provinciaCode}>
+                  <RenderLineChart
+                    theme={theme}
+                    data={p.data.slice(-330)}
+                    yAxisScale="linear"
+                    xAxisType="time"
+                    showYAxisSelector
+                    yAxisMin={0}
+                    title={`${p.provincia}<br/><small>Número de Reproducción efectivo</small>`}
+                    width={33}
+                    height={isMobile() ? 25 : 25}
+                    xAxisStepSize={isMobile() ? 14 : 1}
+                    xLabelsField="updatedAt"
+                    yDatasets={{
+                      'Re Estimado': 'estimado',
+                      'Re Lim Sup': 'limsup',
+                      'Re Lim Inf': 'liminf',
+                      1: 'b',
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {comunasInRegion && comunasInRegion[0] && (
           <div className={styles.widget}>
             <div className={styles.title}>Incidencia Activos cada 100.000 hab por comuna</div>

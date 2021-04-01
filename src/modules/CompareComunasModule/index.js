@@ -92,7 +92,7 @@ const CompareComunasModule = ({
             onChange={changeComunas}
             options={
             Object.values(comunasData).sort(
-              (a, b) => ((a.region > b.region) ? 1 : -1),
+              (a, b) => ((`${a.region}-${a.comuna}` > `${b.region}-${b.comuna}`) ? 1 : -1),
             ).map((r) => ({
               value: r.comunaCode,
               label: r.label,
