@@ -62,7 +62,7 @@ const ByRegionModule = ({
       let id = location.pathname.replace('/por-region/', '');
       id = id.replace('/por-region', '');
       id = id.replace('/', '');
-      if (id) {
+      if (id && !Number.isNaN(parseInt(id, 10))) {
         if (parseInt(id, 10) < 10) {
           id = `0${parseInt(id, 10)}`;
         }
