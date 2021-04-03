@@ -4,6 +4,7 @@ import moment from 'moment';
 
 import {
   mode,
+  avgLast,
 } from '../helpers/data';
 
 const nameCodeRegion = {
@@ -50,23 +51,6 @@ const accumulate = (array, key, accKey) => {
     return {
       ...item,
       [accKey]: acc,
-    };
-  });
-  return rsp;
-};
-
-const avgLast = (array, n, key, averagedKey) => {
-  const prev = [];
-  let avg = 0;
-  const rsp = array.map((item, index) => {
-    prev.push(item[key]);
-    if (index >= (n - 1)) {
-      avg = (prev.reduce((a, b) => a + parseFloat(b, 10), 0)) / n;
-      prev.shift();
-    }
-    return {
-      ...item,
-      [averagedKey]: avg,
     };
   });
   return rsp;

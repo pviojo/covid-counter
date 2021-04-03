@@ -9,11 +9,11 @@ import numerales from "numeral/locales/es";
 import moment from 'moment';
 import isMobile from 'is-mobile';
 
-import { RenderLineChart, RenderBarChart, chartColorsTheme } from '../../components/Charts';
+import { RenderLineChart, RenderBarChart } from '../../components/Charts';
 
 import Metric from '../../components/Metric';
 import ComunasByStep from '../../components/ComunasByStep';
-import { delta } from '../../helpers/data';
+import { delta, avgLast } from '../../helpers/data';
 
 import '../../global.scss';
 import styles from './index.module.scss';
@@ -167,13 +167,12 @@ const GeneralModule = ({
         <div className={styles.widget}>
           <RenderLineChart
             theme={theme}
-            data={data.slice(-14).map((x, i) => ({
+            data={data.slice(-56).map((x, i) => ({
               ...x,
-              newCasesPrevWeek: data.slice(-28, -14)[i].newCases,
+              newCasesPrevWeek: data.slice(-56 - 7, -7)[i].newCases,
             }))}
-            xcolors={chartColorsTheme[theme]}
             yAxisScale="linear"
-            title="Comparación Casos nuevos ultimos 14 días (vs anteriores 14)"
+            title="Comparación Casos nuevos ultimos 56 días (vs anteriores 7)"
             xAxisType="time"
             xAxisStepSize={1}
             width={100}
@@ -182,8 +181,8 @@ const GeneralModule = ({
             yAxisMin={0}
             xLabelsField="updatedAt"
             yDatasets={{
-              'Casos nuevos ult 14 días': 'newCases',
-              'Casos nuevos anteriores 14 días': 'newCasesPrevWeek',
+              'Casos nuevos ult 56 días': 'newCases',
+              'Casos nuevos anteriores 56 días': 'newCasesPrevWeek',
             }}
           />
         </div>
@@ -192,18 +191,21 @@ const GeneralModule = ({
             theme={theme}
             data={
             (() => {
-              const originalData = [...data];
+              let originalData = [...data];
+              originalData = avgLast(originalData, 7, 'pcr', 'avg7DPCR');
               let d = delta(
-                data.slice(-28),
-                14,
+                data.slice(-56 - 7),
+                7,
                 'newCases',
-              ).map((x) => ({
+              );
+              d = avgLast(d, 7, 'newCases', 'avg7DNewCases');
+              d.map((x) => ({
                 ...x,
                 newCases: Math.min(Math.max(x.newCases, -1), 1),
               }));
               const avg = (
-                (originalData.slice(-14).reduce((a, b) => a + b.newCases, 0))
-                / (originalData.slice(-28, -14).reduce((a, b) => a + b.newCases, 0))
+                (originalData.slice(-56).reduce((a, b) => a + b.newCases, 0))
+                / (originalData.slice(-56 - 7, -7).reduce((a, b) => a + b.newCases, 0))
               ) - 1;
 
               d = d.map((x) => ({
@@ -217,14 +219,14 @@ const GeneralModule = ({
             yAxisType="percentage"
             xAxisType="time"
             showYAxisSelector
-            title="Variación Casos nuevos últimos 14 días (vs anteriores 14 días)"
+            title="Variación Casos nuevos últimos 56 días (vs anteriores 7 días)"
             width={100}
             height={isMobile() ? 80 : 50}
             xAxisStepSize={isMobile() ? 7 : 1}
             xLabelsField="updatedAt"
             yDatasets={{
               'Var %': 'newCases',
-              Promedio: 'avg',
+              'Promedio (ult 7 días)': 'avg7DNewCases',
             }}
           />
           <small>* Limitado en rango +/- 100%</small>
@@ -234,12 +236,12 @@ const GeneralModule = ({
         <div className={styles.widget}>
           <RenderLineChart
             theme={theme}
-            data={data.slice(-14).map((x, i) => ({
+            data={data.slice(-56).map((x, i) => ({
               ...x,
-              deathsPrevWeek: data.slice(-28, -14)[i].deaths,
+              deathsPrevWeek: data.slice(-56 - 7, -7)[i].deaths,
             }))}
             yAxisScale="linear"
-            title="Comparación Fallecidos ultimos 14 días (vs anteriores 14)"
+            title="Comparación Fallecidos ultimos 56 días (vs anteriores 7)"
             xAxisType="time"
             xAxisStepSize={1}
             width={100}
@@ -260,22 +262,18 @@ const GeneralModule = ({
             (() => {
               const originalData = [...data];
               let d = delta(
-                data.slice(-28),
-                14,
+                originalData.slice(-56),
+                7,
                 'deaths',
-              ).map((x) => ({
-                ...x,
-                deathsReal: x.deaths,
-                deaths: Math.min(Math.max(x.deaths, -1), 1),
-              }));
-              const avg = (
-                (originalData.slice(-14).reduce((a, b) => a + b.deaths, 0))
-                / (originalData.slice(-28, -14).reduce((a, b) => a + b.deaths, 0))
-              ) - 1;
-              d = d.map((x) => ({
-                ...x,
-                avg: Math.round(avg * 100) / 100,
-              }));
+              );
+              d = avgLast(d, 7, 'deaths', 'avg7Ddeaths');
+              d = avgLast(d, 14, 'deaths', 'avg14Ddeaths');
+              d
+                .map((x) => ({
+                  ...x,
+                  deathsReal: x.deaths,
+                  deaths: Math.min(Math.max(x.deaths, -1), 1),
+                }));
               return d;
             })()
           }
@@ -283,14 +281,14 @@ const GeneralModule = ({
             yAxisType="percentage"
             xAxisType="time"
             showYAxisSelector
-            title="Variación Fallecidos últimos 14 días (vs anteriores 14 días)"
+            title="Variación Fallecidos últimos 56 días (vs anteriores 7 días)"
             width={100}
             height={isMobile() ? 80 : 50}
             xAxisStepSize={isMobile() ? 7 : 1}
             xLabelsField="updatedAt"
             yDatasets={{
               'Var %': 'deaths',
-              Promedio: 'avg',
+              'Promedio (ult 7 días)': 'avg7Ddeaths',
             }}
           />
           <small>* Limitado en rango +/- 100%</small>
@@ -300,7 +298,6 @@ const GeneralModule = ({
         <RenderLineChart
           theme={theme}
           data={data}
-          xcolors={chartColorsTheme[theme]}
           yAxisScale="linear"
           title="Casos nuevos"
           xAxisType="time"
@@ -411,7 +408,6 @@ const GeneralModule = ({
         <RenderLineChart
           theme={theme}
           data={data}
-          xcolors={chartColorsTheme[theme]}
           yAxisScale="linear"
           title="Casos totales"
           xAxisType="time"
@@ -652,7 +648,6 @@ const GeneralModule = ({
         <RenderLineChart
           theme={theme}
           data={data}
-          xcolors={chartColorsTheme[theme]}
           yAxisScale="linear"
           title="Fallecidos totales"
           xAxisType="time"

@@ -53,6 +53,23 @@ export const mode = (arr) => [...new Set(arr)]
   .filter((v, i, a) => v[1] === a[0][1])
   .map((v) => v[0]);
 
+export const avgLast = (array, n, key, averagedKey) => {
+  const prev = [];
+  let avg = 0;
+  const rsp = array.map((item, index) => {
+    prev.push(item[key]);
+    if (index >= (n - 1)) {
+      avg = (prev.reduce((a, b) => a + parseFloat(b, 10), 0)) / n;
+      prev.shift();
+    }
+    return {
+      ...item,
+      [averagedKey]: avg,
+    };
+  });
+  return rsp;
+};
+
 export default {
   maxWeekly,
 };

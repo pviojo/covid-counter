@@ -16,7 +16,10 @@ import Select from 'react-select';
 import isMobile from 'is-mobile';
 
 import { VectorMap } from '@south-paw/react-vector-maps';
-import { maxWeekly, delta } from '../../helpers/data';
+import {
+  maxWeekly, delta,
+  avgLast,
+} from '../../helpers/data';
 
 import { RenderLineChart, RenderBarChart } from '../../components/Charts';
 import ComunasByStep from '../../components/ComunasByStep';
@@ -219,12 +222,12 @@ const ByRegionModule = ({
           <div className={styles.widget}>
             <RenderLineChart
               theme={theme}
-              data={data.slice(-14).map((x, i) => ({
+              data={data.slice(-56).map((x, i) => ({
                 ...x,
-                newCasesPrevWeek: data.slice(-28, -14)[i].newCases,
+                newCasesPrevWeek: data.slice(-56 - 7, -7)[i].newCases,
               }))}
               yAxisScale="linear"
-              title="Comparación Casos nuevos ultimos 14 días (vs anteriores 14)"
+              title="Comparación Casos nuevos ultimos 56 días (vs anteriores 7)"
               xAxisType="time"
               xAxisStepSize={1}
               width={100}
@@ -233,8 +236,8 @@ const ByRegionModule = ({
               yAxisMin={0}
               xLabelsField="updatedAt"
               yDatasets={{
-                'Casos nuevos ult 14 días': 'newCases',
-                'Casos nuevos anteriores 14 días': 'newCasesPrevWeek',
+                'Casos nuevos ult 56 días': 'newCases',
+                'Casos nuevos anteriores 56 días': 'newCasesPrevWeek',
               }}
             />
           </div>
@@ -243,19 +246,23 @@ const ByRegionModule = ({
               theme={theme}
               data={
             (() => {
-              const originalData = [...data];
+              let originalData = [...data];
+              originalData = avgLast(originalData, 7, 'pcr', 'avg7DPCR');
               let d = delta(
-                data.slice(-28),
-                14,
+                data.slice(-56 - 7),
+                7,
                 'newCases',
-              ).map((x) => ({
+              );
+              d = avgLast(d, 7, 'newCases', 'avg7DNewCases');
+              d.map((x) => ({
                 ...x,
                 newCases: Math.min(Math.max(x.newCases, -1), 1),
               }));
               const avg = (
-                (originalData.slice(-14).reduce((a, b) => a + b.newCases, 0))
-                / (originalData.slice(-28, -14).reduce((a, b) => a + b.newCases, 0))
+                (originalData.slice(-56).reduce((a, b) => a + b.newCases, 0))
+                / (originalData.slice(-56 - 7, -7).reduce((a, b) => a + b.newCases, 0))
               ) - 1;
+
               d = d.map((x) => ({
                 ...x,
                 avg: Math.round(avg * 100) / 100,
@@ -267,14 +274,14 @@ const ByRegionModule = ({
               yAxisType="percentage"
               xAxisType="time"
               showYAxisSelector
-              title="Variación Casos nuevos últimos 14 días (vs anteriores 14 días)"
+              title="Variación Casos nuevos últimos 56 días (vs anteriores 7 días)"
               width={100}
               height={isMobile() ? 80 : 50}
               xAxisStepSize={isMobile() ? 7 : 1}
               xLabelsField="updatedAt"
               yDatasets={{
                 'Var %': 'newCases',
-                Promedio: 'avg',
+                'Promedio (ult 7 días)': 'avg7DNewCases',
               }}
             />
             <small>* Limitado en rango +/- 100%</small>
