@@ -108,6 +108,7 @@ const getDataCovid = async () => {
     if (x[1] === 'Camas UCI ocupadas') {
       camas[x[2]].busy = parseInt(x[3], 10);
     }
+    camas[x[2]].busy = camas[x[2]].busy_noncovid19 + camas[x[2]].busy_covid19;
     camas[x[2]].available = camas[x[2]].total - camas[x[2]].busy;
     return null;
   });
@@ -284,6 +285,7 @@ const getDataCovid = async () => {
       agesRow: agesRowDate,
     };
   });
+
   return rsp;
 };
 const getDataVaccines = async () => {

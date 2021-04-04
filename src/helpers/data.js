@@ -1,16 +1,28 @@
 import moment from 'moment';
 
-export const maxWeekly = (data, field) => {
+export const maxWeekly = (data, processFields) => {
   const rsp = {};
+  let fields = processFields;
+  if (!Array.isArray(fields)) {
+    fields = [fields];
+  }
   data.map((r) => {
     const w = moment(r.updatedAt).format('YYYY-WW');
     if (!rsp[w]) {
       rsp[w] = {
         updatedAt: w,
-        [field]: r[field],
       };
-    } else if (r[field] > rsp[w][field]) {
-      rsp[w][field] = r[field];
+      fields.map((field) => {
+        rsp[w][field] = r[field];
+        return null;
+      });
+    } else {
+      fields.map((field) => {
+        if (r[field] > rsp[w][field]) {
+          rsp[w][field] = r[field];
+        }
+        return null;
+      });
     }
     return null;
   });

@@ -13,7 +13,10 @@ import { RenderLineChart, RenderBarChart } from '../../components/Charts';
 
 import Metric from '../../components/Metric';
 import ComunasByStep from '../../components/ComunasByStep';
-import { delta, avgLast } from '../../helpers/data';
+import {
+  delta, avgLast,
+  maxWeekly,
+} from '../../helpers/data';
 
 import '../../global.scss';
 import styles from './index.module.scss';
@@ -846,20 +849,42 @@ const GeneralModule = ({
         <br />
       </div>
       <div className={styles.widget}>
-        <RenderBarChart
+        <RenderLineChart
           theme={theme}
-          data={data.filter((x) => x.agesRow.general).map((x) => ({
-            updatedAt: x.updatedAt,
-            ...x.agesRow.general,
-          }))}
+          data={
+            maxWeekly(
+              data.filter((x) => x.agesRow.general).map((x) => ({
+                updatedAt: x.updatedAt,
+                ...x.agesRow.general,
+              })),
+              [
+                '0-4',
+                '5-9',
+                '10-14',
+                '15-19',
+                '20-24',
+                '25-29',
+                '30-34',
+                '35-39',
+                '40-44',
+                '45-49',
+                '50-54',
+                '55-59',
+                '60-64',
+                '65-69',
+                '70-74',
+                '75-79',
+                '80+',
+              ],
+            )
+          }
           yAxisScale="linear"
           title="Casos por edad"
-          xAxisType="time"
+          xAxisType="linear"
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
-          stack
           showYAxisSelector
-          height={isMobile() ? 80 : 60}
+          height={isMobile() ? 80 : 40}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -883,6 +908,7 @@ const GeneralModule = ({
           }}
         />
       </div>
+
       <div className={styles.widget}>
         <RenderBarChart
           theme={theme}
@@ -897,7 +923,7 @@ const GeneralModule = ({
           width={100}
           stack
           showYAxisSelector
-          height={isMobile() ? 80 : 60}
+          height={isMobile() ? 80 : 40}
           yAxisMin={0}
           yAxisMax={100}
           xLabelsField="updatedAt"
