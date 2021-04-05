@@ -499,25 +499,25 @@ const getRegionesData = async (comunasData) => {
         total: 0,
         available: 0,
         busy: 0,
-        busy_covid19: 0,
-        busy_noncovid19: 0,
+        busyCovid19: 0,
+        busyNonCovid19: 0,
       };
     }
     if (x[1] === 'Camas UCI habilitadas') {
       camasRegion[x[0]][x[2]].total = parseInt(x[3], 10);
     }
     if (x[1] === 'Camas UCI ocupadas COVID-19') {
-      camasRegion[x[0]][x[2]].busy_covid19 = parseInt(x[3], 10);
+      camasRegion[x[0]][x[2]].busyCovid19 = parseInt(x[3], 10);
     }
     if (x[1] === 'Camas UCI ocupadas no COVID-19') {
-      camasRegion[x[0]][x[2]].busy_noncovid19 = parseInt(x[3], 10);
+      camasRegion[x[0]][x[2]].busyNonCovid19 = parseInt(x[3], 10);
     }
     if (x[1] === 'Camas UCI ocupadas') {
       camasRegion[x[0]][x[2]].busy = parseInt(x[3], 10);
     }
 
-    camasRegion[x[0]][x[2]].busy = camasRegion[x[0]][x[2]].busy_noncovid19
-      + camasRegion[x[0]][x[2]].busy_covid19;
+    camasRegion[x[0]][x[2]].busy = camasRegion[x[0]][x[2]].busyNonCovid19
+      + camasRegion[x[0]][x[2]].busyCovid19;
     camasRegion[x[0]][x[2]].available = camasRegion[x[0]][x[2]].total
       - camasRegion[x[0]][x[2]].busy;
     // eslint-disable-next-line consistent-return
