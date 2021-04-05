@@ -150,6 +150,10 @@
   display: grid;
   grid-template-columns: repeat(6, 1fr);
 }
+:local(.grid8Cols1Col){
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+}
 
 
 @media(max-width:800px){

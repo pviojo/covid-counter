@@ -140,6 +140,28 @@ const ByRegionModule = ({
         <div className={styles.widget}>
           <RenderLineChart
             theme={theme}
+            data={regionesData[selectedRegion].camas}
+            yAxisScale="linear"
+            xAxisType="linear"
+            showYAxisSelector
+            yAxisMin={0}
+            title={`Camas disponibles (${(regionesData[selectedRegion].camas[regionesData[selectedRegion].camas.length - 1]).available}) - ${regionesData[selectedRegion].region}`}
+            width={100}
+            height={isMobile() ? 60 : 25}
+            xAxisStepSize={isMobile() ? 7 : 1}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              Disponibles: 'available',
+              'Ocupados COVID-19': 'busyCovid19',
+              'Ocupados No COVID-19': 'busyNonCovid19',
+              'Ocupados Total': 'busy',
+              Totales: 'total',
+            }}
+          />
+        </div>
+        <div className={styles.widget}>
+          <RenderLineChart
+            theme={theme}
             data={regionesData[selectedRegion].data}
             yAxisScale="linear"
             xAxisType="linear"

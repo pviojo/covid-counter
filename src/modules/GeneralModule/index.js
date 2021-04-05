@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-param-reassign */
 /* eslint-disable max-len */
 /* eslint-disable no-shadow */
@@ -794,6 +795,42 @@ const GeneralModule = ({
         />
       </div>
       <div className={styles.widget}>
+        <div className={styles.title}>Camas disponibles por región</div>
+        <div className={styles.grid8Cols1Col}>
+          {Object.values(regionesData).sort((a, b) => (a.regionCode < b.regionCode ? -1 : 1)).map((r) => {
+            const { available, total } = r.camas[r.camas.length - 1];
+            const { available: available7D } = r.camas[r.camas.length - 1 - 8];
+            const deltaAvailable7D = ((available / available7D) - 1) * 100;
+            const pctAvailable = available / total;
+            return (
+              <div className={styles.widget} key={r.regionCode}>
+                <Metric
+                  color={available === 1 ? '#5e309a' : (pctAvailable < 0.1 ? '#c30' : '#999')}
+                  n={`${numeral(available).format('0,000')}`}
+                  subn={(
+                    <small>
+                      {`${numeral(deltaAvailable7D).format('+0.0')}% vs semana anterior (${numeral(available7D).format('0,000')})`}
+                      <br />
+                      Total:
+                      {' '}
+                      {numeral(total).format('0,000')}
+                    </small>
+)}
+                  subtitle={r.region}
+                />
+                <br />
+                <small>
+                  * Actualizado
+                  {' '}
+                  {moment(data[data.length - 1].updatedAt).add(3, 'hours').format('YYYY-MM-DD')}
+                </small>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
           data={data.map((x) => ({
@@ -958,7 +995,7 @@ const GeneralModule = ({
               xAxisType="time"
               showYAxisSelector
               yAxisMin={0}
-              title={`${r.region}<br/><small>Casos activos</small>`}
+              title={`${r.region}<br/><small>Camas disponibles: ${(r.camas[r.camas.length - 1]).available}</small><br/><small>Casos activos</small>`}
               width={33}
               height={isMobile() ? 25 : 25}
               xAxisStepSize={isMobile() ? 14 : 1}

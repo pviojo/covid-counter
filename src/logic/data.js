@@ -484,6 +484,51 @@ const getRegionesData = async (comunasData) => {
     return null;
   });
 
+  const camasRow = (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto58/Camas_UCI_diarias_std.csv')).filter((x) => x[0] !== 'Total' && x[0] !== 'Region');
+  const camasRegion = {};
+  camasRow.map((x) => {
+    if (x[0] === 'Total') {
+      return;
+    }
+    if (!camasRegion[x[0]]) {
+      camasRegion[x[0]] = {};
+    }
+    if (!camasRegion[x[0]][x[2]]) {
+      camasRegion[x[0]][x[2]] = {
+        updatedAt: x[2],
+        total: 0,
+        available: 0,
+        busy: 0,
+        busy_covid19: 0,
+        busy_noncovid19: 0,
+      };
+    }
+    if (x[1] === 'Camas UCI habilitadas') {
+      camasRegion[x[0]][x[2]].total = parseInt(x[3], 10);
+    }
+    if (x[1] === 'Camas UCI ocupadas COVID-19') {
+      camasRegion[x[0]][x[2]].busy_covid19 = parseInt(x[3], 10);
+    }
+    if (x[1] === 'Camas UCI ocupadas no COVID-19') {
+      camasRegion[x[0]][x[2]].busy_noncovid19 = parseInt(x[3], 10);
+    }
+    if (x[1] === 'Camas UCI ocupadas') {
+      camasRegion[x[0]][x[2]].busy = parseInt(x[3], 10);
+    }
+
+    camasRegion[x[0]][x[2]].busy = camasRegion[x[0]][x[2]].busy_noncovid19
+      + camasRegion[x[0]][x[2]].busy_covid19;
+    camasRegion[x[0]][x[2]].available = camasRegion[x[0]][x[2]].total
+      - camasRegion[x[0]][x[2]].busy;
+    // eslint-disable-next-line consistent-return
+    return null;
+  });
+
+  Object.keys(camasRegion).map((k) => {
+    const regionCode = nameCodeRegion[k];
+    rsp[regionCode].camas = Object.values(camasRegion[k]);
+    return null;
+  });
   return rsp;
 };
 
