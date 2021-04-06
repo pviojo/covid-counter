@@ -843,7 +843,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 35}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -858,7 +858,7 @@ const GeneralModule = ({
         <br />
       </div>
       <div className={styles.widget}>
-        <RenderBarChart
+        <RenderLineChart
           theme={theme}
           data={data.map((x) => ({
             updatedAt: x.updatedAt,
@@ -869,9 +869,8 @@ const GeneralModule = ({
           xAxisType="time"
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
-          stack
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 35}
           yAxisMin={0}
           yAxisMax={100}
           xLabelsField="updatedAt"
