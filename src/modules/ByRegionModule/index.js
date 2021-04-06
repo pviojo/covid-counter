@@ -588,7 +588,7 @@ const ByRegionModule = ({
                   xAxisStepSize={isMobile() ? 14 : 1}
                   xLabelsField="updatedAt"
                   yDatasets={{
-                    '% BAC': 'pctBAC',
+                    '% BAC': 'pctBac',
                   }}
                 />
               </div>
