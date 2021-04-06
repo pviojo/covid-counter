@@ -570,6 +570,31 @@ const ByRegionModule = ({
             )
           ))}
         </div>
+        <div className={styles.grid3Cols1Col}>
+          {Object.keys(comunasData).map((c) => (
+            comunasData[c].regionCode === selectedRegion
+            && (
+              <div className={styles.widget} key={c}>
+                <RenderLineChart
+                  theme={theme}
+                  data={comunasData[c].data.slice(-50)}
+                  yAxisScale="linear"
+                  xAxisType="time"
+                  showYAxisSelector
+                  yAxisMin={0}
+                  title={`${comunasData[c].label}<br/><small>% BAC</small>`}
+                  width={33}
+                  height={isMobile() ? 25 : 25}
+                  xAxisStepSize={isMobile() ? 14 : 1}
+                  xLabelsField="updatedAt"
+                  yDatasets={{
+                    '% BAC': 'pctBAC',
+                  }}
+                />
+              </div>
+            )
+          ))}
+        </div>
       </div>
 
     </div>
