@@ -82,6 +82,21 @@ export const avgLast = (array, n, key, averagedKey) => {
   return rsp;
 };
 
+export const convertRowsToComunaDataObj = (rows, startColIndex, colComunaCodeIndex) => {
+  const dates = rows[0].slice(startColIndex);
+  const rsp = {};
+  rows.map((r) => {
+    if (!rsp[r[colComunaCodeIndex]]) {
+      rsp[r[colComunaCodeIndex]] = {};
+    }
+    dates.map((d, i) => {
+      rsp[r[colComunaCodeIndex]][d] = parseInt(r[startColIndex + i], 10);
+      return null;
+    });
+    return null;
+  });
+  return rsp;
+};
 export default {
   maxWeekly,
 };

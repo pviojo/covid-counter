@@ -4,6 +4,7 @@ import moment from 'moment';
 
 import {
   mode,
+  convertRowsToComunaDataObj,
   avgLast,
 } from '../helpers/data';
 
@@ -328,6 +329,15 @@ const getComunasData = async () => {
   const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto19/CasosActivosPorComuna.csv');
   const dates = rows[0].slice(5);
 
+  const rowsBAC = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto64/BACPorComuna.csv');
+  const bac = convertRowsToComunaDataObj(rowsBAC, 5, 3);
+
+  const rowsNotifications = await readCsv('https://github.com/MinCiencia/Datos-COVID19/blob/master/output/producto63/NNotificacionPorComuna.csv');
+  const notifications = convertRowsToComunaDataObj(rowsNotifications, 5, 3);
+
+  const rowsPositivity = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto65/PositividadPorComuna.csv');
+  const positivity = convertRowsToComunaDataObj(rowsPositivity, 5, 3);
+
   const currentFasesRows = await readCsv('https://raw.githubusercontent.com/pviojo/covid-fases/main/output/current_fases.csv');
   const currentFasePerComuna = currentFasesRows.slice(1).reduce((f, r) => {
     // eslint-disable-next-line no-param-reassign
@@ -375,12 +385,26 @@ const getComunasData = async () => {
     r.currentFase = cf;
     r.data = [];
     // let prevCases = 0;
+    let prevBac = 0;
+    let prevTotalNotificacions = 0;
+    let prevPositivity = 0;
     dates.map((d, i) => {
       // const t = parseInt(row[i + 5], 10);
+      const pctBac = (bac[r.comunaCode] && bac[r.comunaCode][d]) ? bac[r.comunaCode][d] : prevBac;
+      prevBac = pctBac;
+      const totalNotificacions = (notifications[r.comunaCode] && notifications[r.comunaCode][d])
+        ? notifications[r.comunaCode][d] : prevTotalNotificacions;
+      prevTotalNotificacions = totalNotificacions;
+      const pctPositivity = (positivity[r.comunaCode] && positivity[r.comunaCode][d])
+        ? positivity[r.comunaCode][d] : prevPositivity;
+      prevPositivity = pctPositivity;
       r.data.push({
         updatedAt: d,
         // totalCases: t,
         // newCases: t - prevCases,
+        pctBac,
+        pctPositivity,
+        pcrNotifications: totalNotificacions,
         activeCases: parseInt(row[i + 5], 10),
         prevalenceActiveCases: Math.round(
           (parseInt(row[i + 5], 10) / (r.population / 100000)) * 10,

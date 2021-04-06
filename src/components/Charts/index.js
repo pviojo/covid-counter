@@ -86,15 +86,15 @@ export const RenderChart = ({
   yAxisScale,
 }) => {
   const [selectedYAxisScale, setSelectedYAxisScale] = useState(yAxisScale);
-
+  const processedData = typeof data === 'function' ? data() : data;
   let localLabels = null;
   if (!labels && xLabelsField) {
-    localLabels = pluck(data, xLabelsField);
+    localLabels = pluck(processedData, xLabelsField);
   }
   let localDatasets = datasets;
   if (!datasets && yDatasets && chartType !== 'scatter') {
     localDatasets = Object.entries(yDatasets).map(([label, field]) => {
-      let datasetData = pluck(data, field);
+      let datasetData = pluck(processedData, field);
       if (yAxisType === 'percentage') {
         datasetData = datasetData.map((v) => v * 100);
       }

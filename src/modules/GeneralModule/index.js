@@ -487,7 +487,17 @@ const GeneralModule = ({
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
-          data={data}
+          data={() => {
+            let rsp = data;
+            const maxAvg7DtestsPCR = Math.max(...rsp.slice(-90).map((x) => x.avg7DtestsPCR));
+            rsp = rsp.map((x) => (
+              {
+                ...x,
+                maxAvg7DtestsPCR,
+              }
+            ));
+            return rsp;
+          }}
           yAxisScale="linear"
           title="Test PCR reportados"
           xAxisType="time"
@@ -501,6 +511,7 @@ const GeneralModule = ({
             'Test PCR': 'testsPCR',
             'Test PCR (Media Móvil 7D)': 'avg7DtestsPCR',
             'Test PCR (Media Móvil 14D)': 'avg14DtestsPCR',
+            'Máx Media Móvil 14D (ult 90d)': 'maxAvg7DtestsPCR',
           }}
         />
         <br />
@@ -536,15 +547,25 @@ const GeneralModule = ({
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
-          data={data.map((x) => (
-            {
-              ...x,
-              positivity: x.positivity ? x.positivity * 100 : null,
-              avg7DPositivity: x.positivity ? x.avg7DPositivity * 100 : null,
-              avg14DPositivity: x.positivity ? x.avg14DPositivity * 100 : null,
-              recommended: 5,
-            }
-          ))}
+          data={() => {
+            let rsp = data.map((x) => (
+              {
+                ...x,
+                positivity: x.positivity ? x.positivity * 100 : null,
+                avg7DPositivity: x.positivity ? x.avg7DPositivity * 100 : null,
+                avg14DPositivity: x.positivity ? x.avg14DPositivity * 100 : null,
+                recommended: 5,
+              }
+            ));
+            const maxAvg7DPositivity = Math.max(...rsp.slice(-90).map((x) => x.avg7DPositivity));
+            rsp = rsp.map((x) => (
+              {
+                ...x,
+                maxAvg7DPositivity,
+              }
+            ));
+            return rsp;
+          }}
           yAxisScale="log"
           title="% Positividad PCR (Nuevos casos / Test reportados)"
           xAxisType="time"
@@ -559,6 +580,7 @@ const GeneralModule = ({
             '% Test PCR Positivos (Media Móvil 7D)': 'avg7DPositivity',
             '% Test PCR Positivos (Media Móvil 14D)': 'avg14DPositivity',
             'Recomendado (5%)': 'recommended',
+            'Máx Media Móvil 7D (ult 90d)': 'maxAvg7DPositivity',
           }}
         />
         <br />
@@ -946,7 +968,7 @@ const GeneralModule = ({
       </div>
 
       <div className={styles.widget}>
-        <RenderBarChart
+        <RenderLineChart
           theme={theme}
           data={data.filter((x) => x.agesRow.general).map((x) => ({
             updatedAt: x.updatedAt,
@@ -957,11 +979,9 @@ const GeneralModule = ({
           xAxisType="time"
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
-          stack
           showYAxisSelector
           height={isMobile() ? 80 : 40}
           yAxisMin={0}
-          yAxisMax={100}
           xLabelsField="updatedAt"
           yDatasets={{
             '0-4': '0-4',
