@@ -40,6 +40,8 @@ const GeneralModule = ({
   } = data[data.length - 1];
 
   const newCasesToday = data[data.length - 1].newCases;
+  const newCasesFromPCRToday = data[data.length - 1].newCasesFromPCR;
+  const newCasesFromAGToday = data[data.length - 1].newCasesFromAG;
   const newCases7DBefore = data[data.length - 1 - 7].newCases;
   const deltaNewCases7D = ((newCasesToday / newCases7DBefore) - 1) * 100;
   const ventiladoresAvailable7DAgo = data[data.length - 8].ventiladoresAvailable;
@@ -67,7 +69,15 @@ const GeneralModule = ({
           <Metric
             color={deltaNewCases7D > 0 ? '#c30' : '#777'}
             n={`${numeral(newCasesToday).format('0,000')}`}
-            subn={`${numeral(deltaNewCases7D).format('+0.0')}% vs semana anterior (${numeral(newCases7DBefore).format('0,000')})`}
+            subn={(
+              <div>
+                {`${numeral(deltaNewCases7D).format('+0.0')}% vs semana anterior (${numeral(newCases7DBefore).format('0,000')})`}
+                <br />
+                {`PCR: ${numeral(newCasesFromPCRToday).format('0,000')}`}
+                <br />
+                {`Antígenos: ${numeral(newCasesFromAGToday).format('0,000')}`}
+              </div>
+            )}
             subtitle="Casos nuevos hoy"
           />
           <br />
@@ -319,6 +329,26 @@ const GeneralModule = ({
             'Promedio Casos nuevos (ult 28D)': 'avg28DNewCases',
             'Promedio Casos nuevos (ult 35D)': 'avg35DNewCases',
             'Promedio Casos nuevos (ult 42D)': 'avg42DNewCases',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={data}
+          yAxisScale="linear"
+          title="Casos nuevos según test"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            PCR: 'newCasesFromPCR',
+            Antígenos: 'newCasesFromAG',
           }}
         />
         <br />

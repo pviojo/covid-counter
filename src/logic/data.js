@@ -58,14 +58,30 @@ const accumulate = (array, key, accKey) => {
 };
 
 const getDataCovid = async () => {
-  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto5/TotalesNacionales.csv');
-  const pcrRows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto7/PCR_T.csv');
-  const casesPcr = pcrRows.slice(3).map((row) => ({
+  const [
+    rows,
+    pcrRows,
+    ventiladoresRow,
+    camasRow,
+    agesRow,
+    hospitalizadosRow,
+  ] = await Promise.all([
+    readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto5/TotalesNacionales.csv'),
+    readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto49/Positividad_Diaria_Media_T.csv'),
+    (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto20/NumeroVentiladores_T.csv')).slice(1),
+    (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto58/Camas_UCI_diarias_std.csv')).filter((x) => x[0] === 'Total'),
+    (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto16/CasosGeneroEtario_T.csv')).slice(2),
+    (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto9/HospitalizadosUCIEtario_T.csv')).slice(1),
+  ]);
+  const casesPcr = pcrRows.slice(1).map((row) => ({
     updatedAt: moment(row[0]).subtract(3, 'hours').format(),
-    testsPCR: row.slice(1).reduce((a, i) => a + (parseInt(i, 10) || 0), 0),
+    testsPCR: parseInt(row[1], 10),
+    positives: parseInt(row[2], 10),
+    positivity: parseFloat(row[3]),
   }));
   const dates = (rows[0]).slice(1);
   const dataNewCasesWithSymptoms = (rows[1]).slice(1);
+  const dataNewCasesAG = (rows[19]).slice(1);
   const dataTotalCases = (rows[2]).slice(1);
   const dataNewCasesWithoutSymptoms = (rows[6]).slice(1);
   const dataNewCases = (rows[7]).slice(1);
@@ -74,7 +90,6 @@ const getDataCovid = async () => {
   const dataActiveCasesFD = (rows[8]).slice(1);
   let prevDeaths = 0;
 
-  const ventiladoresRow = (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto20/NumeroVentiladores_T.csv')).slice(1);
   const ventiladores = {};
   ventiladoresRow.map((r) => {
     ventiladores[r[0]] = {
@@ -85,7 +100,6 @@ const getDataCovid = async () => {
     return null;
   });
 
-  const camasRow = (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto58/Camas_UCI_diarias_std.csv')).filter((x) => x[0] === 'Total');
   const camas = {};
   camasRow.map((x) => {
     if (!camas[x[2]]) {
@@ -114,8 +128,7 @@ const getDataCovid = async () => {
     return null;
   });
 
-  let agesRow = (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto16/CasosGeneroEtario_T.csv')).slice(2);
-  agesRow = agesRow.map((row, i) => {
+  const processedAgesRow = agesRow.map((row, i) => {
     if (i === 0) {
       return row.map((col, k) => (k === 0 ? col : parseInt(col, 10)));
     }
@@ -123,7 +136,7 @@ const getDataCovid = async () => {
     return delta;
   });
   const byAges = {};
-  agesRow.map((r) => {
+  processedAgesRow.map((r) => {
     byAges[r[0]] = {
       M: {
         '0-4': parseInt(r[1], 10),
@@ -181,7 +194,6 @@ const getDataCovid = async () => {
     });
     return null;
   });
-  const hospitalizadosRow = (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto9/HospitalizadosUCIEtario_T.csv')).slice(1);
   const hospitalizados = {};
   hospitalizadosRow.map((r) => {
     hospitalizados[r[0]] = {
@@ -219,6 +231,7 @@ const getDataCovid = async () => {
   const rsp = dates.map((date, index) => {
     const d = moment(date).subtract(3, 'hours').format();
     const newCases = parseInt(dataNewCases[index] || 0, 10);
+    const newCasesAG = parseInt(dataNewCasesAG[index] || 0, 10);
     const newCasesWithSymptoms = parseInt(dataNewCasesWithSymptoms[index] || 0, 10);
     const newCasesWithoutSymptoms = parseInt(dataNewCasesWithoutSymptoms[index] || 0, 10);
     const totalCases = parseInt(dataTotalCases[index] || 0, 10);
@@ -229,11 +242,10 @@ const getDataCovid = async () => {
     const activeCases = parseInt(dataActiveCases[index] || 0, 10);
     const activeCasesFIS = activeCases;
     const activeCasesFD = parseInt(dataActiveCasesFD[index] || 0, 10);
-    const testsPCR = parseInt(
-      (casesPcr.find((x) => x.updatedAt === d) || { testsPCR: 0 }).testsPCR,
-      10,
+    const pcrDate = (
+      casesPcr.find((x) => x.updatedAt === d) || { testsPCR: 0, positives: 0, positivity: 0 }
     );
-    const positivity = testsPCR > 0 ? newCases / testsPCR : null;
+
     if (date !== '2020-09-30') {
       // eslint-disable-next-line max-len
       ventiladoresAvailable = ventiladores[date] ? ventiladores[date].available : ventiladoresAvailable;
@@ -266,8 +278,10 @@ const getDataCovid = async () => {
       activeCasesFIS,
       activeCasesFD,
       newCasesWithoutSymptoms,
-      testsPCR,
-      positivity,
+      testsPCR: pcrDate.testsPCR,
+      newCasesFromPCR: pcrDate.positives,
+      newCasesFromAG: newCasesAG,
+      positivity: pcrDate.positivity,
       ventiladoresAvailable,
       ventiladoresBusy,
       ventiladoresTotal,
@@ -326,19 +340,30 @@ const getDataDeaths2020 = async () => {
 };
 
 const getComunasData = async () => {
-  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto19/CasosActivosPorComuna.csv');
+  const [
+    rows,
+    rowsBAC,
+    rowsNotifications,
+    rowsPositivity,
+    currentFasesRows,
+    fasesRows,
+  ] = await Promise.all([
+    await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto19/CasosActivosPorComuna.csv'),
+    await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto64/BACPorComuna.csv'),
+    await readCsv('https://github.com/MinCiencia/Datos-COVID19/blob/master/output/producto63/NNotificacionPorComuna.csv'),
+    await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto65/PositividadPorComuna.csv'),
+    await readCsv('https://raw.githubusercontent.com/pviojo/covid-fases/main/output/current_fases.csv'),
+    await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto74/paso_a_paso.csv'),
+  ]);
+
   const dates = rows[0].slice(5);
 
-  const rowsBAC = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto64/BACPorComuna.csv');
   const bac = convertRowsToComunaDataObj(rowsBAC, 5, 3);
 
-  const rowsNotifications = await readCsv('https://github.com/MinCiencia/Datos-COVID19/blob/master/output/producto63/NNotificacionPorComuna.csv');
   const notifications = convertRowsToComunaDataObj(rowsNotifications, 5, 3);
 
-  const rowsPositivity = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto65/PositividadPorComuna.csv');
   const positivity = convertRowsToComunaDataObj(rowsPositivity, 5, 3);
 
-  const currentFasesRows = await readCsv('https://raw.githubusercontent.com/pviojo/covid-fases/main/output/current_fases.csv');
   const currentFasePerComuna = currentFasesRows.slice(1).reduce((f, r) => {
     // eslint-disable-next-line no-param-reassign
     f[r[2]] = {
@@ -353,7 +378,6 @@ const getComunasData = async () => {
     return f;
   }, {});
 
-  const fasesRows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto74/paso_a_paso.csv');
   const fasePerComuna = fasesRows.slice(1).reduce((f, r) => {
     // eslint-disable-next-line no-param-reassign
     f[r[2]] = parseInt(r[r.length - 1], 10);
