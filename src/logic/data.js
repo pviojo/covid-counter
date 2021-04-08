@@ -65,6 +65,7 @@ const getDataCovid = async () => {
     camasRow,
     agesRow,
     hospitalizadosRow,
+    deathsAgeRow,
   ] = await Promise.all([
     readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto5/TotalesNacionales.csv'),
     readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto49/Positividad_Diaria_Media_T.csv'),
@@ -72,7 +73,29 @@ const getDataCovid = async () => {
     (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto58/Camas_UCI_diarias_std.csv')).filter((x) => x[0] === 'Total'),
     (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto16/CasosGeneroEtario_T.csv')).slice(2),
     (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto9/HospitalizadosUCIEtario_T.csv')).slice(1),
+    (await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto10/FallecidosEtario_T.csv')).slice(1),
   ]);
+
+  const processedDeathsAgeRow = deathsAgeRow.map((row, i) => {
+    if (i === 0) {
+      return row.map((col, k) => (k === 0 ? col : parseInt(col, 10)));
+    }
+    const delta = row.map((col, k) => (k === 0 ? col : (col - deathsAgeRow[i - 1][k])));
+    return delta;
+  });
+
+  const deathsAge = processedDeathsAgeRow.slice(1).map((row) => ({
+    updatedAt: moment(row[0]).subtract(3, 'hours').format(),
+    '0-39': parseInt(row[1], 10),
+    '40-49': parseInt(row[2], 10),
+    '50-59': parseInt(row[3], 10),
+    '60-69': parseInt(row[4], 10),
+    '70-79': parseInt(row[5], 10),
+    '80-89': parseInt(row[6], 10),
+    '90+': parseInt(row[7], 10),
+    total: parseInt(row[1], 10) + parseInt(row[2], 10) + parseInt(row[3], 10)
+      + parseInt(row[4], 10) + parseInt(row[5], 10) + parseInt(row[6], 10) + parseInt(row[7], 10),
+  }));
   const casesPcr = pcrRows.slice(1).map((row) => ({
     updatedAt: moment(row[0]).subtract(3, 'hours').format(),
     testsPCR: parseInt(row[1], 10),
@@ -156,6 +179,15 @@ const getDataCovid = async () => {
         '70-74': parseInt(r[15], 10),
         '75-79': parseInt(r[16], 10),
         '80+': parseInt(r[17], 10),
+        '0-19': parseInt(r[1], 10) + parseInt(r[2], 10) + parseInt(r[3], 10) + parseInt(r[4], 10),
+        '0-9': parseInt(r[1], 10) + parseInt(r[2], 10),
+        '10-19': parseInt(r[3], 10) + parseInt(r[4], 10),
+        '20-29': parseInt(r[5], 10) + parseInt(r[6], 10),
+        '30-39': parseInt(r[7], 10) + parseInt(r[8], 10),
+        '40-49': parseInt(r[9], 10) + parseInt(r[10], 10),
+        '50-59': parseInt(r[11], 10) + parseInt(r[12], 10),
+        '60-69': parseInt(r[13], 10) + parseInt(r[14], 10),
+        '70-79': parseInt(r[15], 10) + parseInt(r[16], 10),
       },
       F: {
         '0-4': parseInt(r[18], 10),
@@ -175,6 +207,15 @@ const getDataCovid = async () => {
         '70-74': parseInt(r[32], 10),
         '75-79': parseInt(r[33], 10),
         '80+': parseInt(r[34], 10),
+        '0-19': parseInt(r[18], 10) + parseInt(r[19], 10) + parseInt(r[20], 10) + parseInt(r[21], 10),
+        '0-9': parseInt(r[18], 10) + parseInt(r[19], 10),
+        '10-19': parseInt(r[20], 10) + parseInt(r[21], 10),
+        '20-29': parseInt(r[22], 10) + parseInt(r[23], 10),
+        '30-39': parseInt(r[24], 10) + parseInt(r[25], 10),
+        '40-49': parseInt(r[26], 10) + parseInt(r[27], 10),
+        '50-59': parseInt(r[28], 10) + parseInt(r[29], 10),
+        '60-69': parseInt(r[30], 10) + parseInt(r[31], 10),
+        '70-79': parseInt(r[32], 10) + parseInt(r[33], 10),
       },
       total: 0,
       general: {},
@@ -245,6 +286,9 @@ const getDataCovid = async () => {
     const pcrDate = (
       casesPcr.find((x) => x.updatedAt === d) || { testsPCR: 0, positives: 0, positivity: 0 }
     );
+    const deathsByAge = (
+      deathsAge.find((x) => x.updatedAt === d) || {}
+    );
 
     if (date !== '2020-09-30') {
       // eslint-disable-next-line max-len
@@ -297,6 +341,7 @@ const getDataCovid = async () => {
       pctCamasBusyCovid19: (camasBusyCovid19 / camasTotal) * 100,
       pctCamasBusyNonCovid19: (camasBusyNonCovid19 / camasTotal) * 100,
       hospitalizados: hosp,
+      deathsByAge,
       agesRow: agesRowDate,
     };
   });

@@ -29,6 +29,33 @@ export const maxWeekly = (data, processFields) => {
   return Object.values(rsp);
 };
 
+export const accumulatedWeekly = (data, processFields) => {
+  const rsp = {};
+  let fields = processFields;
+  if (!Array.isArray(fields)) {
+    fields = [fields];
+  }
+  data.map((r) => {
+    const w = moment(r.updatedAt).format('YYYY-WW');
+    if (!rsp[w]) {
+      rsp[w] = {
+        updatedAt: w,
+      };
+      fields.map((field) => {
+        rsp[w][field] = parseInt(r[field], 10);
+        return null;
+      });
+    } else {
+      fields.map((field) => {
+        rsp[w][field] += parseInt(r[field], 10);
+        return null;
+      });
+    }
+    return null;
+  });
+  return Object.values(rsp);
+};
+
 export const delta = (data, offset, field) => {
   const rsp = data.map((r, i) => {
     if (i < offset) {

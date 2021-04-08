@@ -44,6 +44,10 @@ export const chartColorsTheme = {
       '#ffd246',
       '#2d73f5',
       '#aa46be',
+      '#29682C',
+      '#484848',
+      '#b85252',
+      '#fd5ea5',
     ],
   },
   dark: {
