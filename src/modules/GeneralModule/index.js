@@ -899,6 +899,9 @@ const GeneralModule = ({
                 '70-79',
                 '80+',
                 'total',
+                '0-19',
+                '20-59',
+                '60+',
               ];
               let rsp = accumulatedWeekly(
                 data.filter((x) => x.agesRow.general).map((x) => ({
@@ -944,6 +947,9 @@ const GeneralModule = ({
             '70-79': '70-79',
             '80+': '80+',
             Total: 'total',
+            '0-19': '0-19',
+            '20-59': '20-59',
+            '60+': '60+',
             '100%': '100pct',
           }}
         />
@@ -979,7 +985,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 40}
+          height={isMobile() ? 80 : 50}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
