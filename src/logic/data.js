@@ -403,7 +403,7 @@ const getComunasData = async () => {
   ] = await Promise.all([
     await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto19/CasosActivosPorComuna.csv'),
     await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto64/BACPorComuna.csv'),
-    await readCsv('https://github.com/MinCiencia/Datos-COVID19/blob/master/output/producto63/NNotificacionPorComuna.csv'),
+    await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto63/NNotificacionPorComuna.csv'),
     await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto65/PositividadPorComuna.csv'),
     await readCsv('https://raw.githubusercontent.com/pviojo/covid-fases/main/output/current_fases.csv'),
     await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto74/paso_a_paso.csv'),
