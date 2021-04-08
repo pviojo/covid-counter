@@ -723,6 +723,54 @@ const GeneralModule = ({
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
+          data={data.map((x) => (
+            {
+              ...x,
+              lethality: (x.totalDeaths / x.totalCases) * 100,
+            }
+          ))}
+          yAxisScale="linear"
+          title="Letalidad %"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Letalidad (14d) %': 'lethality',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={data.map((x) => (
+            {
+              ...x,
+              lethality: (x.avg14DDeaths / x.avg14DNewCases) * 100,
+            }
+          ))}
+          yAxisScale="linear"
+          title="Letalidad (14d) %"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            'Letalidad %': 'lethality',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
           data={vaccinesData}
           yAxisScale="linear"
           title="Vacunados total"
