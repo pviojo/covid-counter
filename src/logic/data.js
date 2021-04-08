@@ -188,6 +188,7 @@ const getDataCovid = async () => {
         '50-59': parseInt(r[11], 10) + parseInt(r[12], 10),
         '60-69': parseInt(r[13], 10) + parseInt(r[14], 10),
         '70-79': parseInt(r[15], 10) + parseInt(r[16], 10),
+        total: [...Array(16).keys()].reduce((a, i) => a + parseInt(r[i + 1], 10), 0),
       },
       F: {
         '0-4': parseInt(r[18], 10),
@@ -216,6 +217,7 @@ const getDataCovid = async () => {
         '50-59': parseInt(r[28], 10) + parseInt(r[29], 10),
         '60-69': parseInt(r[30], 10) + parseInt(r[31], 10),
         '70-79': parseInt(r[32], 10) + parseInt(r[33], 10),
+        total: [...Array(16).keys()].reduce((a, i) => a + parseInt(r[i + 18], 10), 0),
       },
       total: 0,
       general: {},

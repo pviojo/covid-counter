@@ -898,6 +898,7 @@ const GeneralModule = ({
                 '60-69',
                 '70-79',
                 '80+',
+                'total',
               ];
               let rsp = accumulatedWeekly(
                 data.filter((x) => x.agesRow.general).map((x) => ({
@@ -942,6 +943,7 @@ const GeneralModule = ({
             '60-69': '60-69',
             '70-79': '70-79',
             '80+': '80+',
+            Total: 'total',
             '100%': '100pct',
           }}
         />
