@@ -104,6 +104,7 @@ const getDataCovid = async () => {
   }));
   const dates = (rows[0]).slice(1);
   const dataNewCasesWithSymptoms = (rows[1]).slice(1);
+  const dataCasesReinfect = (rows[18]).slice(1);
   const dataNewCasesAG = (rows[19]).slice(1);
   const dataTotalCases = (rows[2]).slice(1);
   const dataNewCasesWithoutSymptoms = (rows[6]).slice(1);
@@ -281,6 +282,16 @@ const getDataCovid = async () => {
     const d = moment(date).subtract(3, 'hours').format();
     const newCases = parseInt(dataNewCases[index] || 0, 10);
     const newCasesAG = parseInt(dataNewCasesAG[index] || 0, 10);
+    const newCasesReinfect = parseInt(
+      date > '2021-02-26'
+        ? (
+          (
+            dataCasesReinfect[index]
+            - (dataCasesReinfect[index - 1] || dataCasesReinfect[index])
+          ) || 0
+        )
+        : 0, 10,
+    );
     const newCasesWithSymptoms = parseInt(dataNewCasesWithSymptoms[index] || 0, 10);
     const newCasesWithoutSymptoms = parseInt(dataNewCasesWithoutSymptoms[index] || 0, 10);
     const totalCases = parseInt(dataTotalCases[index] || 0, 10);
@@ -333,6 +344,7 @@ const getDataCovid = async () => {
       testsPCR: pcrDate.testsPCR,
       newCasesFromPCR: pcrDate.positives,
       newCasesFromAG: newCasesAG,
+      newCasesReinfect,
       positivity: pcrDate.positivity,
       ventiladoresAvailable,
       ventiladoresBusy,
@@ -766,6 +778,8 @@ export const getData = async () => {
   ));
   data = accumulate(data, 'newDeathsCovid', 'totalDeathsCovid');
   data = accumulate(data, 'testsPCR', 'totalTestsPCR');
+  data = avgLast(data, 7, 'newCasesReinfect', 'avg7DNewCasesReinfect');
+  data = avgLast(data, 14, 'newCasesReinfect', 'avg14DNewCasesReinfect');
   data = avgLast(data, 7, 'newCases', 'avg7DNewCases');
   data = avgLast(data, 14, 'newCases', 'avg14DNewCases');
   data = avgLast(data, 21, 'newCases', 'avg21DNewCases');

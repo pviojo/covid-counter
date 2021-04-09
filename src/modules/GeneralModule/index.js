@@ -339,6 +339,28 @@ const GeneralModule = ({
           theme={theme}
           data={data}
           yAxisScale="linear"
+          title="Casos nuevos con sospecha de reinfección"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 25}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            Casos: 'newCasesReinfect',
+            'Promedio Casos (ult 7D)': 'avg7DNewCasesReinfect',
+            'Promedio Casos (ult 14D)': 'avg14DNewCasesReinfect',
+          }}
+        />
+        <small>* No muestra reporte del 24/2/2021 y 25/2/2021 de 316 y 23 casos acumulados con anterioridad para evitar distorsión del gráfico</small>
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={data}
+          yAxisScale="linear"
           title="Casos nuevos según test"
           xAxisType="time"
           xAxisStepSize={isMobile() ? 7 : 4}
