@@ -341,14 +341,14 @@ const ByRegionModule = ({
             xAxisType="linear"
             showYAxisSelector
             yAxisMin={0}
-            title={`% Positividad - ${regionesData[selectedRegion].region}`}
+            title={`% Positividad PCR - ${regionesData[selectedRegion].region}`}
             width={100}
             height={isMobile() ? 60 : 25}
             xAxisStepSize={isMobile() ? 7 : 1}
             xLabelsField="updatedAt"
             yDatasets={{
-              '% Positividad': 'positivityPercent',
-              '% Positividad (Media Móvil 7D)': 'avg7DPositivityPercent',
+              '% Positividad PCR': 'positivityPercent',
+              '% Positividad PCR (Media Móvil 7D)': 'avg7DPositivityPercent',
             }}
           />
         </div>
@@ -563,7 +563,7 @@ const ByRegionModule = ({
                   xAxisStepSize={isMobile() ? 14 : 1}
                   xLabelsField="updatedAt"
                   yDatasets={{
-                    '% Positividad': 'pctPositivity',
+                    '% Positividad PCR': 'pctPositivity',
                   }}
                 />
               </div>

@@ -110,7 +110,7 @@ const GeneralModule = ({
                 % variación)
               </div>
             )}
-            subtitle="Positividad en todo el país"
+            subtitle="Positividad PCR"
           />
           <br />
           <small>
@@ -1020,6 +1020,62 @@ const GeneralModule = ({
             '0-19': '0-19',
             '20-59': '20-59',
             '60+': '60+',
+            '100%': '100pct',
+          }}
+        />
+      </div>
+
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={
+            () => {
+              const fields = [
+                '0-4',
+                '5-9',
+                '10-14',
+                '15-19',
+                'total',
+              ];
+              let rsp = accumulatedWeekly(
+                data.filter((x) => x.agesRow.general).map((x) => ({
+                  updatedAt: x.updatedAt,
+                  ...x.agesRow.general,
+                })),
+                fields,
+              );
+              const maximums = fields.reduce(
+                (a, b) => {
+                  a[b] = Math.max(...(rsp.slice(0, -26).map((x) => x[b]).filter((x) => !Number.isNaN(x))));
+                  return a;
+                }, {},
+              );
+              rsp = rsp.map((r) => {
+                fields.map((f) => {
+                  r[f] = Math.round(((r[f] / maximums[f])) * 100);
+                  return null;
+                });
+                r['100pct'] = 100;
+                return r;
+              });
+              return rsp;
+            }
+          }
+          yAxisScale="linear"
+          title="% Casos por edad vs primer peak (NNA)"
+          xAxisType="linear"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 40}
+          yAxisMin={0}
+          xLabelsField="updatedAt"
+          yDatasets={{
+            '0-4': '0-4',
+            '5-9': '5-9',
+            '10-14': '10-14',
+            '15-19': '15-19',
+            Total: 'total',
             '100%': '100pct',
           }}
         />
