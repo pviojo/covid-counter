@@ -319,7 +319,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -344,7 +344,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -366,7 +366,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -395,7 +395,7 @@ const GeneralModule = ({
           showYAxisSelector
           title="Variación Casos nuevos (7 días)"
           width={100}
-          height={isMobile() ? 60 : 25}
+          height={isMobile() ? 60 : 30}
           xAxisStepSize={isMobile() ? 7 : 1}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -424,7 +424,7 @@ const GeneralModule = ({
           showYAxisSelector
           title="Variación en 7 días de Media 7d Casos nuevos"
           width={100}
-          height={isMobile() ? 60 : 25}
+          height={isMobile() ? 60 : 30}
           xAxisStepSize={isMobile() ? 7 : 1}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -451,7 +451,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -471,7 +471,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -490,7 +490,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -527,7 +527,7 @@ const GeneralModule = ({
           showYAxisSelector
           title="Variación en 7 días de casos activos"
           width={100}
-          height={isMobile() ? 60 : 25}
+          height={isMobile() ? 60 : 30}
           xAxisStepSize={isMobile() ? 7 : 1}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -557,7 +557,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -588,7 +588,7 @@ const GeneralModule = ({
           showYAxisSelector
           title="Variación en 7 días de Media 7d Test PCR reportados"
           width={100}
-          height={isMobile() ? 60 : 25}
+          height={isMobile() ? 60 : 30}
           xAxisStepSize={isMobile() ? 7 : 1}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -601,7 +601,7 @@ const GeneralModule = ({
         <RenderLineChart
           theme={theme}
           data={() => {
-            let rsp = data.map((x) => (
+            let rsp = data.slice(-120).map((x) => (
               {
                 ...x,
                 positivity: x.positivity ? x.positivity * 100 : null,
@@ -619,13 +619,13 @@ const GeneralModule = ({
             ));
             return rsp;
           }}
-          yAxisScale="log"
-          title="% Positividad PCR (Nuevos casos / Test reportados)"
+          yAxisScale="linear"
+          title="% Positividad PCR (Nuevos casos / Test PCR reportados)"
           xAxisType="time"
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -655,7 +655,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -686,7 +686,7 @@ const GeneralModule = ({
           showYAxisSelector
           title="Variación en 7 días Fallecidos"
           width={100}
-          height={isMobile() ? 60 : 25}
+          height={isMobile() ? 60 : 30}
           xAxisStepSize={isMobile() ? 7 : 1}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -714,7 +714,7 @@ const GeneralModule = ({
           showYAxisSelector
           title="Variación en 7 días de Media 7d Fallecidos"
           width={100}
-          height={isMobile() ? 60 : 25}
+          height={isMobile() ? 60 : 30}
           xAxisStepSize={isMobile() ? 7 : 1}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -733,7 +733,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -757,7 +757,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -781,7 +781,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -800,7 +800,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="date"
           yDatasets={{
@@ -821,7 +821,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="date"
           yDatasets={{
@@ -842,7 +842,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -864,7 +864,7 @@ const GeneralModule = ({
           width={100}
           stack
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -884,7 +884,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -907,7 +907,7 @@ const GeneralModule = ({
           width={100}
           stack
           showYAxisSelector
-          height={isMobile() ? 80 : 25}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -1279,7 +1279,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 35}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           xLabelsField="updatedAt"
           yDatasets={{
@@ -1306,7 +1306,7 @@ const GeneralModule = ({
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
           showYAxisSelector
-          height={isMobile() ? 80 : 35}
+          height={isMobile() ? 80 : 30}
           yAxisMin={0}
           yAxisMax={100}
           xLabelsField="updatedAt"
@@ -1332,7 +1332,7 @@ const GeneralModule = ({
               yAxisMin={0}
               title={`${r.region}<br/><small>Camas disponibles: ${(r.camas[r.camas.length - 1]).available}</small><br/><small>Casos activos</small>`}
               width={33}
-              height={isMobile() ? 25 : 25}
+              height={isMobile() ? 60 : 30}
               xAxisStepSize={isMobile() ? 14 : 1}
               xLabelsField="updatedAt"
               yDatasets={{
