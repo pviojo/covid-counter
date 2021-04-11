@@ -610,7 +610,7 @@ const GeneralModule = ({
                 recommended: 5,
               }
             ));
-            const maxAvg7DPositivity = Math.max(...rsp.slice(-90).map((x) => x.avg7DPositivity));
+            const maxAvg7DPositivity = Math.max(...rsp.map((x) => x.avg7DPositivity));
             rsp = rsp.map((x) => (
               {
                 ...x,
