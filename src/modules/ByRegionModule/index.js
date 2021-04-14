@@ -162,6 +162,139 @@ const ByRegionModule = ({
         <div className={styles.widget}>
           <RenderLineChart
             theme={theme}
+            data={newCasesRegionData[selectedRegion].data.slice(-120)}
+            yAxisScale="linear"
+            xAxisType="linear"
+            showYAxisSelector
+            yAxisMin={0}
+            title={`Casos nuevos - ${regionesData[selectedRegion].region}`}
+            width={100}
+            height={isMobile() ? 60 : 30}
+            xAxisStepSize={isMobile() ? 7 : 1}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Casos Nuevos': 'newCases',
+              'Promedio Casos nuevos (ult 7D)': 'avg7DNewCases',
+            }}
+          />
+        </div>
+
+        <div className={styles.grid2Cols1Col}>
+          <div className={styles.widget}>
+            <RenderLineChart
+              theme={theme}
+              data={data.slice(-56).map((x, i) => ({
+                ...x,
+                newCasesPrevWeek: data.slice(-56 - 7, -7)[i].newCases,
+              }))}
+              yAxisScale="linear"
+              title="Comparación Casos nuevos ultimos 56 días (vs anteriores 7)"
+              xAxisType="time"
+              xAxisStepSize={1}
+              width={100}
+              showYAxisSelector
+              height={isMobile() ? 80 : 50}
+              yAxisMin={0}
+              xLabelsField="updatedAt"
+              yDatasets={{
+                'Casos nuevos': 'newCases',
+                'Casos nuevos (7 días antes)': 'newCasesPrevWeek',
+              }}
+            />
+          </div>
+          <div className={styles.widget}>
+            <RenderLineChart
+              theme={theme}
+              data={
+            (() => {
+              let originalData = [...data];
+              originalData = avgLast(originalData, 7, 'pcr', 'avg7DPCR');
+              let d = delta(
+                data.slice(-56 - 7),
+                7,
+                'newCases',
+              );
+              d = avgLast(d, 7, 'newCases', 'avg7DNewCases');
+              d.map((x) => ({
+                ...x,
+                newCases: Math.min(Math.max(x.newCases, -1), 1),
+              }));
+              const avg = (
+                (originalData.slice(-56).reduce((a, b) => a + b.newCases, 0))
+                / (originalData.slice(-56 - 7, -7).reduce((a, b) => a + b.newCases, 0))
+              ) - 1;
+
+              d = d.map((x) => ({
+                ...x,
+                avg: Math.round(avg * 100) / 100,
+              }));
+              return d;
+            })()
+          }
+              yAxisScale="linear"
+              yAxisType="percentage"
+              xAxisType="time"
+              showYAxisSelector
+              title="Variación Casos nuevos últimos 56 días (vs anteriores 7 días)"
+              width={100}
+              height={isMobile() ? 80 : 50}
+              xAxisStepSize={isMobile() ? 7 : 1}
+              xLabelsField="updatedAt"
+              yDatasets={{
+                'Var %': 'newCases',
+                'Promedio (ult 7 días)': 'avg7DNewCases',
+              }}
+            />
+            <small>* Limitado en rango +/- 100%</small>
+          </div>
+        </div>
+
+        <div className={styles.widget}>
+          <RenderLineChart
+            theme={theme}
+            data={newCasesRegionData[selectedRegion].data.slice(-120)}
+            yAxisScale="linear"
+            xAxisType="linear"
+            showYAxisSelector
+            yAxisMin={0}
+            title={`Test PCR - ${regionesData[selectedRegion].region}`}
+            width={100}
+            height={isMobile() ? 60 : 30}
+            xAxisStepSize={isMobile() ? 7 : 1}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              'Test PCR': 'pcr',
+              'Test PCR (Media Móvil 7D)': 'avg7DPCR',
+            }}
+          />
+        </div>
+        <div className={styles.widget}>
+          <RenderLineChart
+            theme={theme}
+            data={newCasesRegionData[selectedRegion].data.slice(-120).map((x) => ({
+              ...x,
+              positivityPercent: x.positivity * 100,
+              avg7DPositivityPercent: x.avg7DPositivity * 100,
+            }))}
+            yAxisScale="linear"
+            xAxisType="linear"
+            showYAxisSelector
+            yAxisMin={0}
+            title={`% Positividad PCR - ${regionesData[selectedRegion].region}`}
+            width={100}
+            height={isMobile() ? 60 : 30}
+            xAxisStepSize={isMobile() ? 7 : 1}
+            xLabelsField="updatedAt"
+            yDatasets={{
+              '% Positividad PCR': 'positivityPercent',
+              '% Positividad PCR (Media Móvil 7D)': 'avg7DPositivityPercent',
+            }}
+          />
+        </div>
+
+        <div className={styles.widget}>
+          <RenderLineChart
+            theme={theme}
             data={regionesData[selectedRegion].data}
             yAxisScale="linear"
             xAxisType="linear"
@@ -237,118 +370,6 @@ const ByRegionModule = ({
             yDatasets={{
               'Con síntomas': 'percentNewCaseWithSymptoms',
               'Sin síntomas': 'percentNewCaseWithoutSymptoms',
-            }}
-          />
-        </div>
-        <div className={styles.grid2Cols1Col}>
-          <div className={styles.widget}>
-            <RenderLineChart
-              theme={theme}
-              data={data.slice(-56).map((x, i) => ({
-                ...x,
-                newCasesPrevWeek: data.slice(-56 - 7, -7)[i].newCases,
-              }))}
-              yAxisScale="linear"
-              title="Comparación Casos nuevos ultimos 56 días (vs anteriores 7)"
-              xAxisType="time"
-              xAxisStepSize={1}
-              width={100}
-              showYAxisSelector
-              height={isMobile() ? 80 : 50}
-              yAxisMin={0}
-              xLabelsField="updatedAt"
-              yDatasets={{
-                'Casos nuevos ult 56 días': 'newCases',
-                'Casos nuevos anteriores 56 días': 'newCasesPrevWeek',
-              }}
-            />
-          </div>
-          <div className={styles.widget}>
-            <RenderLineChart
-              theme={theme}
-              data={
-            (() => {
-              let originalData = [...data];
-              originalData = avgLast(originalData, 7, 'pcr', 'avg7DPCR');
-              let d = delta(
-                data.slice(-56 - 7),
-                7,
-                'newCases',
-              );
-              d = avgLast(d, 7, 'newCases', 'avg7DNewCases');
-              d.map((x) => ({
-                ...x,
-                newCases: Math.min(Math.max(x.newCases, -1), 1),
-              }));
-              const avg = (
-                (originalData.slice(-56).reduce((a, b) => a + b.newCases, 0))
-                / (originalData.slice(-56 - 7, -7).reduce((a, b) => a + b.newCases, 0))
-              ) - 1;
-
-              d = d.map((x) => ({
-                ...x,
-                avg: Math.round(avg * 100) / 100,
-              }));
-              return d;
-            })()
-          }
-              yAxisScale="linear"
-              yAxisType="percentage"
-              xAxisType="time"
-              showYAxisSelector
-              title="Variación Casos nuevos últimos 56 días (vs anteriores 7 días)"
-              width={100}
-              height={isMobile() ? 80 : 50}
-              xAxisStepSize={isMobile() ? 7 : 1}
-              xLabelsField="updatedAt"
-              yDatasets={{
-                'Var %': 'newCases',
-                'Promedio (ult 7 días)': 'avg7DNewCases',
-              }}
-            />
-            <small>* Limitado en rango +/- 100%</small>
-          </div>
-        </div>
-
-        <div className={styles.widget}>
-          <RenderLineChart
-            theme={theme}
-            data={newCasesRegionData[selectedRegion].data}
-            yAxisScale="linear"
-            xAxisType="linear"
-            showYAxisSelector
-            yAxisMin={0}
-            title={`Test PCR - ${regionesData[selectedRegion].region}`}
-            width={100}
-            height={isMobile() ? 60 : 30}
-            xAxisStepSize={isMobile() ? 7 : 1}
-            xLabelsField="updatedAt"
-            yDatasets={{
-              'Test PCR': 'pcr',
-              'Test PCR (Media Móvil 7D)': 'avg7DPCR',
-            }}
-          />
-        </div>
-        <div className={styles.widget}>
-          <RenderLineChart
-            theme={theme}
-            data={newCasesRegionData[selectedRegion].data.map((x) => ({
-              ...x,
-              positivityPercent: x.positivity * 100,
-              avg7DPositivityPercent: x.avg7DPositivity * 100,
-            }))}
-            yAxisScale="linear"
-            xAxisType="linear"
-            showYAxisSelector
-            yAxisMin={0}
-            title={`% Positividad PCR - ${regionesData[selectedRegion].region}`}
-            width={100}
-            height={isMobile() ? 60 : 30}
-            xAxisStepSize={isMobile() ? 7 : 1}
-            xLabelsField="updatedAt"
-            yDatasets={{
-              '% Positividad PCR': 'positivityPercent',
-              '% Positividad PCR (Media Móvil 7D)': 'avg7DPositivityPercent',
             }}
           />
         </div>

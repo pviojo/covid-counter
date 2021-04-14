@@ -196,8 +196,8 @@ const GeneralModule = ({
             yAxisMin={0}
             xLabelsField="updatedAt"
             yDatasets={{
-              'Casos nuevos ult 56 días': 'newCases',
-              'Casos nuevos anteriores 56 días': 'newCasesPrevWeek',
+              'Casos nuevos': 'newCases',
+              'Casos nuevos (7 días antes)': 'newCasesPrevWeek',
             }}
           />
         </div>
@@ -265,8 +265,8 @@ const GeneralModule = ({
             yAxisMin={0}
             xLabelsField="updatedAt"
             yDatasets={{
-              'Casos nuevos ult 14 días': 'deaths',
-              'Casos nuevos anteriores 14 días': 'deathsPrevWeek',
+              Fallecidos: 'deaths',
+              'Fallecidos (7 días antes)': 'deathsPrevWeek',
             }}
           />
         </div>
