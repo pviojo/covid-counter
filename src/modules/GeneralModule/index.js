@@ -1201,6 +1201,7 @@ const GeneralModule = ({
             Total: 'total',
           }}
         />
+        <small>* Se eliminaron semanas 2020-23 y 2020-29 por ajustes realizados en esas semanas</small>
       </div>
 
       <div className={styles.widget}>
@@ -1264,6 +1265,7 @@ const GeneralModule = ({
             '100%': '100pct',
           }}
         />
+        <small>* Se eliminaron semanas 2020-23 y 2020-29 por ajustes realizados en esas semanas</small>
       </div>
 
       <div className={styles.widget}>

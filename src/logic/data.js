@@ -84,7 +84,7 @@ const getDataCovid = async () => {
     return delta;
   });
 
-  const deathsAge = processedDeathsAgeRow.slice(1).map((row) => ({
+  const deathsAge = processedDeathsAgeRow.slice(1).filter((x) => x[0] !== '2020-06-07' && x[0] !== '2020-07-17').map((row) => ({
     updatedAt: moment(row[0]).subtract(3, 'hours').format(),
     '0-39': parseInt(row[1], 10),
     '40-49': parseInt(row[2], 10),
@@ -96,6 +96,7 @@ const getDataCovid = async () => {
     total: parseInt(row[1], 10) + parseInt(row[2], 10) + parseInt(row[3], 10)
       + parseInt(row[4], 10) + parseInt(row[5], 10) + parseInt(row[6], 10) + parseInt(row[7], 10),
   }));
+
   const casesPcr = pcrRows.slice(1).map((row) => ({
     updatedAt: moment(row[0]).subtract(3, 'hours').format(),
     testsPCR: parseInt(row[1], 10),
