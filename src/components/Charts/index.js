@@ -167,13 +167,21 @@ export const RenderChart = ({
       const ci = chartReference.current.chartInstance;
       const meta = ci.getDatasetMeta(index);
 
-      // See controller.isDatasetVisible comment
-      meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+      if (e.metaKey || e.ctrlKey) {
+        const n = ci.data.datasets.length;
+        [...Array(n).keys()].map((i) => {
+          (ci.getDatasetMeta(i)).hidden = (i !== index ? true : null);
+          return null;
+        });
+      } else {
+        meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+      }
 
       // We hid a dataset ... rerender the chart
       ci.update();
     },
   };
+
   if (chartType !== 'scatter') {
     chartData = {
       labels: localLabels,
