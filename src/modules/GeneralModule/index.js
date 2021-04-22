@@ -312,7 +312,13 @@ const GeneralModule = ({
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
-          data={data}
+          data={data.map((x) => ({
+            ...x,
+            avg7DNewCases: Math.round(x.avg7DNewCases),
+            avg14DNewCases: Math.round(x.avg14DNewCases),
+            avg21DNewCases: Math.round(x.avg21DNewCases),
+            avg28DNewCases: Math.round(x.avg28DNewCases),
+          }))}
           yAxisScale="linear"
           title="Casos nuevos"
           xAxisType="time"
@@ -328,8 +334,6 @@ const GeneralModule = ({
             'Promedio Casos nuevos (ult 14D)': 'avg14DNewCases',
             'Promedio Casos nuevos (ult 21D)': 'avg21DNewCases',
             'Promedio Casos nuevos (ult 28D)': 'avg28DNewCases',
-            'Promedio Casos nuevos (ult 35D)': 'avg35DNewCases',
-            'Promedio Casos nuevos (ult 42D)': 'avg42DNewCases',
           }}
         />
         <br />
@@ -604,9 +608,9 @@ const GeneralModule = ({
             let rsp = data.slice(-120).map((x) => (
               {
                 ...x,
-                positivity: x.positivity ? x.positivity * 100 : null,
-                avg7DPositivity: x.positivity ? x.avg7DPositivity * 100 : null,
-                avg14DPositivity: x.positivity ? x.avg14DPositivity * 100 : null,
+                positivity: x.positivity ? Math.round(x.positivity * 100 * 100) / 100 : null,
+                avg7DPositivity: x.positivity ? Math.round(x.avg7DPositivity * 100 * 100) / 100 : null,
+                avg14DPositivity: x.positivity ? Math.round(x.avg14DPositivity * 100 * 100) / 100 : null,
                 recommended: 5,
               }
             ));

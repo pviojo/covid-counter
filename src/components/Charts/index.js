@@ -2,7 +2,7 @@
 /* eslint-disable react/no-danger */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Line, Bar, Scatter } from 'react-chartjs-2';
 
@@ -89,6 +89,7 @@ export const RenderChart = ({
   yAxisType,
   yAxisScale,
 }) => {
+  const chartReference = useRef();
   const [selectedYAxisScale, setSelectedYAxisScale] = useState(yAxisScale);
   const processedData = typeof data === 'function' ? data() : data;
   let localLabels = null;
@@ -156,6 +157,23 @@ export const RenderChart = ({
     backgroundColor: colorsUse[index % colorsUse.length],
   }));
   let chartData = {};
+  chartOptions.tooltips = {
+    mode: 'index',
+  };
+
+  chartOptions.legend = {
+    onClick: (e, legendItem) => {
+      const index = legendItem.datasetIndex;
+      const ci = chartReference.current.chartInstance;
+      const meta = ci.getDatasetMeta(index);
+
+      // See controller.isDatasetVisible comment
+      meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+
+      // We hid a dataset ... rerender the chart
+      ci.update();
+    },
+  };
   if (chartType !== 'scatter') {
     chartData = {
       labels: localLabels,
@@ -184,6 +202,7 @@ export const RenderChart = ({
   }
   if (chartType !== 'scatter') {
     chartOptions.legend = {
+      ...chartOptions.legend,
       position: legend || 'bottom',
       labels: {
         padding: 5,
@@ -216,6 +235,7 @@ export const RenderChart = ({
         { chartType === 'line'
           && (
           <Line
+            ref={chartReference}
             data={chartData}
             height={height || 250}
             width={width || 100}
@@ -225,6 +245,7 @@ export const RenderChart = ({
         { chartType === 'bar'
           && (
           <Bar
+            ref={chartReference}
             data={chartData}
             height={height || 250}
             width={width || 100}
@@ -234,6 +255,7 @@ export const RenderChart = ({
         { chartType === 'scatter'
           && (
           <Scatter
+            ref={chartReference}
             data={chartData}
             height={height || 250}
             width={width || 100}
