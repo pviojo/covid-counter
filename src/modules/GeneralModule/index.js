@@ -818,7 +818,12 @@ const GeneralModule = ({
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
-          data={vaccinesData}
+          data={vaccinesData.map((x) => ({
+            ...x,
+            avg7DNewFirstDose: Math.round(x.avg7DNewFirstDose),
+            avg7DNewSecondDose: Math.round(x.avg7DNewSecondDose),
+            avg7DNewTotal: Math.round(x.avg7DNewTotal),
+          }))}
           yAxisScale="linear"
           title="Vacunados diarios"
           xAxisType="time"
