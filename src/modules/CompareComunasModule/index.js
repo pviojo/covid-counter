@@ -129,6 +129,7 @@ const CompareComunasModule = ({
                 yAxisMin={0}
                 title="Comparación Incidencia Casos activos cada 100.000 hab (últimos 20 reportes)"
                 width={100}
+                pointRadius={3}
                 height={isMobile() ? 75 : 50}
                 xAxisStepSize={isMobile() ? 14 : 1}
                 xLabelsField="updatedAt"

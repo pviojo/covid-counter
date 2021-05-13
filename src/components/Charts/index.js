@@ -16,6 +16,7 @@ const dataset = ({
   label,
   color,
   data,
+  pointRadius,
 }) => {
   const localDataset = {
     label,
@@ -24,7 +25,7 @@ const dataset = ({
     borderWidth: 2,
     borderColor: color,
     backgroundColor: color,
-    pointRadius: 0,
+    pointRadius,
     pointHitRadius: 20,
     data,
   };
@@ -72,6 +73,7 @@ export const RenderChart = ({
   chartType,
   stack,
   xLabelsField,
+  pointRadius,
   yDatasets,
   colors,
   labels,
@@ -105,6 +107,7 @@ export const RenderChart = ({
       }
       const ds = dataset({
         label,
+        pointRadius,
         data: datasetData,
       });
       if (stack) {
@@ -290,6 +293,7 @@ RenderChart.defaultProps = {
   datasets: null,
   stack: false,
   theme: null,
+  pointRadius: 0,
   showYAxisSelector: false,
 };
 
@@ -313,6 +317,7 @@ RenderChart.propTypes = {
   yAxisScale: PropTypes.string,
   theme: PropTypes.string,
   stack: PropTypes.bool,
+  pointRadius: PropTypes.number,
   showYAxisSelector: PropTypes.bool,
 };
 
