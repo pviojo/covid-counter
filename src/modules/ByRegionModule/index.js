@@ -382,7 +382,7 @@ const ByRegionModule = ({
                 <div className={styles.widget} key={p.provinciaCode}>
                   <RenderLineChart
                     theme={theme}
-                    data={p.data.slice(-330)}
+                    data={p.data.slice(-90)}
                     yAxisScale="linear"
                     xAxisType="time"
                     showYAxisSelector
