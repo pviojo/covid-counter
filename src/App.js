@@ -97,7 +97,6 @@ const App = () => {
   const onChangeLocation = () => {
     setCurrentLocation(window.location.pathname);
   };
-  console.log('currentLocation', currentLocation);
   return (
     <Router>
       <div className={`${styles.app} ${styles[`theme-${theme}`]}`}>
