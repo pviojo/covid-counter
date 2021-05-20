@@ -834,6 +834,9 @@ const GeneralModule = ({
           yAxisMin={0}
           xLabelsField="date"
           yDatasets={{
+            'Primera dosis': 'newFirstDose',
+            'Segunda dosis': 'newSecondDose',
+            Total: 'newTotal',
             'Primera dosis (promedio ult 7 dias)': 'avg7DNewFirstDose',
             'Segunda dosis (promedio ult 7 dias)': 'avg7DNewSecondDose',
             'Total (promedio ult 7 dias)': 'avg7DNewTotal',
