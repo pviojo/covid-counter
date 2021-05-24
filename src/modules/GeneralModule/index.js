@@ -283,7 +283,7 @@ const GeneralModule = ({
               );
               d = avgLast(d, 7, 'deaths', 'avg7Ddeaths');
               d = avgLast(d, 14, 'deaths', 'avg14Ddeaths');
-              d
+              d = d
                 .map((x) => ({
                   ...x,
                   deathsReal: x.deaths,
