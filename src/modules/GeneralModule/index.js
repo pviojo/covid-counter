@@ -185,9 +185,10 @@ const GeneralModule = ({
             data={data.slice(-56).map((x, i) => ({
               ...x,
               newCasesPrevWeek: data.slice(-56 - 7, -7)[i].newCases,
+              newCasesPrev2Week: data.slice(-56 - 14, -14)[i].newCases,
             }))}
             yAxisScale="linear"
-            title="Comparación Casos nuevos ultimos 56 días (vs anteriores 7)"
+            title="Comparación Casos nuevos ultimos 56 días (vs anteriores 7 y 14 días)"
             xAxisType="time"
             xAxisStepSize={1}
             width={100}
@@ -198,6 +199,7 @@ const GeneralModule = ({
             yDatasets={{
               'Casos nuevos': 'newCases',
               'Casos nuevos (7 días antes)': 'newCasesPrevWeek',
+              'Casos nuevos (14 días antes)': 'newCasesPrev2Week',
             }}
           />
         </div>
@@ -234,7 +236,7 @@ const GeneralModule = ({
             yAxisType="percentage"
             xAxisType="time"
             showYAxisSelector
-            title="Variación Casos nuevos últimos 56 días (vs anteriores 7 días)"
+            title="Variación Casos nuevos últimos 56 días (vs anteriores 7)"
             width={100}
             height={isMobile() ? 80 : 50}
             xAxisStepSize={isMobile() ? 7 : 1}
@@ -254,9 +256,10 @@ const GeneralModule = ({
             data={data.slice(-56).map((x, i) => ({
               ...x,
               deathsPrevWeek: data.slice(-56 - 7, -7)[i].deaths,
+              deathsPrev2Week: data.slice(-56 - 14, -14)[i].deaths,
             }))}
             yAxisScale="linear"
-            title="Comparación Fallecidos ultimos 56 días (vs anteriores 7)"
+            title="Comparación Fallecidos ultimos 56 días (vs anteriores 7 y 14 días)"
             xAxisType="time"
             xAxisStepSize={1}
             width={100}
@@ -267,6 +270,7 @@ const GeneralModule = ({
             yDatasets={{
               Fallecidos: 'deaths',
               'Fallecidos (7 días antes)': 'deathsPrevWeek',
+              'Fallecidos (14 días antes)': 'deathsPrev2Week',
             }}
           />
         </div>
