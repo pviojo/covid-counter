@@ -162,7 +162,14 @@ const ByRegionModule = ({
         <div className={styles.widget}>
           <RenderLineChart
             theme={theme}
-            data={newCasesRegionData[selectedRegion].data.slice(-120)}
+            data={() => {
+              const d = newCasesRegionData[selectedRegion].data.slice(-120);
+              const maxAvg7DNewCases = Math.max(...d.map((x) => x.avg7DNewCases));
+              return d.map((x) => ({
+                ...x,
+                maxAvg7DNewCases,
+              }));
+            }}
             yAxisScale="linear"
             xAxisType="linear"
             showYAxisSelector
@@ -175,6 +182,7 @@ const ByRegionModule = ({
             yDatasets={{
               'Casos Nuevos': 'newCases',
               'Promedio Casos nuevos (ult 7D)': 'avg7DNewCases',
+              'MáxPromedio Casos nuevos (ult 7D)': 'maxAvg7DNewCases',
             }}
           />
         </div>

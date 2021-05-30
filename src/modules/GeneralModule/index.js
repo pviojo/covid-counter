@@ -851,6 +851,35 @@ const GeneralModule = ({
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
+          data={vaccinesData.slice(-56).map((x) => ({
+            ...x,
+            avg7DNewFirstDose: Math.round(x.avg7DNewFirstDose),
+            avg7DNewSecondDose: Math.round(x.avg7DNewSecondDose),
+            avg7DNewTotal: Math.round(x.avg7DNewTotal),
+          }))}
+          yAxisScale="linear"
+          title="Vacunados diarios últimos 56 días"
+          xAxisType="time"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 30}
+          yAxisMin={0}
+          xLabelsField="date"
+          yDatasets={{
+            'Primera dosis': 'newFirstDose',
+            'Segunda dosis': 'newSecondDose',
+            Total: 'newTotal',
+            'Primera dosis (promedio ult 7 dias)': 'avg7DNewFirstDose',
+            'Segunda dosis (promedio ult 7 dias)': 'avg7DNewSecondDose',
+            'Total (promedio ult 7 dias)': 'avg7DNewTotal',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
           data={data}
           yAxisScale="linear"
           title="Ventiladores"
