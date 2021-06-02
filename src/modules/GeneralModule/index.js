@@ -652,7 +652,7 @@ const GeneralModule = ({
             return rsp;
           }}
           yAxisScale="linear"
-          title="% Positividad PCR (Nuevos casos / Test PCR reportados)"
+          title="% Positividad PCR (Nuevos casos por PCR / Test PCR reportados)"
           xAxisType="time"
           xAxisStepSize={isMobile() ? 7 : 4}
           width={100}
@@ -1443,6 +1443,18 @@ const GeneralModule = ({
                 Total de Casos
               </th>
               <th className="right">
+                Test PCR
+              </th>
+              <th className="right">
+                Prom Test PCR (ult 7 d)
+              </th>
+              <th className="right">
+                % Positividad Test PCR
+              </th>
+              <th className="right">
+                Prom % Positividad Test PCR (ult 7 d)
+              </th>
+              <th className="right">
                 Total de Fallecidos nuevos
               </th>
               <th className="right">
@@ -1469,6 +1481,10 @@ const GeneralModule = ({
                 <td>{moment(row.updatedAt).add(4, 'hours').format('dddd')}</td>
                 <td className="right">{numeral(row.newCases).format('0,000')}</td>
                 <td className="right">{numeral(row.totalCases).format('0,000')}</td>
+                <td className="right">{numeral(row.testsPCR).format('0,000')}</td>
+                <td className="right">{numeral(row.avg7DtestsPCR).format('0,000')}</td>
+                <td className="right">{numeral(row.positivity * 100).format('0.0')}</td>
+                <td className="right">{numeral(row.avg7DPositivity * 100).format('0.0')}</td>
                 <td className="right">{numeral(row.deaths || 0).format('0,000')}</td>
                 <td className="right">{numeral(row.totalDeaths).format('0,000')}</td>
                 <td className="right">{numeral(row.avg7DDeaths).format('0,000')}</td>
