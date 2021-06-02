@@ -8,7 +8,12 @@ import numeral from 'numeral';
 // eslint-disable-next-line
 import numerales from "numeral/locales/es";
 import moment from 'moment';
+import 'moment/locale/es';
 import isMobile from 'is-mobile';
+
+import { CSVLink } from 'react-csv';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import { RenderLineChart, RenderBarChart } from '../../components/Charts';
 
@@ -29,6 +34,7 @@ const GeneralModule = ({
   theme,
   regionesData,
 }) => {
+  moment.locale('es');
   numeral.locale('es');
   const newCasesLast7D = data[data.length - 1].avg7DNewCases * 7;
   const newCasesPrev7D = data[data.length - 1].avg14DNewCases * 14 - data[data.length - 1].avg7DNewCases * 7;
@@ -63,6 +69,24 @@ const GeneralModule = ({
     });
     return a;
   }, {}) : {};
+
+  const csvData = data.map((row) => ([
+    moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD'),
+    parseInt(row.newCases, 10),
+    parseInt(row.totalCases, 10),
+    parseInt(row.newDeaths || 0, 10),
+    parseInt(row.deaths || 0, 10),
+    parseFloat((row.totalDeaths / row.totalCases) * 100 || 0),
+  ]));
+  csvData.unshift([
+    'fecha',
+    'nuevos_casos',
+    'total_casos',
+    'nuevos_fallecidos',
+    'total_fallecidos',
+    'letalidad',
+  ]);
+
   return (
     <div className={`${styles.cnt} ${styles[`theme-${theme}`]}`}>
       <div className={styles.grid6Cols1Col}>
@@ -1390,6 +1414,71 @@ const GeneralModule = ({
 
         ))}
       </div>
+
+      <div className={styles.widget}>
+        <div className={styles.tools}>
+          <div className="btn">
+            <CSVLink data={csvData} filename={`${moment().utc().format()}-covid-data-chile.csv`}>
+              <FontAwesomeIcon icon={faDownload} />
+              Descargar
+            </CSVLink>
+          </div>
+        </div>
+        <div className={styles.title}>
+          Datos
+        </div>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>
+                Fecha del reporte (cierre 21H día anterior)
+              </th>
+              <th>
+                Día de semana
+              </th>
+              <th className="right">
+                Nuevos Casos
+              </th>
+              <th className="right">
+                Total de Casos
+              </th>
+              <th className="right">
+                Total de Fallecidos nuevos
+              </th>
+              <th className="right">
+                Total de Fallecidos acumulados
+              </th>
+              <th className="right">
+                Prom fallecidos diarios por millón (ult 7 d)
+              </th>
+              <th className="center">
+                Letalidad (%)
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.reverse().map((row) => (
+              <tr
+                key={row.updatedAt}
+                style={{
+                  background:
+                    `rgb(${255 - 55 * (moment(row.updatedAt).add(4, 'hours').isoWeekday() / 7)}, ${255 - 55 * (moment(row.updatedAt).add(4, 'hours').isoWeekday() / 7)}, ${255 + 55 * (moment(row.updatedAt).add(4, 'hours').isoWeekday() / 7)})`,
+                }}
+              >
+                <td>{moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD')}</td>
+                <td>{moment(row.updatedAt).add(4, 'hours').format('dddd')}</td>
+                <td className="right">{numeral(row.newCases).format('0,000')}</td>
+                <td className="right">{numeral(row.totalCases).format('0,000')}</td>
+                <td className="right">{numeral(row.deaths || 0).format('0,000')}</td>
+                <td className="right">{numeral(row.totalDeaths).format('0,000')}</td>
+                <td className="right">{numeral(row.avg7DDeaths).format('0,000')}</td>
+                <td className="center">{numeral((row.totalDeaths / row.totalCases) * 100).format('0.0')}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
     </div>
   );
 };
