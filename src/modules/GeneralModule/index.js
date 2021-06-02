@@ -1462,7 +1462,7 @@ const GeneralModule = ({
                 key={row.updatedAt}
                 style={{
                   background:
-                    `rgb(${255 - 55 * (moment(row.updatedAt).add(4, 'hours').isoWeekday() / 7)}, ${255 - 55 * (moment(row.updatedAt).add(4, 'hours').isoWeekday() / 7)}, ${255 + 55 * (moment(row.updatedAt).add(4, 'hours').isoWeekday() / 7)})`,
+                    `rgb(${255 - 55 * (moment(row.updatedAt).add(4, 'hours').isoWeekday() / 7)}, ${255 - 55 * (moment(row.updatedAt).add(4, 'hours').isoWeekday() / 7)}, ${255 - 55 * (moment(row.updatedAt).add(4, 'hours').isoWeekday() / 7)})`,
                 }}
               >
                 <td>{moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD')}</td>
