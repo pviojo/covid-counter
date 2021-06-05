@@ -1405,13 +1405,13 @@ const GeneralModule = ({
               xAxisType="time"
               showYAxisSelector
               yAxisMin={0}
-              title={`${r.region}<br/><small>Camas disponibles: ${(r.camas[r.camas.length - 1]).available}</small><br/><small>Casos activos</small>`}
+              title={`${r.region}<br/><small>Camas disponibles: ${(r.camas[r.camas.length - 1]).available}</small><br/><small>Incidencia Casos activos 100.000 hab</small>`}
               width={33}
               height={isMobile() ? 60 : 30}
               xAxisStepSize={isMobile() ? 14 : 1}
               xLabelsField="updatedAt"
               yDatasets={{
-                'Incidencia 100.000 hab': 'activeCases',
+                'Incidencia 100.000 hab': 'prevalenceActiveCases',
               }}
             />
           </div>
