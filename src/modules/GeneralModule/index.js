@@ -1473,7 +1473,7 @@ const GeneralModule = ({
             </tr>
           </thead>
           <tbody>
-            {data.reverse().map((row) => (
+            {[...data].reverse().map((row) => (
               <tr
                 key={row.updatedAt}
                 style={{
