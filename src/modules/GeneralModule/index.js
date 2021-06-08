@@ -1251,7 +1251,7 @@ const GeneralModule = ({
                 ...x.deathsByAge,
               })),
               fields,
-            ).reverse().slice(0, -1);
+            ).slice(0, -1);
             return rsp;
           }}
           yAxisScale="linear"
@@ -1297,7 +1297,7 @@ const GeneralModule = ({
                 ...x.deathsByAge,
               })),
               fields,
-            ).reverse().slice(0, -1);
+            ).slice(0, -1);
 
             const maximums = fields.reduce(
               (a, b) => {
