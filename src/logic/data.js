@@ -101,7 +101,9 @@ const getDataCovid = async () => {
     updatedAt: moment(row[0]).subtract(3, 'hours').format(),
     testsPCR: parseInt(row[1], 10),
     positives: parseInt(row[2], 10),
-    positivity: parseFloat(row[3]),
+    positivesPCR: parseInt(row[2], 10),
+    positivesAG: parseInt(row[3], 10),
+    positivity: parseFloat(row[4]),
   }));
   const dates = (rows[0]).slice(1);
   const dataNewCasesWithSymptoms = (rows[1]).slice(1);
