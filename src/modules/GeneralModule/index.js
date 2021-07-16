@@ -344,7 +344,7 @@ const GeneralModule = ({
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
-          data={data.map((x) => ({
+          data={data.slice(-180).map((x) => ({
             ...x,
             avg7DNewCases: Math.round(x.avg7DNewCases),
             avg14DNewCases: Math.round(x.avg14DNewCases),

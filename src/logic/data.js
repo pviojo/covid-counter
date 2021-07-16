@@ -464,7 +464,6 @@ const getComunasData = async () => {
     r.comuna = row[2];
     r.comunaCode = row[3];
     r.population = parseInt(row[4], 10);
-    r.fase = fasePerComuna[parseInt(r.comunaCode, 10)] || '';
 
     const cf = currentFasePerComuna[parseInt(r.comunaCode, 10)] || {};
     if (cf.active_cases_start) {
@@ -475,6 +474,7 @@ const getComunasData = async () => {
     }
 
     r.currentFase = cf;
+    r.fase = (cf && cf.fase) || fasePerComuna[parseInt(r.comunaCode, 10)];
     r.data = [];
     // let prevCases = 0;
     let prevBac = 0;
@@ -544,7 +544,7 @@ const getRegionesData = async (comunasData) => {
     });
     rsp[regionCode].minFase = Math.min(rsp[regionCode].minFase, parseInt(comuna.fase, 10));
     rsp[regionCode].fases.push(parseInt(comuna.fase, 10));
-    rsp[regionCode].byFase[comuna.fase].population += parseInt(comuna.population, 10);
+    rsp[regionCode].byFase[comuna.fase].population += parseInt(comuna && comuna.population, 10);
 
     return null;
   });
