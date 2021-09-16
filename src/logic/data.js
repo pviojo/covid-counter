@@ -518,6 +518,7 @@ const getRegionesData = async (comunasData) => {
     if (!rsp[regionCode]) {
       rsp[regionCode] = {
         regionCode,
+        population: 0,
         region: comuna.region,
         data: {},
         minFase: 100,
@@ -544,6 +545,7 @@ const getRegionesData = async (comunasData) => {
     });
     rsp[regionCode].minFase = Math.min(rsp[regionCode].minFase, parseInt(comuna.fase, 10));
     rsp[regionCode].fases.push(parseInt(comuna.fase, 10));
+    rsp[regionCode].population += parseInt(comuna && comuna.population, 10);
     rsp[regionCode].byFase[comuna.fase].population += parseInt(comuna && comuna.population, 10);
 
     return null;
@@ -556,6 +558,13 @@ const getRegionesData = async (comunasData) => {
     );
     rsp[k].modeFase = Math.min(...mode(rsp[k].fases));
     rsp[k].re = {};
+    rsp[k].data = rsp[k].data.map(
+      (x) => (
+        {
+          ...x,
+          prevalenceActiveCases: x.activeCases / (rsp[k].population / 100000),
+        }),
+    );
     return null;
   });
 

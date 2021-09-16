@@ -234,7 +234,9 @@ const ByRegionModule = ({
 
                   d = d.map((x) => ({
                     ...x,
-                    avg: Math.round(avg * 100) / 100,
+                    newCases: Math.min(Math.max(x.newCases, -1), 1),
+                    avg7DNewCases: Math.min(Math.max(x.avg7DNewCases, -1), 1),
+                    avg: Math.round(Math.min(Math.max(avg, -1), 1) * 100) / 100,
                   }));
                   return d;
                 })()

@@ -235,31 +235,33 @@ const GeneralModule = ({
           <RenderLineChart
             theme={theme}
             data={
-            (() => {
-              let originalData = [...data];
-              originalData = avgLast(originalData, 7, 'pcr', 'avg7DPCR');
-              let d = delta(
-                data.slice(-56 - 7),
-                7,
-                'newCases',
-              );
-              d = avgLast(d, 7, 'newCases', 'avg7DNewCases');
-              d.map((x) => ({
-                ...x,
-                newCases: Math.min(Math.max(x.newCases, -1), 1),
-              }));
-              const avg = (
-                (originalData.slice(-56).reduce((a, b) => a + b.newCases, 0))
-                / (originalData.slice(-56 - 7, -7).reduce((a, b) => a + b.newCases, 0))
-              ) - 1;
+              (() => {
+                let originalData = [...data];
+                originalData = avgLast(originalData, 7, 'pcr', 'avg7DPCR');
+                let d = delta(
+                  data.slice(-56 - 7),
+                  7,
+                  'newCases',
+                );
+                d = avgLast(d, 7, 'newCases', 'avg7DNewCases');
+                d.map((x) => ({
+                  ...x,
+                  newCases: Math.min(Math.max(x.newCases, -1), 1),
+                }));
+                const avg = (
+                  (originalData.slice(-56).reduce((a, b) => a + b.newCases, 0))
+                  / (originalData.slice(-56 - 7, -7).reduce((a, b) => a + b.newCases, 0))
+                ) - 1;
 
-              d = d.map((x) => ({
-                ...x,
-                avg: Math.round(avg * 100) / 100,
-              }));
-              return d;
-            })()
-          }
+                d = d.map((x) => ({
+                  ...x,
+                  newCases: Math.min(Math.max(x.newCases, -1), 1),
+                  avg7DNewCases: Math.min(Math.max(x.avg7DNewCases, -1), 1),
+                  avg: Math.round(avg * 100) / 100,
+                }));
+                return d;
+              })()
+            }
             yAxisScale="linear"
             yAxisType="percentage"
             xAxisType="time"
@@ -306,24 +308,25 @@ const GeneralModule = ({
           <RenderLineChart
             theme={theme}
             data={
-            (() => {
-              const originalData = [...data];
-              let d = delta(
-                originalData.slice(-56),
-                7,
-                'deaths',
-              );
-              d = avgLast(d, 7, 'deaths', 'avg7Ddeaths');
-              d = avgLast(d, 14, 'deaths', 'avg14Ddeaths');
-              d = d
-                .map((x) => ({
-                  ...x,
-                  deathsReal: x.deaths,
-                  deaths: Math.min(Math.max(x.deaths, -1), 1),
-                }));
-              return d;
-            })()
-          }
+              (() => {
+                const originalData = [...data];
+                let d = delta(
+                  originalData.slice(-56),
+                  7,
+                  'deaths',
+                );
+                d = avgLast(d, 7, 'deaths', 'avg7Ddeaths');
+                d = avgLast(d, 14, 'deaths', 'avg14Ddeaths');
+                d = d
+                  .map((x) => ({
+                    ...x,
+                    deathsReal: x.deaths,
+                    deaths: Math.min(Math.max(x.deaths, -1), 1),
+                    avg7Ddeaths: Math.min(Math.max(x.avg7Ddeaths, -1), 1),
+                  }));
+                return d;
+              })()
+            }
             yAxisScale="linear"
             yAxisType="percentage"
             xAxisType="time"
@@ -1011,7 +1014,7 @@ const GeneralModule = ({
                       {' '}
                       {numeral(total).format('0,000')}
                     </small>
-)}
+                  )}
                   subtitle={r.region}
                 />
                 <br />
