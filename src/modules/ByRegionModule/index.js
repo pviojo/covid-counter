@@ -127,13 +127,13 @@ const ByRegionModule = ({
             }}
             onChange={(e) => selectRegion(e.value)}
             options={
-            Object.values(regionesData).sort(
-              (a, b) => ((a.region > b.region) ? 1 : -1),
-            ).map((r) => ({
-              value: r.regionCode,
-              label: r.region,
-            }))
-          }
+              Object.values(regionesData).sort(
+                (a, b) => ((a.region > b.region) ? 1 : -1),
+              ).map((r) => ({
+                value: r.regionCode,
+                label: r.region,
+              }))
+            }
           />
         </div>
         <ComunasByStep fases={regionesData[selectedRegion].fases} fasesData={regionesData[selectedRegion].byFase} />
@@ -214,31 +214,31 @@ const ByRegionModule = ({
             <RenderLineChart
               theme={theme}
               data={
-            (() => {
-              let originalData = [...data];
-              originalData = avgLast(originalData, 7, 'pcr', 'avg7DPCR');
-              let d = delta(
-                data.slice(-56 - 7),
-                7,
-                'newCases',
-              );
-              d = avgLast(d, 7, 'newCases', 'avg7DNewCases');
-              d.map((x) => ({
-                ...x,
-                newCases: Math.min(Math.max(x.newCases, -1), 1),
-              }));
-              const avg = (
-                (originalData.slice(-56).reduce((a, b) => a + b.newCases, 0))
-                / (originalData.slice(-56 - 7, -7).reduce((a, b) => a + b.newCases, 0))
-              ) - 1;
+                (() => {
+                  let originalData = [...data];
+                  originalData = avgLast(originalData, 7, 'pcr', 'avg7DPCR');
+                  let d = delta(
+                    data.slice(-56 - 7),
+                    7,
+                    'newCases',
+                  );
+                  d = avgLast(d, 7, 'newCases', 'avg7DNewCases');
+                  d.map((x) => ({
+                    ...x,
+                    newCases: Math.min(Math.max(x.newCases, -1), 1),
+                  }));
+                  const avg = (
+                    (originalData.slice(-56).reduce((a, b) => a + b.newCases, 0))
+                    / (originalData.slice(-56 - 7, -7).reduce((a, b) => a + b.newCases, 0))
+                  ) - 1;
 
-              d = d.map((x) => ({
-                ...x,
-                avg: Math.round(avg * 100) / 100,
-              }));
-              return d;
-            })()
-          }
+                  d = d.map((x) => ({
+                    ...x,
+                    avg: Math.round(avg * 100) / 100,
+                  }));
+                  return d;
+                })()
+              }
               yAxisScale="linear"
               yAxisType="percentage"
               xAxisType="time"
@@ -322,12 +322,12 @@ const ByRegionModule = ({
           <RenderBarChart
             theme={theme}
             data={
-            delta(
-              maxWeekly(regionesData[selectedRegion].data, 'activeCases'),
-              2,
-              'activeCases',
-            )
-          }
+              delta(
+                maxWeekly(regionesData[selectedRegion].data, 'activeCases'),
+                2,
+                'activeCases',
+              )
+            }
             yAxisScale="linear"
             yAxisType="percentage"
             xAxisType="linear"
@@ -440,19 +440,19 @@ const ByRegionModule = ({
                 {comunasInRegion.map((c) => {
                   const delta1 = (
                     (c.data[c.data.length - 1].prevalenceActiveCases / c.data[c.data.length - 1 - 1].prevalenceActiveCases)
-                   - 1) * 100;
+                    - 1) * 100;
                   const delta2 = (
                     (c.data[c.data.length - 1 - 1].prevalenceActiveCases / c.data[c.data.length - 1 - 2].prevalenceActiveCases)
-                   - 1) * 100;
+                    - 1) * 100;
                   const delta3 = (
                     (c.data[c.data.length - 1 - 2].prevalenceActiveCases / c.data[c.data.length - 1 - 3].prevalenceActiveCases)
-                   - 1) * 100;
+                    - 1) * 100;
                   const delta4 = (
                     (c.data[c.data.length - 1 - 3].prevalenceActiveCases / c.data[c.data.length - 1 - 4].prevalenceActiveCases)
-                   - 1) * 100;
+                    - 1) * 100;
                   const delta5 = (
                     (c.data[c.data.length - 1 - 4].prevalenceActiveCases / c.data[c.data.length - 1 - 5].prevalenceActiveCases)
-                   - 1) * 100;
+                    - 1) * 100;
                   return (
                     <tr key={c.comunaCode} style={{ background: faseData[c.fase] && faseData[c.fase].colortr }}>
                       <td>
@@ -500,23 +500,23 @@ const ByRegionModule = ({
                         </span>
                       </td>
                       {!isMobile() && (
-                      <>
-                        <td className="right">{numeral(c.population).format('0,000')}</td>
-                        <td className="right" style={{ color: delta5 >= 0 ? '#c30' : '#093' }}>
-                          {c.data[c.data.length - 1 - 4].prevalenceActiveCases}
-                          {' '}
-                          (
-                          {numeral(delta5).format('+0.0')}
-                          %)
-                        </td>
-                        <td className="right" style={{ color: delta4 >= 0 ? '#c30' : '#093' }}>
-                          {c.data[c.data.length - 1 - 3].prevalenceActiveCases}
-                          {' '}
-                          (
-                          {numeral(delta4).format('+0.0')}
-                          %)
-                        </td>
-                      </>
+                        <>
+                          <td className="right">{numeral(c.population).format('0,000')}</td>
+                          <td className="right" style={{ color: delta5 >= 0 ? '#c30' : '#093' }}>
+                            {c.data[c.data.length - 1 - 4].prevalenceActiveCases}
+                            {' '}
+                            (
+                            {numeral(delta5).format('+0.0')}
+                            %)
+                          </td>
+                          <td className="right" style={{ color: delta4 >= 0 ? '#c30' : '#093' }}>
+                            {c.data[c.data.length - 1 - 3].prevalenceActiveCases}
+                            {' '}
+                            (
+                            {numeral(delta4).format('+0.0')}
+                            %)
+                          </td>
+                        </>
                       )}
 
                       <td className="right" style={{ color: delta3 >= 0 ? '#c30' : '#093' }}>

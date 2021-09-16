@@ -110,48 +110,45 @@ const App = () => {
           <div className={`${styles.option} ${currentLocation.startsWith('/comparar-comunas') ? styles.selected : ''}`}>
             <a onClick={() => history.push('/comparar-comunas')}>Comparar comunas</a>
           </div>
-          <div className={`${styles.option} ${currentLocation.startsWith('/cuarentenas') ? styles.selected : ''}`}>
-            <a onClick={() => history.push('/cuarentenas')}>Cuarentenas</a>
-          </div>
 
         </div>
         <div className={`${styles.main}`}>
           {currentLocation === '/deaths'
-          && (
-            <DeathsModule />
-          )}
+            && (
+              <DeathsModule />
+            )}
           {currentLocation === '/'
             && (
-            <GeneralModule
-              data={data}
-              vaccinesData={vaccinesData}
-              regionesData={regionesData}
-              theme={theme}
-            />
+              <GeneralModule
+                data={data}
+                vaccinesData={vaccinesData}
+                regionesData={regionesData}
+                theme={theme}
+              />
             )}
           {currentLocation.startsWith('/por-region')
             && (
-            <ByRegionModule
-              comunasData={comunasData}
-              regionesData={regionesData}
-              newCasesRegionData={newCasesRegionData}
-              theme={theme}
-            />
+              <ByRegionModule
+                comunasData={comunasData}
+                regionesData={regionesData}
+                newCasesRegionData={newCasesRegionData}
+                theme={theme}
+              />
             )}
           {currentLocation.startsWith('/comparar-comunas')
             && (
-            <CompareComunasModule
-              comunasData={comunasData}
-              theme={theme}
-            />
+              <CompareComunasModule
+                comunasData={comunasData}
+                theme={theme}
+              />
             )}
           {currentLocation.startsWith('/cuarentenas')
             && (
-            <QuarantinesModule
-              onChangeLocation={onChangeLocation}
-              comunasData={comunasData}
-              theme={theme}
-            />
+              <QuarantinesModule
+                onChangeLocation={onChangeLocation}
+                comunasData={comunasData}
+                theme={theme}
+              />
             )}
         </div>
         <div className={styles.sources}>

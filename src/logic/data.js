@@ -474,7 +474,7 @@ const getComunasData = async () => {
     }
 
     r.currentFase = cf;
-    r.fase = (cf && cf.fase) || fasePerComuna[parseInt(r.comunaCode, 10)];
+    r.fase = fasePerComuna[parseInt(r.comunaCode, 10)];
     r.data = [];
     // let prevCases = 0;
     let prevBac = 0;
