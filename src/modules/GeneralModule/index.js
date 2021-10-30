@@ -32,6 +32,7 @@ const GeneralModule = ({
   data,
   vaccinesData,
   theme,
+  dataPerVaccinationStatus,
   regionesData,
 }) => {
   moment.locale('es');
@@ -344,6 +345,76 @@ const GeneralModule = ({
           <small>* Limitado en rango +/- 100%</small>
         </div>
       </div>
+
+      <div className={styles.widget}>
+        <div className={styles.title}>
+          Situación según estado de vacunación
+          <br />
+          <small>Total (Incidencia cada 100.000 personas)</small>
+        </div>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>
+                Semana
+              </th>
+              <th>&nbsp;</th>
+              <th className="center">
+                Esquema incompleto
+              </th>
+              <th className="center">
+                Esquema completo
+              </th>
+              <th className="center">
+                Esquema completo + refuerzo
+                {' (> 14 d)'}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...dataPerVaccinationStatus].reverse().slice(0, 4).map((row) => (
+              <>
+                <tr
+                  key={`1-${row.week}`}
+                >
+                  <td rowSpan={4}>{row.week}</td>
+                  <td>Población</td>
+                  <td className="center">{row.uncomplete && `${numeral(row.uncomplete.population).format('0,000')}`}</td>
+                  <td className="center">{row.complete && `${numeral(row.complete.population).format('0,000')}`}</td>
+                  <td className="center">{row.boost_1 && `${numeral(row.boost_1.population).format('0,000')}`}</td>
+                </tr>
+                <tr
+                  key={`2-${row.week}`}
+                >
+                  <td>Casos</td>
+                  <td className="center">{row.uncomplete && `${numeral(row.uncomplete.confirmedCases).format('0,000')} (${numeral(row.uncomplete.incidence.confirmedCases).format('0,000.00')})`}</td>
+                  <td className="center">{row.complete && `${numeral(row.complete.confirmedCases).format('0,000')} (${numeral(row.complete.incidence.confirmedCases).format('0,000.00')})`}</td>
+                  <td className="center">{row.boost_1 && `${numeral(row.boost_1.confirmedCases).format('0,000')} (${numeral(row.boost_1.incidence.confirmedCases).format('0,000.00')})`}</td>
+
+                </tr>
+                <tr
+                  key={`3-${row.week}`}
+                >
+                  <td>Casos UCI</td>
+                  <td className="center">{row.uncomplete && `${numeral(row.uncomplete.uciCases).format('0,000')} (${numeral(row.uncomplete.incidence.uciCases).format('0,000.00')})`}</td>
+                  <td className="center">{row.complete && `${numeral(row.complete.uciCases).format('0,000')} (${numeral(row.complete.incidence.uciCases).format('0,000.00')})`}</td>
+                  <td className="center">{row.boost_1 && `${numeral(row.boost_1.uciCases).format('0,000')} (${numeral(row.boost_1.incidence.uciCases).format('0,000.00')})`}</td>
+
+                </tr>
+                <tr
+                  key={`4-${row.week}`}
+                >
+                  <td>Fallecidos</td>
+                  <td className="center">{row.uncomplete && `${numeral(row.uncomplete.deaths).format('0,000')} (${numeral(row.uncomplete.incidence.deaths).format('0,000.00')})`}</td>
+                  <td className="center">{row.complete && `${numeral(row.complete.deaths).format('0,000')} (${numeral(row.complete.incidence.deaths).format('0,000.00')})`}</td>
+                  <td className="center">{row.boost_1 && `${numeral(row.boost_1.deaths).format('0,000')} (${numeral(row.boost_1.incidence.deaths).format('0,000.00')})`}</td>
+                </tr>
+              </>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
@@ -1513,6 +1584,7 @@ GeneralModule.defaultProps = {
 GeneralModule.propTypes = {
   data: PropTypes.array.isRequired,
   vaccinesData: PropTypes.array.isRequired,
+  dataPerVaccinationStatus: PropTypes.array.isRequired,
   regionesData: PropTypes.object.isRequired,
   theme: PropTypes.string,
 };

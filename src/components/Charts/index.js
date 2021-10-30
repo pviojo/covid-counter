@@ -243,35 +243,35 @@ export const RenderChart = ({
           </div>
         )}
       <div style={{ width: '100%' }}>
-        { chartType === 'line'
+        {chartType === 'line'
           && (
-          <Line
-            ref={chartReference}
-            data={chartData}
-            height={height || 250}
-            width={width || 100}
-            options={chartOptions}
-          />
+            <Line
+              ref={chartReference}
+              data={chartData}
+              height={height || 250}
+              width={width || 100}
+              options={chartOptions}
+            />
           )}
-        { chartType === 'bar'
+        {chartType === 'bar'
           && (
-          <Bar
-            ref={chartReference}
-            data={chartData}
-            height={height || 250}
-            width={width || 100}
-            options={chartOptions}
-          />
+            <Bar
+              ref={chartReference}
+              data={chartData}
+              height={height || 250}
+              width={width || 100}
+              options={chartOptions}
+            />
           )}
-        { chartType === 'scatter'
+        {chartType === 'scatter'
           && (
-          <Scatter
-            ref={chartReference}
-            data={chartData}
-            height={height || 250}
-            width={width || 100}
-            options={chartOptions}
-          />
+            <Scatter
+              ref={chartReference}
+              data={chartData}
+              height={height || 250}
+              width={width || 100}
+              options={chartOptions}
+            />
           )}
       </div>
     </div>

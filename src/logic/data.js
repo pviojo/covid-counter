@@ -771,6 +771,48 @@ const getDataDeathsCovid = async () => {
   };
 };
 
+const getDataPerVaccinationStatus = async () => {
+  const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto89/incidencia_en_vacunados_edad.csv');
+  const totalRows = rows.filter((r) => r[1] === 'Total');
+  let data = totalRows.map((row) => ({
+    week: row[0],
+    uncomplete: totalRows.filter((x) => x[0] === row[0] && x[2] === 'sin esquema completo')[0],
+    complete: totalRows.filter((x) => x[0] === row[0] && x[2] === 'con esquema completo')[0],
+    boost_1: totalRows.filter((x) => x[0] === row[0] && x[2] === 'con dosis refuerzo > 14 dias')[0],
+  }));
+  data = Object.values(data.reduce((a, b) => {
+    if (a[b.week]) {
+      return a;
+    }
+    return {
+      ...a,
+      [b.week]: b,
+    };
+  }, {}));
+  data = data.map((row) => {
+    const newRow = { ...row };
+    ['uncomplete', 'complete', 'boost_1'].map((f) => {
+      if (newRow[f]) {
+        newRow[f] = {
+          confirmedCases: parseInt(newRow[f][3], 10),
+          uciCases: parseInt(newRow[f][4], 10),
+          deaths: parseInt(newRow[f][5], 10),
+          population: parseInt(newRow[f][6], 10),
+        };
+        newRow[f].incidence = {
+          confirmedCases: (newRow[f].confirmedCases / newRow[f].population) * 100000,
+          uciCases: (newRow[f].uciCases / newRow[f].population) * 100000,
+          deaths: (newRow[f].deaths / newRow[f].population) * 100000,
+        };
+      }
+      return null;
+    });
+    return newRow;
+  });
+
+  return data;
+};
+
 export const getData = async () => {
   let data = await getDataCovid();
   const {
@@ -844,6 +886,7 @@ export const getData = async () => {
   const comunasData = await getComunasData();
   const regionesData = await getRegionesData(comunasData);
   const newCasesRegionData = await getNewCasesRegionData();
+  const dataPerVaccinationStatus = await getDataPerVaccinationStatus();
   let vaccinesData = await getDataVaccines();
   vaccinesData = avgLast(vaccinesData, 7, 'newFirstDose', 'avg7DNewFirstDose');
   vaccinesData = avgLast(vaccinesData, 7, 'newSecondDose', 'avg7DNewSecondDose');
@@ -852,6 +895,7 @@ export const getData = async () => {
     dailyData: data,
     vaccinesData,
     comunasData,
+    dataPerVaccinationStatus,
     regionesData,
     newCasesRegionData,
     dataDeathsCovidByReportDay,

@@ -29,7 +29,7 @@ Metric.defaultProps = {
 Metric.propTypes = {
   subtitle: PropTypes.any.isRequired,
   n: PropTypes.any.isRequired,
-  subn: PropTypes.string,
+  subn: PropTypes.any,
   color: PropTypes.string,
 };
 

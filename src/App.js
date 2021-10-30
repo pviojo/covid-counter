@@ -44,6 +44,7 @@ const App = () => {
   const [data, setData] = useState(null);
   const [comunasData, setComunasData] = useState(null);
   const [vaccinesData, setVaccinesData] = useState(null);
+  const [dataPerVaccinationStatus, setDataPerVaccinationStatus] = useState(null);
   const [regionesData, setRegionesData] = useState(null);
   const [newCasesRegionData, setNewCasesRegionData] = useState(null);
   useEffect(() => {
@@ -65,11 +66,13 @@ const App = () => {
         comunasData,
         regionesData,
         vaccinesData,
+        dataPerVaccinationStatus,
         newCasesRegionData,
       } = await getData();
       initData(loadedData);
       setComunasData(comunasData);
       setVaccinesData(vaccinesData);
+      setDataPerVaccinationStatus(dataPerVaccinationStatus);
       setRegionesData(regionesData);
       setNewCasesRegionData(newCasesRegionData);
       setLoading(false);
@@ -122,6 +125,7 @@ const App = () => {
               <GeneralModule
                 data={data}
                 vaccinesData={vaccinesData}
+                dataPerVaccinationStatus={dataPerVaccinationStatus}
                 regionesData={regionesData}
                 theme={theme}
               />
