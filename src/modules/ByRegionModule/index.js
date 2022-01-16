@@ -234,9 +234,9 @@ const ByRegionModule = ({
 
                   d = d.map((x) => ({
                     ...x,
-                    newCases: Math.min(Math.max(x.newCases, -1), 1),
-                    avg7DNewCases: Math.min(Math.max(x.avg7DNewCases, -1), 1),
-                    avg: Math.round(Math.min(Math.max(avg, -1), 1) * 100) / 100,
+                    newCases: Math.min(Math.max(x.newCases, -3), 3),
+                    avg7DNewCases: Math.min(Math.max(x.avg7DNewCases, -3), 3),
+                    avg: Math.round(Math.min(Math.max(avg, -3), 3) * 100) / 100,
                   }));
                   return d;
                 })()
@@ -255,7 +255,7 @@ const ByRegionModule = ({
                 'Promedio (ult 7 días)': 'avg7DNewCases',
               }}
             />
-            <small>* Limitado en rango +/- 100%</small>
+            <small>* Limitado en rango +/- 300%</small>
           </div>
         </div>
 

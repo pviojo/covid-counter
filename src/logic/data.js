@@ -775,7 +775,7 @@ const getDataPerVaccinationStatus = async () => {
   const rows = await readCsv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto89/incidencia_en_vacunados_edad.csv');
   const totalRows = rows.filter((r) => r[1] === 'Total');
   let data = totalRows.map((row) => ({
-    week: row[0],
+    week: `${row[0] < 30 ? '2022' : '2021'}-${String(row[0]).padStart(2, '0')}`,
     uncomplete: totalRows.filter((x) => x[0] === row[0] && x[2] === 'sin esquema completo')[0],
     complete: totalRows.filter((x) => x[0] === row[0] && x[2] === 'con esquema completo')[0],
     boost_1: totalRows.filter((x) => x[0] === row[0] && x[2] === 'con dosis refuerzo > 14 dias')[0],

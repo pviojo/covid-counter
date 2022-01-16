@@ -256,8 +256,8 @@ const GeneralModule = ({
 
                 d = d.map((x) => ({
                   ...x,
-                  newCases: Math.min(Math.max(x.newCases, -1), 1),
-                  avg7DNewCases: Math.min(Math.max(x.avg7DNewCases, -1), 1),
+                  newCases: Math.min(Math.max(x.newCases, -3), 3),
+                  avg7DNewCases: Math.min(Math.max(x.avg7DNewCases, -3), 3),
                   avg: Math.round(avg * 100) / 100,
                 }));
                 return d;
@@ -277,7 +277,7 @@ const GeneralModule = ({
               'Promedio (ult 7 días)': 'avg7DNewCases',
             }}
           />
-          <small>* Limitado en rango +/- 100%</small>
+          <small>* Limitado en rango +/- 300%</small>
         </div>
       </div>
       <div className={styles.grid2Cols1Col}>
@@ -322,8 +322,8 @@ const GeneralModule = ({
                   .map((x) => ({
                     ...x,
                     deathsReal: x.deaths,
-                    deaths: Math.min(Math.max(x.deaths, -1), 1),
-                    avg7Ddeaths: Math.min(Math.max(x.avg7Ddeaths, -1), 1),
+                    deaths: Math.min(Math.max(x.deaths, -3), 3),
+                    avg7Ddeaths: Math.min(Math.max(x.avg7Ddeaths, -3), 3),
                   }));
                 return d;
               })()
@@ -342,7 +342,7 @@ const GeneralModule = ({
               'Promedio (ult 7 días)': 'avg7Ddeaths',
             }}
           />
-          <small>* Limitado en rango +/- 100%</small>
+          <small>* Limitado en rango +/- 300%</small>
         </div>
       </div>
 
@@ -413,6 +413,84 @@ const GeneralModule = ({
             ))}
           </tbody>
         </table>
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={dataPerVaccinationStatus.map((row) => ({
+            week: row.week,
+            uncomplete: Math.round(row.uncomplete?.incidence.confirmedCases * 1000) / 1000,
+            complete: Math.round(row.complete?.incidence.confirmedCases * 1000) / 1000,
+            boost_1: Math.round(row.boost_1?.incidence.confirmedCases * 1000) / 1000,
+          }))}
+          yAxisScale="linear"
+          title="Incidencia Casos (cada 100.000 hab) según estado de vacunación"
+          xAxisType="linear"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 30}
+          yAxisMin={0}
+          xLabelsField="week"
+          yDatasets={{
+            'Esquema incompleto': 'uncomplete',
+            'Esquema completo': 'complete',
+            'Esquema completo + refuerzo (>14 días)': 'boost_1',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={dataPerVaccinationStatus.map((row) => ({
+            week: row.week,
+            uncomplete: Math.round(row.uncomplete?.incidence.uciCases * 1000) / 1000,
+            complete: Math.round(row.complete?.incidence.uciCases * 1000) / 1000,
+            boost_1: Math.round(row.boost_1?.incidence.uciCases * 1000) / 1000,
+          }))}
+          yAxisScale="linear"
+          title="Incidencia Casos UCI (cada 100.000 hab) según estado de vacunación"
+          xAxisType="linear"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 30}
+          yAxisMin={0}
+          xLabelsField="week"
+          yDatasets={{
+            'Esquema incompleto': 'uncomplete',
+            'Esquema completo': 'complete',
+            'Esquema completo + refuerzo (>14 días)': 'boost_1',
+          }}
+        />
+        <br />
+      </div>
+      <div className={styles.widget}>
+        <RenderLineChart
+          theme={theme}
+          data={dataPerVaccinationStatus.map((row) => ({
+            week: row.week,
+            uncomplete: Math.round(row.uncomplete?.incidence.deaths * 1000) / 1000,
+            complete: Math.round(row.complete?.incidence.deaths * 1000) / 1000,
+            boost_1: Math.round(row.boost_1?.incidence.deaths * 1000) / 1000,
+          }))}
+          yAxisScale="linear"
+          title="Incidencia Fallecidos (cada 100.000 hab) según estado de vacunación"
+          xAxisType="linear"
+          xAxisStepSize={isMobile() ? 7 : 4}
+          width={100}
+          showYAxisSelector
+          height={isMobile() ? 80 : 30}
+          yAxisMin={0}
+          xLabelsField="week"
+          yDatasets={{
+            'Esquema incompleto': 'uncomplete',
+            'Esquema completo': 'complete',
+            'Esquema completo + refuerzo (>14 días)': 'boost_1',
+          }}
+        />
+        <br />
       </div>
 
       <div className={styles.widget}>
@@ -900,85 +978,90 @@ const GeneralModule = ({
         />
         <br />
       </div>
-      <div className={styles.widget}>
-        <RenderLineChart
-          theme={theme}
-          data={vaccinesData}
-          yAxisScale="linear"
-          title="Vacunados total"
-          xAxisType="time"
-          xAxisStepSize={isMobile() ? 7 : 4}
-          width={100}
-          showYAxisSelector
-          height={isMobile() ? 80 : 30}
-          yAxisMin={0}
-          xLabelsField="date"
-          yDatasets={{
-            'Primera dosis': 'firstDose',
-            'Segunda dosis': 'secondDose',
-            Total: 'total',
-          }}
-        />
-        <br />
-      </div>
-      <div className={styles.widget}>
-        <RenderLineChart
-          theme={theme}
-          data={vaccinesData.map((x) => ({
-            ...x,
-            avg7DNewFirstDose: Math.round(x.avg7DNewFirstDose),
-            avg7DNewSecondDose: Math.round(x.avg7DNewSecondDose),
-            avg7DNewTotal: Math.round(x.avg7DNewTotal),
-          }))}
-          yAxisScale="linear"
-          title="Vacunados diarios"
-          xAxisType="time"
-          xAxisStepSize={isMobile() ? 7 : 4}
-          width={100}
-          showYAxisSelector
-          height={isMobile() ? 80 : 30}
-          yAxisMin={0}
-          xLabelsField="date"
-          yDatasets={{
-            'Primera dosis': 'newFirstDose',
-            'Segunda dosis': 'newSecondDose',
-            Total: 'newTotal',
-            'Primera dosis (promedio ult 7 dias)': 'avg7DNewFirstDose',
-            'Segunda dosis (promedio ult 7 dias)': 'avg7DNewSecondDose',
-            'Total (promedio ult 7 dias)': 'avg7DNewTotal',
-          }}
-        />
-        <br />
-      </div>
-      <div className={styles.widget}>
-        <RenderLineChart
-          theme={theme}
-          data={vaccinesData.slice(-56).map((x) => ({
-            ...x,
-            avg7DNewFirstDose: Math.round(x.avg7DNewFirstDose),
-            avg7DNewSecondDose: Math.round(x.avg7DNewSecondDose),
-            avg7DNewTotal: Math.round(x.avg7DNewTotal),
-          }))}
-          yAxisScale="linear"
-          title="Vacunados diarios últimos 56 días"
-          xAxisType="time"
-          xAxisStepSize={isMobile() ? 7 : 4}
-          width={100}
-          showYAxisSelector
-          height={isMobile() ? 80 : 30}
-          yAxisMin={0}
-          xLabelsField="date"
-          yDatasets={{
-            'Primera dosis': 'newFirstDose',
-            'Segunda dosis': 'newSecondDose',
-            Total: 'newTotal',
-            'Primera dosis (promedio ult 7 dias)': 'avg7DNewFirstDose',
-            'Segunda dosis (promedio ult 7 dias)': 'avg7DNewSecondDose',
-            'Total (promedio ult 7 dias)': 'avg7DNewTotal',
-          }}
-        />
-        <br />
-      </div>
+      {false
+        && (
+          <>
+            <div className={styles.widget}>
+              <RenderLineChart
+                theme={theme}
+                data={vaccinesData}
+                yAxisScale="linear"
+                title="Vacunados total"
+                xAxisType="time"
+                xAxisStepSize={isMobile() ? 7 : 4}
+                width={100}
+                showYAxisSelector
+                height={isMobile() ? 80 : 30}
+                yAxisMin={0}
+                xLabelsField="date"
+                yDatasets={{
+                  'Primera dosis': 'firstDose',
+                  'Segunda dosis': 'secondDose',
+                  Total: 'total',
+                }}
+              />
+              <br />
+            </div>
+            <div className={styles.widget}>
+              <RenderLineChart
+                theme={theme}
+                data={vaccinesData.map((x) => ({
+                  ...x,
+                  avg7DNewFirstDose: Math.round(x.avg7DNewFirstDose),
+                  avg7DNewSecondDose: Math.round(x.avg7DNewSecondDose),
+                  avg7DNewTotal: Math.round(x.avg7DNewTotal),
+                }))}
+                yAxisScale="linear"
+                title="Vacunados diarios"
+                xAxisType="time"
+                xAxisStepSize={isMobile() ? 7 : 4}
+                width={100}
+                showYAxisSelector
+                height={isMobile() ? 80 : 30}
+                yAxisMin={0}
+                xLabelsField="date"
+                yDatasets={{
+                  'Primera dosis': 'newFirstDose',
+                  'Segunda dosis': 'newSecondDose',
+                  Total: 'newTotal',
+                  'Primera dosis (promedio ult 7 dias)': 'avg7DNewFirstDose',
+                  'Segunda dosis (promedio ult 7 dias)': 'avg7DNewSecondDose',
+                  'Total (promedio ult 7 dias)': 'avg7DNewTotal',
+                }}
+              />
+              <br />
+            </div>
+            <div className={styles.widget}>
+              <RenderLineChart
+                theme={theme}
+                data={vaccinesData.slice(-56).map((x) => ({
+                  ...x,
+                  avg7DNewFirstDose: Math.round(x.avg7DNewFirstDose),
+                  avg7DNewSecondDose: Math.round(x.avg7DNewSecondDose),
+                  avg7DNewTotal: Math.round(x.avg7DNewTotal),
+                }))}
+                yAxisScale="linear"
+                title="Vacunados diarios últimos 56 días"
+                xAxisType="time"
+                xAxisStepSize={isMobile() ? 7 : 4}
+                width={100}
+                showYAxisSelector
+                height={isMobile() ? 80 : 30}
+                yAxisMin={0}
+                xLabelsField="date"
+                yDatasets={{
+                  'Primera dosis': 'newFirstDose',
+                  'Segunda dosis': 'newSecondDose',
+                  Total: 'newTotal',
+                  'Primera dosis (promedio ult 7 dias)': 'avg7DNewFirstDose',
+                  'Segunda dosis (promedio ult 7 dias)': 'avg7DNewSecondDose',
+                  'Total (promedio ult 7 dias)': 'avg7DNewTotal',
+                }}
+              />
+              <br />
+            </div>
+          </>
+        )}
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}
