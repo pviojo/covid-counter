@@ -254,10 +254,10 @@ const GeneralModule = ({
                   / (originalData.slice(-56 - 7, -7).reduce((a, b) => a + b.newCases, 0))
                 ) - 1;
 
-                d = d.map((x) => ({
+                d = d.slice(-365).map((x) => ({
                   ...x,
-                  newCases: Math.min(Math.max(x.newCases, -3), 3),
-                  avg7DNewCases: Math.min(Math.max(x.avg7DNewCases, -3), 3),
+                  newCases: Math.min(Math.max(x.newCases, -5), 5),
+                  avg7DNewCases: Math.min(Math.max(x.avg7DNewCases, -5), 5),
                   avg: Math.round(avg * 100) / 100,
                 }));
                 return d;
@@ -277,7 +277,7 @@ const GeneralModule = ({
               'Promedio (ult 7 días)': 'avg7DNewCases',
             }}
           />
-          <small>* Limitado en rango +/- 300%</small>
+          <small>* Limitado en rango +/- 500%</small>
         </div>
       </div>
       <div className={styles.grid2Cols1Col}>
@@ -319,11 +319,11 @@ const GeneralModule = ({
                 d = avgLast(d, 7, 'deaths', 'avg7Ddeaths');
                 d = avgLast(d, 14, 'deaths', 'avg14Ddeaths');
                 d = d
-                  .map((x) => ({
+                  .slice(-365).map((x) => ({
                     ...x,
                     deathsReal: x.deaths,
-                    deaths: Math.min(Math.max(x.deaths, -3), 3),
-                    avg7Ddeaths: Math.min(Math.max(x.avg7Ddeaths, -3), 3),
+                    deaths: Math.min(Math.max(x.deaths, -5), 5),
+                    avg7Ddeaths: Math.min(Math.max(x.avg7Ddeaths, -5), 5),
                   }));
                 return d;
               })()
@@ -342,7 +342,7 @@ const GeneralModule = ({
               'Promedio (ult 7 días)': 'avg7Ddeaths',
             }}
           />
-          <small>* Limitado en rango +/- 300%</small>
+          <small>* Limitado en rango +/- 500%</small>
         </div>
       </div>
 
@@ -574,8 +574,8 @@ const GeneralModule = ({
               'newCases',
             ).map((x) => ({
               ...x,
-              newCases: Math.min(Math.max(x.newCases, -1), 1),
-            }))
+              newCases: Math.min(Math.max(x.newCases, -5), 5),
+            })).slice(-365)
           }
           yAxisScale="linear"
           yAxisType="percentage"
@@ -590,7 +590,7 @@ const GeneralModule = ({
             'Var %': 'newCases',
           }}
         />
-        <small>* Limitado en rango +/- 100%</small>
+        <small>* Limitado en rango +/- 500%</small>
       </div>
 
       <div className={styles.widget}>
@@ -603,8 +603,8 @@ const GeneralModule = ({
               'avg7DNewCases',
             ).map((x) => ({
               ...x,
-              avg7DNewCases: Math.min(Math.max(x.avg7DNewCases, -1), 1),
-            }))
+              avg7DNewCases: Math.min(Math.max(x.avg7DNewCases, -5), 5),
+            })).slice(-365)
           }
           yAxisScale="linear"
           yAxisType="percentage"
@@ -619,7 +619,7 @@ const GeneralModule = ({
             'Var %': 'avg7DNewCases',
           }}
         />
-        <small>* Limitado en rango +/- 100%</small>
+        <small>* Limitado en rango +/- 500%</small>
       </div>
 
       <div className={styles.widget}>
@@ -700,14 +700,14 @@ const GeneralModule = ({
                 'activeCasesFIS',
               ).map((x) => ({
                 ...x,
-                activeCasesFIS: Math.min(Math.max(x.activeCasesFIS, -1), 1),
+                activeCasesFIS: Math.min(Math.max(x.activeCasesFIS, -5), 5),
               })),
               7,
               'activeCasesFD',
             ).map((x) => ({
               ...x,
-              activeCasesFD: Math.min(Math.max(x.activeCasesFD, -1), 1),
-            }))
+              activeCasesFD: Math.min(Math.max(x.activeCasesFD, -5), 5),
+            })).slice(-365)
           }
           yAxisScale="linear"
           yAxisType="percentage"
@@ -723,7 +723,7 @@ const GeneralModule = ({
             'Var % (FD)': 'activeCasesFD',
           }}
         />
-        <small>* Limitado en rango +/- 100%</small>
+        <small>* Limitado en rango +/- 500%</small>
       </div>
       <div className={styles.widget}>
         <RenderLineChart
@@ -767,8 +767,8 @@ const GeneralModule = ({
               'avg7DtestsPCR',
             ).map((x) => ({
               ...x,
-              avg7DtestsPCR: Math.min(Math.max(x.avg7DtestsPCR, -1), 1),
-            }))
+              avg7DtestsPCR: Math.min(Math.max(x.avg7DtestsPCR, -5), 5),
+            })).slice(-365)
           }
           yAxisScale="linear"
           yAxisType="percentage"
@@ -783,7 +783,7 @@ const GeneralModule = ({
             'Var %': 'avg7DtestsPCR',
           }}
         />
-        <small>* Limitado en rango +/- 100%</small>
+        <small>* Limitado en rango +/- 500%</small>
       </div>
       <div className={styles.widget}>
         <RenderLineChart
@@ -865,8 +865,8 @@ const GeneralModule = ({
               'deaths',
             ).map((x) => ({
               ...x,
-              deaths: Math.min(Math.max(x.deaths, -1), 1),
-            }))
+              deaths: Math.min(Math.max(x.deaths, -5), 5),
+            })).slice(-365)
           }
           yAxisScale="linear"
           yAxisType="percentage"
@@ -881,7 +881,7 @@ const GeneralModule = ({
             'Var %': 'deaths',
           }}
         />
-        <small>* Limitado en rango +/- 100%</small>
+        <small>* Limitado en rango +/- 500%</small>
       </div>
       <div className={styles.widget}>
         <RenderLineChart
@@ -893,8 +893,8 @@ const GeneralModule = ({
               'avg7DDeaths',
             ).map((x) => ({
               ...x,
-              avg7DDeaths: Math.min(Math.max(x.avg7DDeaths, -1), 1),
-            }))
+              avg7DDeaths: Math.min(Math.max(x.avg7DDeaths, -5), 5),
+            })).slice(-365)
           }
           yAxisScale="linear"
           yAxisType="percentage"
@@ -909,7 +909,7 @@ const GeneralModule = ({
             'Var %': 'avg7DDeaths',
           }}
         />
-        <small>* Limitado en rango +/- 100%</small>
+        <small>* Limitado en rango +/- 500%</small>
       </div>
       <div className={styles.widget}>
         <RenderLineChart
