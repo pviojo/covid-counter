@@ -46,7 +46,7 @@
     "js-polynomial-regression": "^0.9.1",
     "mini-css-extract-plugin": "0.5.0",
     "moment": "2.26.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "numeral": "2.0.6",
     "optimize-css-assets-webpack-plugin": "5.0.1",
     "pnp-webpack-plugin": "1.2.1",
