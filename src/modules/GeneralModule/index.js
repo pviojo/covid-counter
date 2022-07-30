@@ -18,7 +18,7 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { RenderLineChart, RenderBarChart } from '../../components/Charts';
 
 import Metric from '../../components/Metric';
-import ComunasByStep from '../../components/ComunasByStep';
+// import ComunasByStep from '../../components/ComunasByStep';
 import {
   delta, avgLast,
   // maxWeekly,
@@ -58,7 +58,7 @@ const GeneralModule = ({
   const deltaVentiladores = ((ventiladoresAvailable / ventiladoresAvailable7DAgo) - 1) * 100;
   const deltaPctVentiladores = pctVentiladoresAvailable7DAgo - pctVentiladoresAvailable;
 
-  const allFases = regionesData ? Object.values(regionesData).reduce((a, b) => a.concat(b.fases), []) : [];
+  /* const allFases = regionesData ? Object.values(regionesData).reduce((a, b) => a.concat(b.fases), []) : [];
   const fasesData = regionesData ? Object.values(regionesData).reduce((a, b) => {
     Object.keys(b.byFase).map((k) => {
       if (!a[k]) {
@@ -69,7 +69,7 @@ const GeneralModule = ({
       return null;
     });
     return a;
-  }, {}) : {};
+  }, {}) : {}; */
 
   const csvData = data.map((row) => ([
     moment(row.updatedAt).add(4, 'hours').format('YYYY-MM-DD'),
@@ -206,7 +206,6 @@ const GeneralModule = ({
         </div>
       </div>
 
-      <ComunasByStep fases={allFases} fasesData={fasesData} />
       <div className={styles.grid2Cols1Col}>
         <div className={styles.widget}>
           <RenderLineChart
@@ -346,153 +345,157 @@ const GeneralModule = ({
         </div>
       </div>
 
-      <div className={styles.widget}>
-        <div className={styles.title}>
-          Situación según estado de vacunación
-          <br />
-          <small>Total (Incidencia cada 100.000 personas)</small>
-        </div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>
-                Semana
-              </th>
-              <th>&nbsp;</th>
-              <th className="center">
-                Esquema incompleto
-              </th>
-              <th className="center">
-                Esquema completo
-              </th>
-              <th className="center">
-                Esquema completo + refuerzo
-                {' (> 14 d)'}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {[...dataPerVaccinationStatus].reverse().slice(0, 4).map((row) => (
-              <>
-                <tr
-                  key={`1-${row.week}`}
-                >
-                  <td rowSpan={4}>{row.week}</td>
-                  <td>Población</td>
-                  <td className="center">{row.uncomplete && `${numeral(row.uncomplete.population).format('0,000')}`}</td>
-                  <td className="center">{row.complete && `${numeral(row.complete.population).format('0,000')}`}</td>
-                  <td className="center">{row.boost_1 && `${numeral(row.boost_1.population).format('0,000')}`}</td>
+      {false && (
+        <>
+          <div className={styles.widget}>
+            <div className={styles.title}>
+              Situación según estado de vacunación
+              <br />
+              <small>Total (Incidencia cada 100.000 personas)</small>
+            </div>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>
+                    Semana
+                  </th>
+                  <th>&nbsp;</th>
+                  <th className="center">
+                    Esquema incompleto
+                  </th>
+                  <th className="center">
+                    Esquema completo
+                  </th>
+                  <th className="center">
+                    Esquema completo + refuerzo
+                    {' (> 14 d)'}
+                  </th>
                 </tr>
-                <tr
-                  key={`2-${row.week}`}
-                >
-                  <td>Casos</td>
-                  <td className="center">{row.uncomplete && `${numeral(row.uncomplete.confirmedCases).format('0,000')} (${numeral(row.uncomplete.incidence.confirmedCases).format('0,000.00')})`}</td>
-                  <td className="center">{row.complete && `${numeral(row.complete.confirmedCases).format('0,000')} (${numeral(row.complete.incidence.confirmedCases).format('0,000.00')})`}</td>
-                  <td className="center">{row.boost_1 && `${numeral(row.boost_1.confirmedCases).format('0,000')} (${numeral(row.boost_1.incidence.confirmedCases).format('0,000.00')})`}</td>
+              </thead>
+              <tbody>
+                {[...dataPerVaccinationStatus].reverse().slice(0, 4).map((row) => (
+                  <>
+                    <tr
+                      key={`1-${row.week}`}
+                    >
+                      <td rowSpan={4}>{row.week}</td>
+                      <td>Población</td>
+                      <td className="center">{row.uncomplete && `${numeral(row.uncomplete.population).format('0,000')}`}</td>
+                      <td className="center">{row.complete && `${numeral(row.complete.population).format('0,000')}`}</td>
+                      <td className="center">{row.boost_1 && `${numeral(row.boost_1.population).format('0,000')}`}</td>
+                    </tr>
+                    <tr
+                      key={`2-${row.week}`}
+                    >
+                      <td>Casos</td>
+                      <td className="center">{row.uncomplete && `${numeral(row.uncomplete.confirmedCases).format('0,000')} (${numeral(row.uncomplete.incidence.confirmedCases).format('0,000.00')})`}</td>
+                      <td className="center">{row.complete && `${numeral(row.complete.confirmedCases).format('0,000')} (${numeral(row.complete.incidence.confirmedCases).format('0,000.00')})`}</td>
+                      <td className="center">{row.boost_1 && `${numeral(row.boost_1.confirmedCases).format('0,000')} (${numeral(row.boost_1.incidence.confirmedCases).format('0,000.00')})`}</td>
 
-                </tr>
-                <tr
-                  key={`3-${row.week}`}
-                >
-                  <td>Casos UCI</td>
-                  <td className="center">{row.uncomplete && `${numeral(row.uncomplete.uciCases).format('0,000')} (${numeral(row.uncomplete.incidence.uciCases).format('0,000.00')})`}</td>
-                  <td className="center">{row.complete && `${numeral(row.complete.uciCases).format('0,000')} (${numeral(row.complete.incidence.uciCases).format('0,000.00')})`}</td>
-                  <td className="center">{row.boost_1 && `${numeral(row.boost_1.uciCases).format('0,000')} (${numeral(row.boost_1.incidence.uciCases).format('0,000.00')})`}</td>
+                    </tr>
+                    <tr
+                      key={`3-${row.week}`}
+                    >
+                      <td>Casos UCI</td>
+                      <td className="center">{row.uncomplete && `${numeral(row.uncomplete.uciCases).format('0,000')} (${numeral(row.uncomplete.incidence.uciCases).format('0,000.00')})`}</td>
+                      <td className="center">{row.complete && `${numeral(row.complete.uciCases).format('0,000')} (${numeral(row.complete.incidence.uciCases).format('0,000.00')})`}</td>
+                      <td className="center">{row.boost_1 && `${numeral(row.boost_1.uciCases).format('0,000')} (${numeral(row.boost_1.incidence.uciCases).format('0,000.00')})`}</td>
 
-                </tr>
-                <tr
-                  key={`4-${row.week}`}
-                >
-                  <td>Fallecidos</td>
-                  <td className="center">{row.uncomplete && `${numeral(row.uncomplete.deaths).format('0,000')} (${numeral(row.uncomplete.incidence.deaths).format('0,000.00')})`}</td>
-                  <td className="center">{row.complete && `${numeral(row.complete.deaths).format('0,000')} (${numeral(row.complete.incidence.deaths).format('0,000.00')})`}</td>
-                  <td className="center">{row.boost_1 && `${numeral(row.boost_1.deaths).format('0,000')} (${numeral(row.boost_1.incidence.deaths).format('0,000.00')})`}</td>
-                </tr>
-              </>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className={styles.widget}>
-        <RenderLineChart
-          theme={theme}
-          data={dataPerVaccinationStatus.map((row) => ({
-            week: row.week,
-            uncomplete: Math.round(row.uncomplete?.incidence.confirmedCases * 1000) / 1000,
-            complete: Math.round(row.complete?.incidence.confirmedCases * 1000) / 1000,
-            boost_1: Math.round(row.boost_1?.incidence.confirmedCases * 1000) / 1000,
-          }))}
-          yAxisScale="linear"
-          title="Incidencia Casos (cada 100.000 hab) según estado de vacunación"
-          xAxisType="linear"
-          xAxisStepSize={isMobile() ? 7 : 4}
-          width={100}
-          showYAxisSelector
-          height={isMobile() ? 80 : 30}
-          yAxisMin={0}
-          xLabelsField="week"
-          yDatasets={{
-            'Esquema incompleto': 'uncomplete',
-            'Esquema completo': 'complete',
-            'Esquema completo + refuerzo (>14 días)': 'boost_1',
-          }}
-        />
-        <br />
-      </div>
-      <div className={styles.widget}>
-        <RenderLineChart
-          theme={theme}
-          data={dataPerVaccinationStatus.map((row) => ({
-            week: row.week,
-            uncomplete: Math.round(row.uncomplete?.incidence.uciCases * 1000) / 1000,
-            complete: Math.round(row.complete?.incidence.uciCases * 1000) / 1000,
-            boost_1: Math.round(row.boost_1?.incidence.uciCases * 1000) / 1000,
-          }))}
-          yAxisScale="linear"
-          title="Incidencia Casos UCI (cada 100.000 hab) según estado de vacunación"
-          xAxisType="linear"
-          xAxisStepSize={isMobile() ? 7 : 4}
-          width={100}
-          showYAxisSelector
-          height={isMobile() ? 80 : 30}
-          yAxisMin={0}
-          xLabelsField="week"
-          yDatasets={{
-            'Esquema incompleto': 'uncomplete',
-            'Esquema completo': 'complete',
-            'Esquema completo + refuerzo (>14 días)': 'boost_1',
-          }}
-        />
-        <br />
-      </div>
-      <div className={styles.widget}>
-        <RenderLineChart
-          theme={theme}
-          data={dataPerVaccinationStatus.map((row) => ({
-            week: row.week,
-            uncomplete: Math.round(row.uncomplete?.incidence.deaths * 1000) / 1000,
-            complete: Math.round(row.complete?.incidence.deaths * 1000) / 1000,
-            boost_1: Math.round(row.boost_1?.incidence.deaths * 1000) / 1000,
-          }))}
-          yAxisScale="linear"
-          title="Incidencia Fallecidos (cada 100.000 hab) según estado de vacunación"
-          xAxisType="linear"
-          xAxisStepSize={isMobile() ? 7 : 4}
-          width={100}
-          showYAxisSelector
-          height={isMobile() ? 80 : 30}
-          yAxisMin={0}
-          xLabelsField="week"
-          yDatasets={{
-            'Esquema incompleto': 'uncomplete',
-            'Esquema completo': 'complete',
-            'Esquema completo + refuerzo (>14 días)': 'boost_1',
-          }}
-        />
-        <br />
-      </div>
+                    </tr>
+                    <tr
+                      key={`4-${row.week}`}
+                    >
+                      <td>Fallecidos</td>
+                      <td className="center">{row.uncomplete && `${numeral(row.uncomplete.deaths).format('0,000')} (${numeral(row.uncomplete.incidence.deaths).format('0,000.00')})`}</td>
+                      <td className="center">{row.complete && `${numeral(row.complete.deaths).format('0,000')} (${numeral(row.complete.incidence.deaths).format('0,000.00')})`}</td>
+                      <td className="center">{row.boost_1 && `${numeral(row.boost_1.deaths).format('0,000')} (${numeral(row.boost_1.incidence.deaths).format('0,000.00')})`}</td>
+                    </tr>
+                  </>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className={styles.widget}>
+            <RenderLineChart
+              theme={theme}
+              data={dataPerVaccinationStatus.map((row) => ({
+                week: row.week,
+                uncomplete: Math.round(row.uncomplete?.incidence.confirmedCases * 1000) / 1000,
+                complete: Math.round(row.complete?.incidence.confirmedCases * 1000) / 1000,
+                boost_1: Math.round(row.boost_1?.incidence.confirmedCases * 1000) / 1000,
+              }))}
+              yAxisScale="linear"
+              title="Incidencia Casos (cada 100.000 hab) según estado de vacunación"
+              xAxisType="linear"
+              xAxisStepSize={isMobile() ? 7 : 4}
+              width={100}
+              showYAxisSelector
+              height={isMobile() ? 80 : 30}
+              yAxisMin={0}
+              xLabelsField="week"
+              yDatasets={{
+                'Esquema incompleto': 'uncomplete',
+                'Esquema completo': 'complete',
+                'Esquema completo + refuerzo (>14 días)': 'boost_1',
+              }}
+            />
+            <br />
+          </div>
+          <div className={styles.widget}>
+            <RenderLineChart
+              theme={theme}
+              data={dataPerVaccinationStatus.map((row) => ({
+                week: row.week,
+                uncomplete: Math.round(row.uncomplete?.incidence.uciCases * 1000) / 1000,
+                complete: Math.round(row.complete?.incidence.uciCases * 1000) / 1000,
+                boost_1: Math.round(row.boost_1?.incidence.uciCases * 1000) / 1000,
+              }))}
+              yAxisScale="linear"
+              title="Incidencia Casos UCI (cada 100.000 hab) según estado de vacunación"
+              xAxisType="linear"
+              xAxisStepSize={isMobile() ? 7 : 4}
+              width={100}
+              showYAxisSelector
+              height={isMobile() ? 80 : 30}
+              yAxisMin={0}
+              xLabelsField="week"
+              yDatasets={{
+                'Esquema incompleto': 'uncomplete',
+                'Esquema completo': 'complete',
+                'Esquema completo + refuerzo (>14 días)': 'boost_1',
+              }}
+            />
+            <br />
+          </div>
+          <div className={styles.widget}>
+            <RenderLineChart
+              theme={theme}
+              data={dataPerVaccinationStatus.map((row) => ({
+                week: row.week,
+                uncomplete: Math.round(row.uncomplete?.incidence.deaths * 1000) / 1000,
+                complete: Math.round(row.complete?.incidence.deaths * 1000) / 1000,
+                boost_1: Math.round(row.boost_1?.incidence.deaths * 1000) / 1000,
+              }))}
+              yAxisScale="linear"
+              title="Incidencia Fallecidos (cada 100.000 hab) según estado de vacunación"
+              xAxisType="linear"
+              xAxisStepSize={isMobile() ? 7 : 4}
+              width={100}
+              showYAxisSelector
+              height={isMobile() ? 80 : 30}
+              yAxisMin={0}
+              xLabelsField="week"
+              yDatasets={{
+                'Esquema incompleto': 'uncomplete',
+                'Esquema completo': 'complete',
+                'Esquema completo + refuerzo (>14 días)': 'boost_1',
+              }}
+            />
+            <br />
+          </div>
 
+        </>
+      )}
       <div className={styles.widget}>
         <RenderLineChart
           theme={theme}

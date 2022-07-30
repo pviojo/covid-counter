@@ -546,7 +546,7 @@ const getRegionesData = async (comunasData) => {
     rsp[regionCode].minFase = Math.min(rsp[regionCode].minFase, parseInt(comuna.fase, 10));
     rsp[regionCode].fases.push(parseInt(comuna.fase, 10));
     rsp[regionCode].population += parseInt(comuna && comuna.population, 10);
-    rsp[regionCode].byFase[comuna.fase].population += parseInt(comuna && comuna.population, 10);
+    // rsp[regionCode].byFase[comuna.fase].population += parseInt(comuna && comuna.population, 10);
 
     return null;
   });

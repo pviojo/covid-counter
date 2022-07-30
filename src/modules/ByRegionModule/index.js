@@ -22,7 +22,7 @@ import {
 } from '../../helpers/data';
 
 import { RenderLineChart, RenderBarChart } from '../../components/Charts';
-import ComunasByStep from '../../components/ComunasByStep';
+// import ComunasByStep from '../../components/ComunasByStep';
 
 import chileMap from '../../data/chile.json';
 import {
@@ -32,7 +32,8 @@ import {
 import '../../global.scss';
 import styles from './index.module.scss';
 
-const getLayerCss = (l, regionData) => (`&[id="${l.id}"] { fill: ${regionData && faseData[regionData.modeFase].color}}  &[id="${l.id}", aria-checked='true'] {fill: #916CB5 !important;}`);
+// const getLayerCss = (l, regionData) => (`&[id="${l.id}"] { fill: ${regionData && faseData[regionData.modeFase].color}}  &[id="${l.id}", aria-checked='true'] {fill: #916CB5 !important;}`);
+const getLayerCss = (l) => (`&[id="${l.id}"] { fill: #0066cc}  &[id="${l.id}", aria-checked='true'] {fill: #916CB5 !important;}`);
 
 const ByRegionModule = ({
   comunasData,
@@ -136,7 +137,6 @@ const ByRegionModule = ({
             }
           />
         </div>
-        <ComunasByStep fases={regionesData[selectedRegion].fases} fasesData={regionesData[selectedRegion].byFase} />
         <div className={styles.widget}>
           <RenderLineChart
             theme={theme}
@@ -422,7 +422,6 @@ const ByRegionModule = ({
               <thead>
                 <tr>
                   <th>Comuna</th>
-                  <th className="center">Fase</th>
                   {!isMobile() && (
                     <>
                       <th className="right">Población</th>
@@ -464,41 +463,6 @@ const ByRegionModule = ({
                         />
                         <span style={{ verticalAlign: 'middle' }}>
                           {c.comuna}
-                        </span>
-                      </td>
-                      <td className="center">
-                        {c.fase}
-                        {' '}
-                        -
-                        {' '}
-                        {faseData[c.fase] && faseData[c.fase].name}
-                        <br />
-                        Inicio:
-                        {' '}
-                        {moment(c.currentFase.start).format('DD/MM')}
-                        <br />
-                        Inc Activos Inicio:
-                        {' '}
-                        {numeral(c.currentFase.prevalence_active_cases_start).format('0,000.0')}
-                        {' '}
-                        (T:
-                        {' '}
-                        {numeral(c.currentFase.active_cases_start).format('0,000')}
-                        )
-                        <br />
-                        Inc Activos Actual:
-                        {' '}
-                        {numeral(c.currentFase.prevalence_active_cases_end).format('0,000.0')}
-                        {' '}
-                        (T:
-                        {' '}
-                        {numeral(c.currentFase.active_cases_end).format('0,000')}
-                        )
-                        <br />
-                        Variación Activos:
-                        {' '}
-                        <span style={{ color: c.currentFase.pct_delta_active_cases >= 0 ? '#c30' : '#093' }}>
-                          {numeral(c.currentFase.pct_delta_active_cases).format('+%0.0')}
                         </span>
                       </td>
                       {!isMobile() && (
@@ -576,56 +540,6 @@ const ByRegionModule = ({
           ))}
         </div>
 
-        <div className={styles.grid3Cols1Col}>
-          {Object.keys(comunasData).map((c) => (
-            comunasData[c].regionCode === selectedRegion
-            && (
-              <div className={styles.widget} key={c}>
-                <RenderLineChart
-                  theme={theme}
-                  data={comunasData[c].data.slice(-50)}
-                  yAxisScale="linear"
-                  xAxisType="time"
-                  showYAxisSelector
-                  yAxisMin={0}
-                  title={`${comunasData[c].label}<br/><small>% Positividad PCR</small>`}
-                  width={33}
-                  height={isMobile() ? 60 : 30}
-                  xAxisStepSize={isMobile() ? 14 : 1}
-                  xLabelsField="updatedAt"
-                  yDatasets={{
-                    '% Positividad PCR': 'pctPositivity',
-                  }}
-                />
-              </div>
-            )
-          ))}
-        </div>
-        <div className={styles.grid3Cols1Col}>
-          {Object.keys(comunasData).map((c) => (
-            comunasData[c].regionCode === selectedRegion
-            && (
-              <div className={styles.widget} key={c}>
-                <RenderLineChart
-                  theme={theme}
-                  data={comunasData[c].data.slice(-50)}
-                  yAxisScale="linear"
-                  xAxisType="time"
-                  showYAxisSelector
-                  yAxisMin={0}
-                  title={`${comunasData[c].label}<br/><small>% BAC</small>`}
-                  width={33}
-                  height={isMobile() ? 60 : 30}
-                  xAxisStepSize={isMobile() ? 14 : 1}
-                  xLabelsField="updatedAt"
-                  yDatasets={{
-                    '% BAC': 'pctBac',
-                  }}
-                />
-              </div>
-            )
-          ))}
-        </div>
       </div>
 
     </div>
